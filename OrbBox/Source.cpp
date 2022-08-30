@@ -20,22 +20,26 @@ public:
 
 private:
     PhysicsBody* bodyArray[3];
+    int vertexDrawScale = 4;
 
 public:
     bool OnUserCreate() override {
         PhysicsBody* p = new PhysicsBody();
-        p->position = coord(100, 100);
+        p->position = coord(200, 200);
         bodyArray[0] = p;
         return true;
     }
     bool OnUserUpdate(float fElapsedTime) override {///something keeps deleting the fucking pointers to data
         // called once per frame
-        //for (int x = 0; x < ScreenWidth(); x++)
-            //for (int y = 0; y < ScreenHeight(); y++)
-                //Draw(x, y, olc::Pixel(60,60,60));
+
+        //fill with color
+        for (int x = 0; x < ScreenWidth(); x++)
+            for (int y = 0; y < ScreenHeight(); y++)
+                Draw(x, y, olc::Pixel(10,10,20));
         //drawing mesh to view
         drawMesh(bodyArray[0]);
         //finished
+        //bodyArray[0]->position.add(coord(10, 0));
 
         return true;
     }
@@ -48,14 +52,14 @@ public:
         else {
             //draw circles on vertecies
             for (int i = 0; i < p->getMesh().pgonLength; i++) {
-                int x = p->getPolygonList()->b->position.x;
-                int y = p->getPolygonList()->b->position.y;
+                int x = p->position.x;
+                int y = p->position.y;
                 //A
-                FillCircle(int((p->translate(x, m.polygonList->a->position.x)).x), int((p->translate(y, m.polygonList->a->position.y)).y), 10);
+                FillCircle(int((p->translate(x, m.polygonList->a->position.x)).x), int((p->translate(y, m.polygonList->a->position.y)).y), vertexDrawScale, olc::WHITE);
                 //B
-                FillCircle(int((p->translate(x, m.polygonList->b->position.x)).x), int((p->translate(y, m.polygonList->b->position.y)).y), 10);
+                FillCircle(int((p->translate(x, m.polygonList->b->position.x)).x), int((p->translate(y, m.polygonList->b->position.y)).y), vertexDrawScale, olc::BLUE);
                 //C
-                //FillCircle(int((p->translate(x, m.polygonList->c->position.x)).x), int((p->translate(y, m.polygonList->c->position.y)).y), 10);
+                FillCircle(int((p->translate(x, m.polygonList->c->position.x)).x), int((p->translate(y, m.polygonList->c->position.y)).y), vertexDrawScale, olc::RED);
             }
         }
     }

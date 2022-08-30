@@ -94,8 +94,8 @@ public: mesh() {//create default
 	b.prev = vertexList;
 
 	vertex c = vertex(0, 20, 2);
-	b.next = make_shared<vertex>(c);
 	c.prev = make_shared<vertex>(b);
+	vertexList->next->next = make_shared<vertex>(c);
 
 	vexLength = 3;
 
