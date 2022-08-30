@@ -1,5 +1,8 @@
 
 #pragma once
+#include <vector>
+using std::shared_ptr;
+using std::make_shared;
 //===================-< COORDINANT >-==================
 struct coord {
 
@@ -24,10 +27,18 @@ public: void add(coord _value) {
 };
 
 struct vertex {
+public:
 	coord position;
 	int id;
-	vertex* next;
-	vertex* prev;
+	shared_ptr<vertex> next;
+	shared_ptr<vertex> prev;
+
+public: vertex() {
+	position = coord();
+	id = -1;
+	next = nullptr;
+	prev = nullptr;
+}
 
 public: vertex(double _a, double _b, int _id = -1) {
 	position.x = _a;
@@ -41,13 +52,21 @@ public: vertex(double _a, double _b, int _id = -1) {
 struct polygon {
 public:
 	int id;
-	vertex* a;
-	vertex* b;
-	vertex* c;
-	polygon* next;
-	polygon* prev;
+	shared_ptr<vertex> a;
+	shared_ptr<vertex> b;
+	shared_ptr<vertex> c;
+	shared_ptr<polygon> next;
+	shared_ptr<polygon> prev;
 
-public: polygon(vertex* _a, vertex* _b, vertex* _c, int _id = -1) {
+public:polygon() {
+	a = nullptr;
+	b = nullptr;
+	c = nullptr;
+	id = -1;
+	next = nullptr;
+	prev = nullptr;
+}
+public: polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -59,34 +78,34 @@ public: polygon(vertex* _a, vertex* _b, vertex* _c, int _id = -1) {
 
 
 struct mesh {
-	vertex* vertexList;
+	shared_ptr<vertex> vertexList;
 	int vexLength;
 
-	polygon* polygonList;
+	shared_ptr<polygon> polygonList;
 	int pgonLength;
 
 public: mesh() {//create default
 	//initialize vertex list
 	vertex a = vertex(0, 0, 0);
-	vertexList = &a;
+	vertexList = make_shared<vertex>(a);
 
 	vertex b = vertex(20, 0, 1);
-	vertexList->next = &b;
+	vertexList->next = make_shared<vertex>(b);
 	b.prev = vertexList;
 
 	vertex c = vertex(0, 20, 2);
-	b.next = &c;
+	b.next = make_shared<vertex>(c);
 
 	vexLength = 3;
 
 	//create polygon
 	polygon p = polygon(vertexList, vertexList->next, vertexList->next->next, 0);
-	polygonList = &p;
+	polygonList = make_shared<polygon>(p);
 
 	pgonLength = 1;
 }
 
-public: mesh(vertex* _vertexList, polygon* _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
+public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
 	vertexList = _vertexList;
 	polygonList = _polygonList;
 	vexLength = _vexLength;
@@ -139,7 +158,7 @@ public:coord translate(coord absolute, coord relative) {//position of an Physics
 public:mesh getMesh() {
 	return body;
 }
-public:polygon* getPolygonList() {
+public:shared_ptr<polygon> getPolygonList() {
 	return body.polygonList;
 }
 };
