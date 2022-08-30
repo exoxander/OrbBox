@@ -51,15 +51,19 @@ public:
         }
         else {
             //draw circles on vertecies
-            for (int i = 0; i < p->getMesh().pgonLength; i++) {
-                double x = p->position.x;
-                double y = p->position.y;
-                //A
-                FillCircle(int((p->translate(p->position, m.polygonList->a->position)).x), int((p->translate(p->position, m.polygonList->a->position)).y), vertexDrawScale+4, olc::WHITE);
-                //B
-                FillCircle(int((p->translate(p->position, m.polygonList->b->position)).x), int((p->translate(p->position, m.polygonList->b->position)).y), vertexDrawScale, olc::BLUE);
-                //C
-                FillCircle(int((p->translate(p->position, m.polygonList->c->position)).x), int((p->translate(p->position, m.polygonList->c->position)).y), vertexDrawScale, olc::RED);
+            shared_ptr<vertex> current = p->getMesh().vertexList;
+            for (int i = 0; i < p->getMesh().vexLength; i++) {
+                if (current != nullptr) {
+                    //make circle
+                    FillCircle(int((p->translate(p->position, current->position)).x), int((p->translate(p->position, current->position)).y), vertexDrawScale + 4, olc::WHITE);
+                    current = current->next;
+                }
+                else {
+                    //throw an error or something idk
+                    std::cout << "vexlength exceeded actual" << std::endl;
+                }
+                
+                
             }
         }
     }
