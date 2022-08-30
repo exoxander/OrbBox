@@ -52,14 +52,14 @@ public:
         else {
             //draw circles on vertecies
             for (int i = 0; i < p->getMesh().pgonLength; i++) {
-                int x = p->position.x;
-                int y = p->position.y;
+                double x = p->position.x;
+                double y = p->position.y;
                 //A
-                FillCircle(int((p->translate(x, m.polygonList->a->position.x)).x), int((p->translate(y, m.polygonList->a->position.y)).y), vertexDrawScale, olc::WHITE);
+                FillCircle(int((p->translate(p->position, m.polygonList->a->position)).x), int((p->translate(p->position, m.polygonList->a->position)).y), vertexDrawScale+4, olc::WHITE);
                 //B
-                FillCircle(int((p->translate(x, m.polygonList->b->position.x)).x), int((p->translate(y, m.polygonList->b->position.y)).y), vertexDrawScale, olc::BLUE);
+                FillCircle(int((p->translate(p->position, m.polygonList->b->position)).x), int((p->translate(p->position, m.polygonList->b->position)).y), vertexDrawScale, olc::BLUE);
                 //C
-                FillCircle(int((p->translate(x, m.polygonList->c->position.x)).x), int((p->translate(y, m.polygonList->c->position.y)).y), vertexDrawScale, olc::RED);
+                FillCircle(int((p->translate(p->position, m.polygonList->c->position)).x), int((p->translate(p->position, m.polygonList->c->position)).y), vertexDrawScale, olc::RED);
             }
         }
     }

@@ -152,7 +152,7 @@ public:mesh createMesh() {
 	return m;
 }
 public:coord translate(coord absolute, coord relative) {//position of an PhysicsBody, position of a vertex
-	coord result((relative.x + absolute.x), (relative.y + absolute.x));
+	coord result = coord((relative.x + absolute.x), (relative.y + absolute.y));
 
 	return result;
 }
