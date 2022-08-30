@@ -55,7 +55,7 @@ public:
                 //B
                 FillCircle(int((p->translate(x, m.polygonList->b->position.x)).x), int((p->translate(y, m.polygonList->b->position.y)).y), 10);
                 //C
-                FillCircle(int((p->translate(x, m.polygonList->c->position.x)).x), int((p->translate(y, m.polygonList->c->position.y)).y), 10);
+                //FillCircle(int((p->translate(x, m.polygonList->c->position.x)).x), int((p->translate(y, m.polygonList->c->position.y)).y), 10);
             }
         }
     }
