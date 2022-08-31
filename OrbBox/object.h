@@ -1,6 +1,7 @@
 
 #pragma once
 #include <vector>
+#include <math.h>
 using std::shared_ptr;
 using std::make_shared;
 //===================-< COORDINANT >-==================
@@ -159,6 +160,8 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 	m.vexLength = 1;
 	for (int i = 0; i < _vertecies; i++) {
 		//generate vertecies and add to vertexList
+		//x1 = x0*cos() - y0*sin()
+		//y1 = x0*sin() + y0*cos()
 		
 		//make polygon and add to polygonList
 		if (i % 3 == 0) {
