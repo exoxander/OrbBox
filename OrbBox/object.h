@@ -84,7 +84,7 @@ struct mesh {
 	shared_ptr<polygon> polygonList;
 	int pgonLength;
 
-public: mesh() {//create default
+public: mesh() {//create default triangle mesh
 	//initialize vertex list
 	vertex a = vertex(0, 0, 0);
 	vertexList = make_shared<vertex>(a);
@@ -149,6 +149,23 @@ public:mesh createMesh() {
 	//origin vertex	
 
 	mesh m = mesh();
+	return m;
+}
+public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
+	mesh m;
+	//origin vertex
+	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	m.vertexList = origin;
+	m.vexLength = 1;
+	for (int i = 0; i < _vertecies; i++) {
+		//generate vertecies and add to vertexList
+		
+		//make polygon and add to polygonList
+		if (i % 3 == 0) {
+			
+		}
+	}
+
 	return m;
 }
 public:coord translate(coord absolute, coord relative) {//position of an PhysicsBody, position of a vertex
