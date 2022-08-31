@@ -29,7 +29,7 @@ public:
         bodyArray[0] = p;
         return true;
     }
-    bool OnUserUpdate(float fElapsedTime) override {///something keeps deleting the fucking pointers to data
+    bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
 
         //fill with color
@@ -37,7 +37,7 @@ public:
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(10,10,20));
         //drawing mesh to view
-        drawMesh(bodyArray[0]);
+        drawMesh(bodyArray[0],true);
         //finished
         //bodyArray[0]->position.add(coord(10, 0));
 
@@ -47,7 +47,18 @@ public:
     void drawMesh(PhysicsBody* p, bool filled = false) {
         mesh m = p->getMesh();
         if (filled) {
-            //do nothing for now
+            //loop through all polygons and draw to screen
+            shared_ptr<polygon> current = m.polygonList;
+            for (int i = 0; i < m.pgonLength; i++) {
+                coord a = current->a->position;
+                coord b = current->b->position;
+                coord c = current->c->position;
+                coord parent = p->position;
+                FillTriangle(int((p->translate(parent, a)).x), int((p->translate(parent, a)).y),
+                    int((p->translate(parent, b)).x), int((p->translate(parent, b)).y),
+                    int((p->translate(parent, c)).x), int((p->translate(parent, c)).y));
+                //int((p->translate(parent, a)).x), int((p->translate(parent, b)).y)
+            }
         }
         else {
             //draw circles on vertecies
