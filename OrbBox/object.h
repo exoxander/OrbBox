@@ -4,6 +4,8 @@
 #include <math.h>
 using std::shared_ptr;
 using std::make_shared;
+#define PI 3.14159265
+
 //===================-< COORDINANT >-==================
 struct coord {
 
@@ -167,7 +169,7 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 	m.vertexList = origin;
 	m.vexLength = 1;
 
-	double angle = 360 / double(_vertecies);
+	double angle = (2 * PI) / double(_vertecies);
 
 	for (int i = 0; i < _vertecies; i++) {
 		//generate vertecies and add to vertexList
