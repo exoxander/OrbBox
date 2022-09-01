@@ -6,12 +6,7 @@
 #include "Camera.h"
 
 //const float TickRate = 16;
-
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
-
-
-
-
 
 class Engine : public olc::PixelGameEngine {
 
@@ -26,6 +21,7 @@ private:
     olc::Pixel colorList[4] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED };
     Utility u;
     Camera viewport;
+    bodyList bodies;
 
 
 public:

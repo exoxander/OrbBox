@@ -3,7 +3,6 @@ using std::shared_ptr;
 using std::make_shared;
 
 #define PI 3.14159265//used in trig functions
-//#include "Camera.h"
 
 //===================-< COORDINANT >-==================
 struct coord {
@@ -126,6 +125,34 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 }
 };
 
+//-------------------------< GLOBAL OBJECT LIST >-------------------------
+struct bodyList {
+public:
+	shared_ptr<PhysicsBody> head;
+	shared_ptr<PhysicsBody> tail;
+	int length;
+
+public:bodyList() {
+	head = nullptr;
+	tail = nullptr;
+	length = 0;
+}
+public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
+	addBody(make_shared<PhysicsBody>(_body));
+}
+public:void addBody(shared_ptr<PhysicsBody> _body) {
+	if (length == 0) {
+		length == 1;
+		head = _body;
+		tail = _body;
+	}
+	else {
+
+	}
+}
+
+};
+
 //-------------------< UTILITY CLASS >---------------------------
 class Utility {
 
@@ -134,6 +161,7 @@ public:Utility() {
 	//default constructor
 }
 
+	  //------------< GENERATE CIRCLE FUNCTION >------------------
 public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
 	mesh m;
 	//origin vertex
