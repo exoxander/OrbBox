@@ -33,7 +33,7 @@ public:
         //initialize camera
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
         PhysicsBody* p = new PhysicsBody();
-        p->setMesh(u.generateCircle(30));
+        p->setMesh(u.generateCircle(30,6));
         p->position.add(coord(200,0));
         bodyArray[0] = p;
         return true;
