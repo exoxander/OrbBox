@@ -1,6 +1,7 @@
 #pragma once
 using std::shared_ptr;
 using std::make_shared;
+//#include "Camera.h"
 //===================-< COORDINANT >-==================
 struct coord {
 
@@ -124,10 +125,5 @@ class Utility {
 
 public:Utility() {
 
-}
-
-public:coord translate(coord parent, coord vertex) {//position of an PhysicsBody, position of a vertex
-	coord result = coord((vertex.x + parent.x), (vertex.y + parent.y));
-	return result;
 }
 };

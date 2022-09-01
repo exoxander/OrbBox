@@ -3,6 +3,7 @@
 #include "olcPixelGameEngine.h"
 #include "PhysicsBody.h"
 #include "Utility.h"
+#include "Camera.h"
 
 //const float TickRate = 16;
 
@@ -24,11 +25,15 @@ private:
     int vertexDrawScale = 4;
     olc::Pixel colorList[4] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED };
     Utility u;
+    Camera viewport;
+
 
 public:
     bool OnUserCreate() override {
+        //initialize camera
+        viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
         PhysicsBody* p = new PhysicsBody();
-        p->position = coord(200, 200);
+        //p->position = coord(200, 200);
         p->setMesh(p->generateCircle(30));
         bodyArray[0] = p;
         return true;
@@ -63,11 +68,11 @@ public:
                 //make color result of % between polygon id and color list
                 olc::Pixel polygonColor = colorList[current->id%4];
                 FillTriangle(
-                    int((u.translate(parent, a)).x), int((u.translate(parent, a)).y),//A
-                    int((u.translate(parent, b)).x), int((u.translate(parent, b)).y),//B
-                    int((u.translate(parent, c)).x), int((u.translate(parent, c)).y),//C
+                    int((viewport.translate(parent, a)).x), int((viewport.translate(parent, a)).y),//A
+                    int((viewport.translate(parent, b)).x), int((viewport.translate(parent, b)).y),//B
+                    int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
                     polygonColor);
-                //int((u.translate(parent, a)).x), int((u.translate(parent, b)).y)
+                //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
             }
         }
         else {
@@ -77,7 +82,10 @@ public:
                 if (current != nullptr) {
                     //make circle
                     olc::Pixel vertexColor = colorList[current->id%4];
-                    FillCircle(int((u.translate(p->position, current->position)).x), int((u.translate(p->position, current->position)).y), vertexDrawScale, vertexColor);
+                    FillCircle(
+                        int((viewport.translate(p->position, current->position)).x),
+                        int((viewport.translate(p->position, current->position)).y),
+                        vertexDrawScale, vertexColor);
                     current = current->next;
                 }
                 else {
@@ -93,7 +101,7 @@ public:
 int main()
 {
     Engine window;
-    if (window.Construct(256 * 4, 192 * 4, 1, 1)) {
+    if (window.Construct(1024, 640, 1, 1)) {
         window.Start();
     }
     return 0;

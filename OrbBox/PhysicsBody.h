@@ -12,10 +12,9 @@ class PhysicsBody
 {
 public:
 	int id;
-	double mass;//xyyy | x = size class?
+	double mass;
 	coord velocity;
 	coord position;
-	//coord screenSpace;
 private:
 	mesh body;
 

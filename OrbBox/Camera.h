@@ -19,4 +19,8 @@ public:Camera(double _x, double _y, double _zoom = 1) {
 	panSpeed = 0.01;
 	zoomSpeed = 0.1;
 }
+public:coord translate(coord parent, coord vertex) {//returns the coordinant of a vertex after converting between object and camera space
+	coord result = coord((vertex.x + parent.x + location.x), (vertex.y + parent.y + location.y));
+	return result;
+}
 };
