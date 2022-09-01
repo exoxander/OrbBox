@@ -175,7 +175,7 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 			
 		}
 		//if near end, create final polygon
-		if (m.vexLength == _vertecies) {//final polygon
+		if (m.vexLength == _vertecies+1) {//final polygon
 		//origin, most recent vertex, first polygon.b
 			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
 			currentPgon->next = pgon;
