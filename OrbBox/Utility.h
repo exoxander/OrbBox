@@ -1,11 +1,6 @@
-
 #pragma once
-#include <vector>
-#include <math.h>
 using std::shared_ptr;
 using std::make_shared;
-#define PI 3.14159265
-
 //===================-< COORDINANT >-==================
 struct coord {
 
@@ -124,84 +119,15 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 }
 };
 
+class Utility {
 
-//===================-< PhysicsBody >-==================
-class PhysicsBody
-{
-public:
-	int id;
-	double mass;//xyyy | x = size class?
-	coord velocity;
-	coord position;
-	//coord screenSpace;
-private:
-	mesh body;
 
-	//default
-public: PhysicsBody() {
-	position = coord();
-	velocity = coord();
-	mass = 10;
-	id = -1;
-	body = mesh();
-}
-	  //complete
-public: PhysicsBody(coord _posistion, coord _velocity, double _mass = 10) {
-	position = _posistion;
-	velocity = _velocity;
-	mass = _mass;
-	id = -1;
-	body = mesh();
+public:Utility() {
+
 }
 
-	  //create mesh from vertex list | impliment later
-public:mesh createMesh() {
-	//origin vertex	
-
-	mesh m = mesh();
-	return m;
-}
-public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
-	mesh m;
-	//origin vertex
-	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
-	shared_ptr<vertex> current = origin;
-	m.vertexList = origin;
-	m.vexLength = 1;
-
-	double angle = (2 * PI) / double(_vertecies);
-
-	for (int i = 0; i < _vertecies; i++) {
-		//generate vertecies and add to vertexList
-		//x1 = x0*cos() - y0*sin()
-		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at coord (radius, 0)
-		coord next = coord(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
-		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
-
-		//add to vertex chain and increase vexlength
-		current->next = vert;
-		vert->prev = current;
-		vert->id = i + 1;
-		m.vexLength++;
-		current = vert;
-	}
-
-	return m;
-}
-public:coord translate(coord absolute, coord relative) {//position of an PhysicsBody, position of a vertex
-	coord result = coord((relative.x + absolute.x), (relative.y + absolute.y));
-
+public:coord translate(coord parent, coord vertex) {//position of an PhysicsBody, position of a vertex
+	coord result = coord((vertex.x + parent.x), (vertex.y + parent.y));
 	return result;
 }
-public:mesh getMesh() {
-	return body;
-}
-public: void setMesh(mesh _m) {
-	body = _m;
-}
-public:shared_ptr<polygon> getPolygonList() {
-	return body.polygonList;
-}
 };
-
