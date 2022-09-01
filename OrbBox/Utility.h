@@ -1,7 +1,10 @@
 #pragma once
 using std::shared_ptr;
 using std::make_shared;
+
+#define PI 3.14159265//used in trig functions
 //#include "Camera.h"
+
 //===================-< COORDINANT >-==================
 struct coord {
 
@@ -25,6 +28,8 @@ public: void add(coord _value) {
 }
 };
 
+
+//---------------< VERTEX > --------------
 struct vertex {
 public:
 	coord position;
@@ -55,6 +60,7 @@ public: vertex(coord _position, int _id = -1) {
 }
 };
 
+//---------------< POLYGON >--------------
 struct polygon {
 public:
 	int id;
@@ -82,7 +88,7 @@ public: polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex>
 }
 };
 
-
+//----------------< MESH >------------------
 struct mesh {
 	shared_ptr<vertex> vertexList;
 	int vexLength;
@@ -120,10 +126,63 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 }
 };
 
+//-------------------< UTILITY CLASS >---------------------------
 class Utility {
 
 
 public:Utility() {
+	//default constructor
+}
 
+public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
+	mesh m;
+	//origin vertex
+	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	shared_ptr<vertex> currentVex = origin;
+	shared_ptr<polygon> currentPgon;
+	m.vertexList = origin;
+	m.vexLength = 1;
+
+	double angle = (2 * PI) / double(_vertecies);//angle needs to be in radians
+
+	for (int i = 0; i < _vertecies; i++) {
+		//generate vertecies and add to vertexList
+		//x1 = x0*cos() - y0*sin()
+		//y1 = x0*sin() + y0*cos()
+		//create vertex by angle * i starting at coord (radius, 0)
+		coord next = coord(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
+		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
+
+		//add to vertex chain and increase vexlength
+		currentVex->next = vert;
+		vert->prev = currentVex;
+		vert->id = i + 1;
+		m.vexLength++;
+		currentVex = vert;
+
+		//make polygons
+		if (m.vexLength == 3) {//first polygon
+			m.polygonList = make_shared<polygon>(origin,currentVex->prev,currentVex,1);
+			m.pgonLength = 1;
+			currentPgon = m.polygonList;
+		}
+		else if (m.vexLength > 3 && i < _vertecies) {//middle polygons
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin,currentPgon->c,currentVex, m.pgonLength+1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			m.pgonLength++;
+			currentPgon = pgon;
+		}
+		else if(_vertecies == i) {//final polygon
+			//origin, most recent vertex, first polygon.b
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength+1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			m.pgonLength++;
+			currentPgon = pgon;
+		}
+	}
+
+	return m;
 }
 };

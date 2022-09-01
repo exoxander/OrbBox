@@ -33,22 +33,20 @@ public:
         //initialize camera
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
         PhysicsBody* p = new PhysicsBody();
-        //p->position = coord(200, 200);
-        p->setMesh(p->generateCircle(30));
+        p->setMesh(u.generateCircle(30));
+        p->position.add(coord(200,0));
         bodyArray[0] = p;
         return true;
     }
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
-
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(10,10,20));
         //drawing mesh to view
-        drawMesh(bodyArray[0],false);
+        drawMesh(bodyArray[0],true);
         //finished
-        //bodyArray[0]->position.add(coord(10, 0));
 
         return true;
     }
@@ -73,6 +71,9 @@ public:
                     int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
                     polygonColor);
                 //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
+                if (current->next != nullptr) {
+                    current = current->next;
+                }
             }
         }
         else {
