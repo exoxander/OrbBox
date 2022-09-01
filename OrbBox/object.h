@@ -48,6 +48,13 @@ public: vertex(double _a, double _b, int _id = -1) {
 	next = nullptr;
 	prev = nullptr;
 }
+public: vertex(coord _position, int _id = -1) {
+	position.x = _position.x;
+	position.y = _position.y;
+	id = _id;
+	next = nullptr;
+	prev = nullptr;
+}
 };
 
 struct polygon {
@@ -156,17 +163,26 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 	mesh m;
 	//origin vertex
 	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	shared_ptr<vertex> current = origin;
 	m.vertexList = origin;
 	m.vexLength = 1;
+
+	double angle = 360 / double(_vertecies);
+
 	for (int i = 0; i < _vertecies; i++) {
 		//generate vertecies and add to vertexList
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
-		
-		//make polygon and add to polygonList
-		if (i % 3 == 0) {
-			
-		}
+		//create vertex by angle * i starting at coord (radius, 0)
+		coord next = coord(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
+		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
+
+		//add to vertex chain and increase vexlength
+		current->next = vert;
+		vert->prev = current;
+		vert->id = i + 1;
+		m.vexLength++;
+		current = vert;
 	}
 
 	return m;
@@ -178,6 +194,9 @@ public:coord translate(coord absolute, coord relative) {//position of an Physics
 }
 public:mesh getMesh() {
 	return body;
+}
+public: void setMesh(mesh _m) {
+	body = _m;
 }
 public:shared_ptr<polygon> getPolygonList() {
 	return body.polygonList;
