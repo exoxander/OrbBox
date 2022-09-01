@@ -5,7 +5,6 @@ using std::shared_ptr;
 using std::make_shared;
 
 
-
 //===================-< PhysicsBody >-==================
 class PhysicsBody
 {
@@ -52,4 +51,74 @@ public:shared_ptr<polygon> getPolygonList() {
 	return body.polygonList;
 }
 };
+
+//-------------------------< GLOBAL OBJECT LIST >-------------------------
+struct body {
+	shared_ptr<PhysicsBody> item;
+	shared_ptr<body> next;
+	shared_ptr<body> prev;
+
+public:body() {
+	item = nullptr;
+	next = nullptr;
+	prev = nullptr;
+}
+public:body(shared_ptr<PhysicsBody> _item) {
+	item = _item;
+	next = nullptr;
+	prev = nullptr;
+}
+};
+
+//---------------------< BODY LIST >--------------------------
+struct bodyList {
+public:
+	shared_ptr<body> head;
+	shared_ptr<body> tail;
+	int length;
+
+public:bodyList() {
+	head = nullptr;
+	tail = nullptr;
+	length = 0;
+}
+public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
+	addBody(make_shared<PhysicsBody>(_body));
+}
+public:void addBody(shared_ptr<PhysicsBody> _body) {
+	if (length == 0) {
+		length = 1;
+		head = make_shared<body>(_body);
+		tail = make_shared<body>(_body);
+	}
+	else {
+		length++;
+		shared_ptr<body> b = make_shared<body>(_body);
+		tail->next = b;
+		b->prev = tail;
+		tail = b;
+	}
+}
+public: void removeBody(int _id) {
+	bool found = false;
+	shared_ptr<body> current = head;
+	do {
+		if (current->item->id == _id) {
+			//logically remove from list
+			current->prev->next = current->next;
+			current->next->prev = current->prev;
+			//call deconstructor on current once thats completed
+			length--;
+			break;
+		}
+	} while (current->next);
+	if (!found) {
+		//throw an error
+	}
+}
+
+};
+
+
+
 

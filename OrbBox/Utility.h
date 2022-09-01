@@ -125,33 +125,7 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 }
 };
 
-//-------------------------< GLOBAL OBJECT LIST >-------------------------
-struct bodyList {
-public:
-	shared_ptr<PhysicsBody> head;
-	shared_ptr<PhysicsBody> tail;
-	int length;
 
-public:bodyList() {
-	head = nullptr;
-	tail = nullptr;
-	length = 0;
-}
-public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
-	addBody(make_shared<PhysicsBody>(_body));
-}
-public:void addBody(shared_ptr<PhysicsBody> _body) {
-	if (length == 0) {
-		length == 1;
-		head = _body;
-		tail = _body;
-	}
-	else {
-
-	}
-}
-
-};
 
 //-------------------< UTILITY CLASS >---------------------------
 class Utility {
