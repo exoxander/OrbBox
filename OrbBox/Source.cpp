@@ -88,6 +88,7 @@ public:
                     int((viewport.translate(parent, b)).x), int((viewport.translate(parent, b)).y),//B
                     int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
                     polygonColor);
+                
                 //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
                 if (current->next != nullptr) {
                     current = current->next;
