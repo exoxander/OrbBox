@@ -31,7 +31,9 @@ public:
         PhysicsBody star = PhysicsBody();
         planet.setMesh(u.generateCircle(30));
         planet.position.add(coord(200,0));
+        planet.id = 1;
         star.setMesh(u.generateCircle(50));
+        star.id = 2;
         bodies.addBody(planet);
         bodies.addBody(star);
         return true;

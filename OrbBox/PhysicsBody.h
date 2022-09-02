@@ -91,9 +91,18 @@ public:void addBody(shared_ptr<PhysicsBody> _body) {
 		head = make_shared<body>(_body);
 		tail = make_shared<body>(_body);
 	}
+	else if(length == 1) {
+		length++;
+		shared_ptr<body> b = make_shared<body>();
+		b->item = _body;
+		head->next = b;
+		b->prev = head;
+		tail = b;
+	}
 	else {
 		length++;
-		shared_ptr<body> b = make_shared<body>(_body);
+		shared_ptr<body> b = make_shared<body>();
+		b->item = _body;
 		tail->next = b;
 		b->prev = tail;
 		tail = b;
