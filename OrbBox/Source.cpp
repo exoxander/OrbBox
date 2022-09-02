@@ -29,13 +29,24 @@ public:
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
         PhysicsBody planet = PhysicsBody();
         PhysicsBody star = PhysicsBody();
+        PhysicsBody mewn = PhysicsBody();
+
+
         planet.setMesh(u.generateCircle(30));
         planet.position.add(coord(200,0));
         planet.id = 1;
+
         star.setMesh(u.generateCircle(50));
         star.id = 2;
+        star.mass = 100;
+
+        mewn.setMesh(u.generateCircle(10));
+        mewn.mass = 5;
+        mewn.position = coord(-170,90);
+
         bodies.addBody(planet);
         bodies.addBody(star);
+        bodies.addBody(mewn);
         return true;
     }
     bool OnUserUpdate(float fElapsedTime) override {
@@ -45,8 +56,12 @@ public:
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(10,10,20));
         //drawing mesh to view
-        drawMesh(bodies.head,true);
-        drawMesh(bodies.head->next, true);
+        //drawMesh(bodies.head,true);
+        shared_ptr<body> currentBody = bodies.head;
+        while (currentBody != nullptr) {
+            drawMesh(currentBody,true);
+            currentBody = currentBody->next;
+        }
         //finished
 
         return true;
