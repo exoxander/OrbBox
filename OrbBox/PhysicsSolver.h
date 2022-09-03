@@ -17,12 +17,21 @@ public:matrixItem() {
 	yFalloff = 1;
 	next = nullptr;
 }
-public:matrixItem(int _a, int _b, double xDist, double yDist) {//make sure distances are absolute values
+public:matrixItem(int _a, int _b, double xDist, double yDist, bool xNeg = false, bool yNeg = false) {//make sure distances are absolute values
 	a = _a;
 	b = _b;
 	//gravitational force falloff is 1 / distance squared
-	xFalloff = xDist == 0 ? 1 : (1 / sqrt(xDist));
-	yFalloff = yDist == 0 ? 1: (1 / sqrt(yDist));
+	//make negative after to deal with backward velocity without taking a negative root
+	xFalloff = xDist <= 0 ? 0 : (1 / sqrt(xDist));
+	if (xNeg) {
+		xFalloff *= -1;
+	}
+
+	yFalloff = yDist <= 0 ? 0: (1 / sqrt(yDist));
+	if (yNeg) {
+		yFalloff *= -1;
+	}
+
 	next = nullptr;
 }
 };
@@ -65,9 +74,20 @@ public:void generateMatrix(bool regen = false) {
 			while (linkingBody != nullptr) {//going through each body needing to be linked by the active one
 				//difference between x and y coords of the two bodies
 				int b = linkingBody->item->id;
-				double xDist = abs(activePosition.x - linkingBody->item->position.x);
-				double yDist = abs(activePosition.y - linkingBody->item->position.y);
-				currentItem = make_shared<matrixItem>(a, b, xDist, yDist);
+				bool xNegative = false;
+				bool yNegative = false;
+
+				double xDist = activePosition.x - linkingBody->item->position.x;
+				double yDist = activePosition.y - linkingBody->item->position.y;
+
+				if (xDist < 0) {
+					xNegative = true;
+				}
+				if (yDist < 0) {
+					yNegative = true;
+				}
+
+				currentItem = make_shared<matrixItem>(a, b, abs(xDist), abs(yDist), xNegative, yNegative);
 				//add to matrix
 				if (head == nullptr) {
 					head = currentItem;
