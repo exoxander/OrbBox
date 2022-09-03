@@ -29,9 +29,9 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
-        PhysicsBody planet = PhysicsBody(coord(200,-50),coord(),30);
-        PhysicsBody star = PhysicsBody(coord(0,0),coord(),100);
-        PhysicsBody mewn = PhysicsBody(coord(-250,60),coord(),15);
+        PhysicsBody planet = PhysicsBody(coord(200,-50),coord(),20);
+        PhysicsBody star = PhysicsBody(coord(0,0),coord(),50);
+        PhysicsBody mewn = PhysicsBody(coord(-250,60),coord(),10);
 
 
         //planet.setMesh(u.generateCircle(30));
@@ -49,7 +49,7 @@ public:
 
         bodies->addBody(planet);
         bodies->addBody(star);
-        //bodies->addBody(mewn);
+        bodies->addBody(mewn);
         return true;
     }
 

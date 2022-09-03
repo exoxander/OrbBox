@@ -7,56 +7,42 @@ using std::shared_ptr;
 struct matrixItem {
 	int a;
 	int b;
-	double xFalloff;
-	double yFalloff;
+	double y;
+	double x;
+	double distanceFactor;
 	shared_ptr<matrixItem> next;
 public:matrixItem() {
 	a = -1;
 	b = -2;
-	xFalloff = 1;
-	yFalloff = 1;
+	x = 0;
+	y = 0;
+	distanceFactor = 0;
 	next = nullptr;
 }
-public:matrixItem(int _a, int _b, double xDist, double yDist, bool xNeg = false, bool yNeg = false) {//make sure distances are absolute values
+public:matrixItem(int _a, int _b, double _x, double _y) {//make sure distanceFactors are absolute values
 	a = _a;
 	b = _b;
-	//gravitational force falloff is 1 / distance squared
+	//gravitational force falloff is 1 / distanceFactor squared
 	//make negative after to deal with backward velocity without taking a negative root
-	if (xDist == 0) {
-		xFalloff = 0;
-	}
-	else {
-		xFalloff = (1 / sqrt(xDist));
-	}
-	if (xNeg) {
-		xFalloff *= -1;
-	}
-
-	if (yDist == 0) {
-		yFalloff = 0;
-	}
-	else {
-		yFalloff = (1 / sqrt(yDist));
-	}
-	if (yNeg) {
-		yFalloff *= -1;
-	}
+	x = _x;
+	y = _y;
+	distanceFactor = 1 / sqrt(x*x + y*y);
 
 	next = nullptr;
 }
 };
 
-//----------------< DISTANCE MATRIX >----------------
-struct distanceMatrix {
+//----------------< distanceFactor MATRIX >----------------
+struct distanceFactorMatrix {
 public:
 	shared_ptr<matrixItem> head;
 	shared_ptr<bodyList> allBodies;
 
-public:distanceMatrix() {
+public:distanceFactorMatrix() {
 	head = nullptr;
 	allBodies = nullptr;
 }
-public:distanceMatrix(shared_ptr<bodyList> _allBodies) {
+public:distanceFactorMatrix(shared_ptr<bodyList> _allBodies) {
 	head = nullptr;
 	allBodies = _allBodies;
 	generateMatrix();//create the item matrix
@@ -90,14 +76,7 @@ public:void generateMatrix(bool regen = false) {
 				double xDist = activePosition.x - linkingBody->item->position.x;
 				double yDist = activePosition.y - linkingBody->item->position.y;
 
-				if (xDist < 0) {
-					xNegative = true;
-				}
-				if (yDist < 0) {
-					yNegative = true;
-				}
-
-				currentItem = make_shared<matrixItem>(a, b, abs(xDist), abs(yDist), xNegative, yNegative);
+				currentItem = make_shared<matrixItem>(a, b,xDist,yDist);
 				//add to matrix
 				if (head == nullptr) {
 					head = currentItem;
@@ -120,10 +99,10 @@ public:void generateMatrix(bool regen = false) {
 
 //--------------------< PHYSICS SOLVER >------------------------
 class PhysicsSolver {
-	distanceMatrix distMatrix;
+	distanceFactorMatrix distMatrix;
 	shared_ptr<bodyList> allBodies;
 public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
-	distMatrix = distanceMatrix(_bodyList);
+	distMatrix = distanceFactorMatrix(_bodyList);
 	allBodies = _bodyList;
 }
 
@@ -133,8 +112,8 @@ public:void step() {
 	//create the matrix for this step	
 	distMatrix.generateMatrix(true);
 
-	//velocity to add  = sum of all (other objects mass * distance factor)
-	//loop through each body in the body list and calculate the forces of all other bodies from the distance matrix
+	//velocity to add  = sum of all (other objects mass * distanceFactor factor)
+	//loop through each body in the body list and calculate the forces of all other bodies from the distanceFactor matrix
 	while (currentBody != nullptr) {//for each body in the global list
 		shared_ptr<matrixItem> currentItem = distMatrix.head;
 		double dx = 0;
@@ -147,8 +126,8 @@ public:void step() {
 				if (allBodies->exists(currentItem->a)) {
 					linkMass = allBodies->getBody(currentItem->a)->item->mass;
 					//adding velocities
-					dx += linkMass * currentItem->xFalloff;
-					dy += linkMass * currentItem->yFalloff;
+					dx += linkMass * currentItem->x * currentItem->distanceFactor;
+					dy += linkMass * currentItem->y * currentItem->distanceFactor;
 				}
 				
 			}
@@ -156,8 +135,8 @@ public:void step() {
 				if (allBodies->exists(currentItem->b)) {
 					linkMass = allBodies->getBody(currentItem->b)->item->mass;
 					//adding velocities
-					dx -= linkMass * currentItem->xFalloff;
-					dy -= linkMass * currentItem->yFalloff;
+					dx -= linkMass * currentItem->x * currentItem->distanceFactor;
+					dy -= linkMass * currentItem->y * currentItem->distanceFactor;
 				}
 			}			
 
