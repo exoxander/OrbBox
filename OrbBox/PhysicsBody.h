@@ -108,6 +108,30 @@ public:void addBody(shared_ptr<PhysicsBody> _body) {
 		tail = b;
 	}
 }
+public:bool exists(int _id) {
+	bool found = false;
+	shared_ptr<body> currentBody = head;
+	while (currentBody != nullptr) {
+		if (currentBody->item->id == _id) {
+			found = true;
+			break;
+		}
+		else {
+			currentBody = currentBody->next;
+		}
+
+	}
+	return found;
+}
+public:shared_ptr<body> getBody(int _id) {
+	shared_ptr<body> currentBody = head;
+	while (currentBody != nullptr) {
+		if (currentBody->item->id == _id) {
+			return currentBody;
+		}
+		currentBody = currentBody->next;
+	}
+}
 public: void removeBody(int _id) {
 	bool found = false;
 	shared_ptr<body> current = head;
