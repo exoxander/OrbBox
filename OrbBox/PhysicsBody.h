@@ -30,7 +30,7 @@ public: PhysicsBody(coord _posistion, coord _velocity, double _mass = 10) {
 	velocity = _velocity;
 	mass = _mass;
 	id = -1;
-	body = mesh();
+	body = mesh(mass);
 }
 
 	  //create mesh from vertex list | impliment later

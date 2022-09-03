@@ -22,12 +22,22 @@ public:matrixItem(int _a, int _b, double xDist, double yDist, bool xNeg = false,
 	b = _b;
 	//gravitational force falloff is 1 / distance squared
 	//make negative after to deal with backward velocity without taking a negative root
-	xFalloff = xDist <= 0 ? 0 : (1 / sqrt(xDist));
+	if (xDist == 0) {
+		xFalloff = 0;
+	}
+	else {
+		xFalloff = (1 / sqrt(xDist));
+	}
 	if (xNeg) {
 		xFalloff *= -1;
 	}
 
-	yFalloff = yDist <= 0 ? 0: (1 / sqrt(yDist));
+	if (yDist == 0) {
+		yFalloff = 0;
+	}
+	else {
+		yFalloff = (1 / sqrt(yDist));
+	}
 	if (yNeg) {
 		yFalloff *= -1;
 	}
@@ -136,22 +146,25 @@ public:void step() {
 			if (currentId == currentItem->b) {//need to know which one is the other object
 				if (allBodies->exists(currentItem->a)) {
 					linkMass = allBodies->getBody(currentItem->a)->item->mass;
+					//adding velocities
+					dx += linkMass * currentItem->xFalloff;
+					dy += linkMass * currentItem->yFalloff;
 				}
 				
 			}
 			else if (currentId == currentItem->a) {
 				if (allBodies->exists(currentItem->b)) {
 					linkMass = allBodies->getBody(currentItem->b)->item->mass;
+					//adding velocities
+					dx -= linkMass * currentItem->xFalloff;
+					dy -= linkMass * currentItem->yFalloff;
 				}
-			}
-			//adding velocities
-			dx += linkMass * currentItem->xFalloff;
-			dy += linkMass * currentItem->yFalloff;
+			}			
 
 			currentItem = currentItem->next;//move to next
 		}
 
-		currentBody->item->velocity.add(coord(dx/10, dy/10));//change existing velocity
+		currentBody->item->velocity.add(coord(dx / currentBody->item->mass, dy / currentBody->item->mass));//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next
 	}

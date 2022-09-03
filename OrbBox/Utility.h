@@ -116,6 +116,57 @@ public: mesh() {//create default triangle mesh
 
 	pgonLength = 1;
 }
+public: mesh(double mass) {
+	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	shared_ptr<vertex> currentVex = origin;
+	shared_ptr<polygon> currentPgon;
+	vertexList = origin;
+	vexLength = 1;
+	int _vertecies = 12;
+
+	double angle = (2 * PI) / double(_vertecies);//angle needs to be in radians
+
+	for (int i = 0; i < _vertecies; i++) {
+		//generate vertecies and add to vertexList
+		//x1 = x0*cos() - y0*sin()
+		//y1 = x0*sin() + y0*cos()
+		//create vertex by angle * i starting at coord (radius, 0)
+		coord next = coord(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
+		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
+
+		//add to vertex chain and increase vexlength
+		currentVex->next = vert;
+		vert->prev = currentVex;
+		vert->id = i + 1;
+		vexLength++;
+		currentVex = vert;
+
+		//make polygons
+		if (vexLength == 3) {//first polygon
+			polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
+			pgonLength = 1;
+			currentPgon = polygonList;
+		}
+		else if (vexLength > 3 && i < _vertecies) {//middle polygons
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			pgonLength++;
+			currentPgon = pgon;
+
+		}
+		//if near end, create final polygon
+		if (vexLength == _vertecies + 1) {//final polygon
+		//origin, most recent vertex, first polygon.b
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, polygonList->b, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			pgonLength++;
+			currentPgon = pgon;
+		}
+
+	}
+}
 
 public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
 	vertexList = _vertexList;
@@ -123,18 +174,6 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 	vexLength = _vexLength;
 	pgonLength = _pgonLength;
 }
-};
-
-
-
-//-------------------< UTILITY CLASS >---------------------------
-class Utility {
-
-
-public:Utility() {
-	//default constructor
-}
-
 	  //------------< GENERATE CIRCLE FUNCTION >------------------
 public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
 	mesh m;
@@ -164,20 +203,20 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 
 		//make polygons
 		if (m.vexLength == 3) {//first polygon
-			m.polygonList = make_shared<polygon>(origin,currentVex->prev,currentVex,1);
+			m.polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
 			m.pgonLength = 1;
 			currentPgon = m.polygonList;
 		}
 		else if (m.vexLength > 3 && i < _vertecies) {//middle polygons
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin,currentPgon->c,currentVex, m.pgonLength+1);//origin, last vertex of previous pgon, most recent vertex
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
 			currentPgon->next = pgon;
 			pgon->prev = currentPgon;
 			m.pgonLength++;
 			currentPgon = pgon;
-			
+
 		}
 		//if near end, create final polygon
-		if (m.vexLength == _vertecies+1) {//final polygon
+		if (m.vexLength == _vertecies + 1) {//final polygon
 		//origin, most recent vertex, first polygon.b
 			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
 			currentPgon->next = pgon;
@@ -185,9 +224,21 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 			m.pgonLength++;
 			currentPgon = pgon;
 		}
-		
-	}
 
+	}
 	return m;
 }
+};
+
+
+
+//-------------------< UTILITY CLASS >---------------------------
+class Utility {
+
+
+public:Utility() {
+	//default constructor
+}
+
+
 };
