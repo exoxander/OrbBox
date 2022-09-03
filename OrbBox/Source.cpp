@@ -43,6 +43,7 @@ public:
         mewn.setMesh(u.generateCircle(10));
         mewn.mass = 5;
         mewn.position = coord(-170,90);
+        mewn.id = 3;
 
         bodies.addBody(planet);
         bodies.addBody(star);
