@@ -3,6 +3,7 @@
 #include "PhysicsBody.h"
 using std::shared_ptr;
 
+
 //--------------< MATRIX ITEM >---------------
 struct matrixItem {
 	int a;
@@ -107,7 +108,7 @@ public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 }
 
 	  //step function does all the calculations
-public:void step() {
+public:void step(double velocityMultiplier = 1) {
 	shared_ptr<body> currentBody = allBodies->head;
 	//create the matrix for this step	
 	distMatrix.generateMatrix(true);
