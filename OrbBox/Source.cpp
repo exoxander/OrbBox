@@ -21,7 +21,7 @@ private:
     olc::Pixel colorList[4] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED };
     Utility u;
     Camera viewport;
-    shared_ptr<bodyList> bodies;
+    shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
 
 
@@ -29,14 +29,14 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
-        PhysicsBody planet = PhysicsBody();
+        //PhysicsBody planet = PhysicsBody();
         PhysicsBody star = PhysicsBody();
         PhysicsBody mewn = PhysicsBody();
 
 
-        planet.setMesh(u.generateCircle(30));
-        planet.position.add(coord(200,0));
-        planet.id = 1;
+        //planet.setMesh(u.generateCircle(30));
+        //planet.position.add(coord(200,0));
+        //planet.id = 1;
 
         star.setMesh(u.generateCircle(50));
         star.id = 2;
@@ -47,7 +47,7 @@ public:
         mewn.position = coord(-170,90);
         mewn.id = 3;
 
-        bodies->addBody(planet);
+        //bodies->addBody(planet);
         bodies->addBody(star);
         bodies->addBody(mewn);
         return true;

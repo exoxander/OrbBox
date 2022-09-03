@@ -131,7 +131,7 @@ public:void step() {
 			currentItem = currentItem->next;//move to next
 		}
 
-		currentBody->item->velocity.add(coord(dx, dy));//change existing velocity
+		currentBody->item->velocity.add(coord(dx/10, dy/10));//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next
 	}
