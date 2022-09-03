@@ -4,6 +4,7 @@
 #include "PhysicsBody.h"
 #include "Utility.h"
 #include "Camera.h"
+#include "PhysicsSolver.h"
 
 //const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
@@ -20,7 +21,8 @@ private:
     olc::Pixel colorList[4] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED };
     Utility u;
     Camera viewport;
-    bodyList bodies;
+    shared_ptr<bodyList> bodies;
+    PhysicsSolver solver = PhysicsSolver(bodies);
 
 
 public:
@@ -45,11 +47,13 @@ public:
         mewn.position = coord(-170,90);
         mewn.id = 3;
 
-        bodies.addBody(planet);
-        bodies.addBody(star);
-        bodies.addBody(mewn);
+        bodies->addBody(planet);
+        bodies->addBody(star);
+        bodies->addBody(mewn);
         return true;
     }
+
+    //-------------------------< ON USER UPDATE >----------------------------
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //fill screen with color
@@ -58,16 +62,18 @@ public:
                 Draw(x, y, olc::Pixel(10,10,20));
         //drawing mesh to view
         //drawMesh(bodies.head,true);
-        shared_ptr<body> currentBody = bodies.head;
+        shared_ptr<body> currentBody = bodies->head;
         while (currentBody != nullptr) {
             drawMesh(currentBody,true);
             currentBody = currentBody->next;
         }
         //finished
 
+        //do physics
+        solver.step();
         return true;
     }
-
+    //-----------------------------< DRAWMESH >-----------------------------
     void drawMesh(shared_ptr<body> _entity, bool filled = false) {
         shared_ptr<body> current = _entity;
         shared_ptr<PhysicsBody> p = current->item;

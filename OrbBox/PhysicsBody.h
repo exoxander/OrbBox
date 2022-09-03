@@ -80,13 +80,13 @@ public:
 public:bodyList() {
 	head = nullptr;
 	tail = nullptr;
-	length = 0;
+	length = -1;
 }
 public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
 	addBody(make_shared<PhysicsBody>(_body));
 }
 public:void addBody(shared_ptr<PhysicsBody> _body) {
-	if (length == 0) {
+	if (length == 0 || length == -1) {
 		length = 1;
 		head = make_shared<body>(_body);
 		tail = make_shared<body>(_body);

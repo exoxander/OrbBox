@@ -21,8 +21,8 @@ public:matrixItem(int _a, int _b, double xDist, double yDist) {//make sure dista
 	a = _a;
 	b = _b;
 	//gravitational force falloff is 1 / distance squared
-	xFalloff = 1 / (sqrt(xDist));
-	yFalloff = 1 / (sqrt(yDist));
+	xFalloff = xDist == 0 ? 1 : (1 / sqrt(xDist));
+	yFalloff = yDist == 0 ? 1: (1 / sqrt(yDist));
 	next = nullptr;
 }
 };
@@ -43,10 +43,7 @@ public:distanceMatrix(shared_ptr<bodyList> _allBodies) {
 	generateMatrix();//create the item matrix
 }
 public:void generateMatrix(bool regen = false) {
-	shared_ptr<body> activeBody = allBodies->head;
-	shared_ptr<body> linkingBody = activeBody->next;
-	shared_ptr<matrixItem> currentItem = nullptr;
-	shared_ptr<matrixItem> lastLinked = nullptr;
+	
 	//destroy all exiting items if regenerating
 	if (regen) {
 		//requires a deconstructor to work properly
@@ -57,7 +54,10 @@ public:void generateMatrix(bool regen = false) {
 	//because each link is two-way, each item only needs to create items (links) for each item after itself in the list
 	//to check for a link to any particular body you just need to check the 2nd ID in matrixItem
 	if (allBodies->length > 1) {
-		
+		shared_ptr<body> activeBody = allBodies->head;
+		shared_ptr<body> linkingBody = activeBody->next;
+		shared_ptr<matrixItem> currentItem = nullptr;
+		shared_ptr<matrixItem> lastLinked = nullptr;
 		while (activeBody != nullptr) {//loop through all bodies in the bodylist and create links to all bodies after it	
 			int a = activeBody->item->id;
 			coord activePosition = activeBody->item->position;
@@ -120,8 +120,15 @@ public:void step() {
 				
 			}
 			else if (currentId == currentItem->a) {
-
+				if (allBodies->exists(currentItem->b)) {
+					linkMass = allBodies->getBody(currentItem->b)->item->mass;
+				}
 			}
+			//adding velocities
+			dx += linkMass * currentItem->xFalloff;
+			dy += linkMass * currentItem->yFalloff;
+
+			currentItem = currentItem->next;//move to next
 		}
 
 		currentBody->item->velocity.add(coord(dx, dy));//change existing velocity
