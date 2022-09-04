@@ -24,10 +24,9 @@ public:matrixItem(int _a, int _b, double _x, double _y) {//make sure distanceFac
 	a = _a;
 	b = _b;
 	//gravitational force falloff is 1 / distanceFactor squared
-	//make negative after to deal with backward velocity without taking a negative root
 	x = _x;
 	y = _y;
-	distanceFactor = 1 / sqrt(x*x + y*y);
+	distanceFactor = 1 / (x*x + y*y);
 
 	next = nullptr;
 }
@@ -144,7 +143,8 @@ public:void step(double stepFactor = 1) {
 			currentItem = currentItem->next;//move to next
 		}
 
-		currentBody->item->velocity.add(coord((dx / currentBody->item->mass) * stepFactor, (dy / currentBody->item->mass) * stepFactor));//change existing velocity
+		// / currentBody->item->mass
+		currentBody->item->velocity.add(coord((dx) * stepFactor, (dy) * stepFactor));//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next
 	}

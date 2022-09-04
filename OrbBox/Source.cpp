@@ -29,16 +29,18 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
-        PhysicsBody planet = PhysicsBody(coord(200, 0), coord(0, -5), 100);
-        PhysicsBody star = PhysicsBody(coord(0, 0), coord(), 2000, 32);
+        viewport.zoom = .2;
 
-        PhysicsBody mewn = PhysicsBody(coord(-200, -200), coord(-.5, .2), 30);
-        PhysicsBody mewn_2 = PhysicsBody(coord(150, 70), coord(.3, 0), 30);
-        PhysicsBody mewn_3 = PhysicsBody(coord(190, 10), coord(-.3, .5), 30);
-        PhysicsBody mewn_4 = PhysicsBody(coord(250, -90), coord(0, -.5), 30);
+        PhysicsBody planet = PhysicsBody(coord(600, 200), coord(0, -8), 1200,24);
+        PhysicsBody star = PhysicsBody(coord(0, 0), coord(), 100000, 32);
 
-        PhysicsBody planet_2 = PhysicsBody(coord(-200, -10), coord(-.5, .2), 256, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(300, 10), coord(.1,-.2), 350, 24);
+        PhysicsBody mewn = PhysicsBody(coord(-700, -200), coord(-.5, .2), 30);
+        PhysicsBody mewn_2 = PhysicsBody(coord(800, 350), coord(.3, 0), 30);
+        PhysicsBody mewn_3 = PhysicsBody(coord(-200, 1000), coord(-.3, .5), 30);
+        PhysicsBody mewn_4 = PhysicsBody(coord(400, -900), coord(0, -.5), 30);
+
+        PhysicsBody planet_2 = PhysicsBody(coord(-700, -120), coord(-.5, .8), 1500, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(500, 70), coord(.1,-.7), 900, 24);
 
 
         planet.id = 1;
