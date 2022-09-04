@@ -31,10 +31,14 @@ public:
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         PhysicsBody planet = PhysicsBody(coord(200, 0), coord(0, -5), 100);
         PhysicsBody star = PhysicsBody(coord(0, 0), coord(), 2000, 32);
+
         PhysicsBody mewn = PhysicsBody(coord(-200, -200), coord(-.5, .2), 30);
-        PhysicsBody mewn_2 = PhysicsBody(coord(150, 70), coord(1, -.5), 30);
-        PhysicsBody planet_2 = PhysicsBody(coord(-200, -180), coord(-.5, .2), 256, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(300, 70), coord(0,0), 350, 24);
+        PhysicsBody mewn_2 = PhysicsBody(coord(150, 70), coord(.3, 0), 30);
+        PhysicsBody mewn_3 = PhysicsBody(coord(190, 10), coord(-.3, .5), 30);
+        PhysicsBody mewn_4 = PhysicsBody(coord(250, -90), coord(0, -.5), 30);
+
+        PhysicsBody planet_2 = PhysicsBody(coord(-200, -10), coord(-.5, .2), 256, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(300, 10), coord(.1,-.2), 350, 24);
 
 
         planet.id = 1;
@@ -44,10 +48,12 @@ public:
 
         bodies->addBody(planet);
         bodies->addBody(star);
-        //bodies->addBody(mewn);
+        bodies->addBody(mewn);
         bodies->addBody(planet_2);
-        //bodies->addBody(mewn_2);
+        bodies->addBody(mewn_2);
         bodies->addBody(planet_3);
+        bodies->addBody(mewn_3);
+        bodies->addBody(mewn_4);
         return true;
     }
 
