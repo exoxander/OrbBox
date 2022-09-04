@@ -29,27 +29,21 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
-        PhysicsBody planet = PhysicsBody(coord(200,0),coord(0,-10),50);
-        PhysicsBody star = PhysicsBody(coord(0,0),coord(),1000);
-        PhysicsBody mewn = PhysicsBody(coord(-250,0),coord(0,12),30);
+        PhysicsBody planet = PhysicsBody(coord(200,0),coord(0,-5),100);
+        PhysicsBody star = PhysicsBody(coord(0,0),coord(),2000,32);
+        PhysicsBody mewn = PhysicsBody(coord(-200,-200),coord(-.5, .2),30);
+        PhysicsBody planet_2 = PhysicsBody(coord(-200,-180), coord(-.5,.2), 256, 18);
 
 
-        //planet.setMesh(u.generateCircle(30));
-        //planet.position.add(coord(200,-50));
         planet.id = 1;
-
-        //star.setMesh(u.generateCircle(50));
         star.id = 2;
-        //star.mass = 100;
-
-        //mewn.setMesh(u.generateCircle(10));
-        //mewn.mass = 5;
-        //mewn.position = coord(-170,90);
         mewn.id = 3;
+        planet_2.id = 4;
 
         bodies->addBody(planet);
         bodies->addBody(star);
         bodies->addBody(mewn);
+        bodies->addBody(planet_2);
         return true;
     }
 
@@ -70,7 +64,7 @@ public:
         //finished
 
         //do physics
-        solver.step(.1);
+        solver.step(.01);
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
@@ -129,7 +123,7 @@ public:
 int main()
 {
     Engine window;
-    if (window.Construct(1024, 640, 1, 1)) {
+    if (window.Construct(1024, 640, 1, 1, false,true)) {//V-SYNCH ON
         window.Start();
     }
     return 0;

@@ -116,17 +116,17 @@ public: mesh() {//create default triangle mesh
 
 	pgonLength = 1;
 }
-public: mesh(double mass) {
+public: mesh(double mass, int _vertecies) {
 	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
 	shared_ptr<vertex> currentVex = origin;
 	shared_ptr<polygon> currentPgon;
 	vertexList = origin;
 	vexLength = 1;
-	int _vertecies = 12;
+	int vertecies = _vertecies;
 
-	double angle = (2 * PI) / double(_vertecies);//angle needs to be in radians
+	double angle = (2 * PI) / double(vertecies);//angle needs to be in radians
 
-	for (int i = 0; i < _vertecies; i++) {
+	for (int i = 0; i < vertecies; i++) {
 		//generate vertecies and add to vertexList
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
@@ -147,7 +147,7 @@ public: mesh(double mass) {
 			pgonLength = 1;
 			currentPgon = polygonList;
 		}
-		else if (vexLength > 3 && i < _vertecies) {//middle polygons
+		else if (vexLength > 3 && i < vertecies) {//middle polygons
 			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
 			currentPgon->next = pgon;
 			pgon->prev = currentPgon;
@@ -156,7 +156,7 @@ public: mesh(double mass) {
 
 		}
 		//if near end, create final polygon
-		if (vexLength == _vertecies + 1) {//final polygon
+		if (vexLength == vertecies + 1) {//final polygon
 		//origin, most recent vertex, first polygon.b
 			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, polygonList->b, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
 			currentPgon->next = pgon;

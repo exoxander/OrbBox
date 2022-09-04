@@ -108,7 +108,7 @@ public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 }
 
 	  //step function does all the calculations
-public:void step(double velocityMultiplier = 1) {
+public:void step(double stepFactor = 1) {
 	shared_ptr<body> currentBody = allBodies->head;
 	//create the matrix for this step	
 	distMatrix.generateMatrix(true);
@@ -123,7 +123,7 @@ public:void step(double velocityMultiplier = 1) {
 		int currentId = currentBody->item->id;
 		while(currentItem != nullptr){
 			//if there is a link
-			if (currentId == currentItem->b) {//need to know which one is the other object
+			if (currentId == currentItem->b) {//need to know which one is the other object and get *its* mass for hte link mass
 				if (allBodies->exists(currentItem->a)) {
 					linkMass = allBodies->getBody(currentItem->a)->item->mass;
 					//adding velocities
@@ -144,7 +144,7 @@ public:void step(double velocityMultiplier = 1) {
 			currentItem = currentItem->next;//move to next
 		}
 
-		currentBody->item->velocity.add(coord(dx / currentBody->item->mass, dy / currentBody->item->mass));//change existing velocity
+		currentBody->item->velocity.add(coord((dx / currentBody->item->mass) * stepFactor, (dy / currentBody->item->mass) * stepFactor));//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next
 	}

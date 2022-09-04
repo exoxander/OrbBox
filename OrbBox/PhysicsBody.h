@@ -25,12 +25,12 @@ public: PhysicsBody() {
 	body = mesh();
 }
 	  //complete
-public: PhysicsBody(coord _posistion, coord _velocity, double _mass = 10) {
+public: PhysicsBody(coord _posistion, coord _velocity, double _mass = 10, int _vertecies = 12) {
 	position = _posistion;
 	velocity = _velocity;
 	mass = _mass;
 	id = -1;
-	body = mesh(sqrt(_mass));
+	body = mesh(sqrt(_mass),_vertecies);
 }
 
 	  //create mesh from vertex list | impliment later
