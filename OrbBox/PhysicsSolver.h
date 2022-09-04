@@ -126,8 +126,8 @@ public:void step(double stepFactor = 1) {
 				if (allBodies->exists(currentItem->a)) {
 					linkMass = allBodies->getBody(currentItem->a)->item->mass;
 					//adding velocities
-					dx += linkMass * currentItem->x * currentItem->distanceFactor;
-					dy += linkMass * currentItem->y * currentItem->distanceFactor;
+					dx += linkMass * currentItem->x * currentItem->distanceFactor * currentBody->item->mass;
+					dy += linkMass * currentItem->y * currentItem->distanceFactor * currentBody->item->mass;
 				}
 				
 			}
@@ -135,8 +135,8 @@ public:void step(double stepFactor = 1) {
 				if (allBodies->exists(currentItem->b)) {
 					linkMass = allBodies->getBody(currentItem->b)->item->mass;
 					//adding velocities
-					dx -= linkMass * currentItem->x * currentItem->distanceFactor;
-					dy -= linkMass * currentItem->y * currentItem->distanceFactor;
+					dx -= linkMass * currentItem->x * currentItem->distanceFactor * currentBody->item->mass;
+					dy -= linkMass * currentItem->y * currentItem->distanceFactor * currentBody->item->mass;
 				}
 			}			
 

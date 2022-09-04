@@ -29,18 +29,18 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
-        viewport.zoom = .2;
+        viewport.zoom = 1;
 
-        PhysicsBody planet = PhysicsBody(coord(600, 200), coord(0, -8), 1200,24);
-        PhysicsBody star = PhysicsBody(coord(0, 0), coord(), 100000, 32);
+        PhysicsBody planet = PhysicsBody(coord(100, 0), coord(0, -.1), 1000,24);
+        PhysicsBody star = PhysicsBody(coord(0, 0), coord(0,10), 1000, 32);
 
-        PhysicsBody mewn = PhysicsBody(coord(-700, -200), coord(-.5, .2), 30);
-        PhysicsBody mewn_2 = PhysicsBody(coord(800, 350), coord(.3, 0), 30);
-        PhysicsBody mewn_3 = PhysicsBody(coord(-200, 1000), coord(-.3, .5), 30);
-        PhysicsBody mewn_4 = PhysicsBody(coord(400, -900), coord(0, -.5), 30);
+        PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
+        PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
+        PhysicsBody mewn_3 = PhysicsBody(coord(-20, 100), coord(-.3, .5), 30);
+        PhysicsBody mewn_4 = PhysicsBody(coord(40, -90), coord(0, -.5), 30);
 
-        PhysicsBody planet_2 = PhysicsBody(coord(-700, -120), coord(-.5, .8), 1500, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(500, 70), coord(.1,-.7), 900, 24);
+        PhysicsBody planet_2 = PhysicsBody(coord(-70, -12), coord(-.5, .8), 100, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(50, 70), coord(.1,-.7), 90, 24);
 
 
         planet.id = 1;
@@ -81,7 +81,7 @@ public:
         //finished
 
         //do physics
-        solver.step(.01);
+        solver.step(.0001);
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
