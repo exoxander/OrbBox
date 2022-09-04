@@ -28,11 +28,12 @@ private:
 public:
     bool OnUserCreate() override {
         //initialize camera
-        viewport.location = coord(double(ScreenWidth()/2), double(ScreenHeight())/2);
-        PhysicsBody planet = PhysicsBody(coord(200,0),coord(0,-5),100);
-        PhysicsBody star = PhysicsBody(coord(0,0),coord(),2000,32);
-        PhysicsBody mewn = PhysicsBody(coord(-200,-200),coord(-.5, .2),30);
-        PhysicsBody planet_2 = PhysicsBody(coord(-200,-180), coord(-.5,.2), 256, 18);
+        viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
+        PhysicsBody planet = PhysicsBody(coord(200, 0), coord(0, -5), 100);
+        PhysicsBody star = PhysicsBody(coord(0, 0), coord(), 2000, 32);
+        PhysicsBody mewn = PhysicsBody(coord(-200, -200), coord(-.5, .2), 30);
+        PhysicsBody mewn_2 = PhysicsBody(coord(150, 70), coord(1, -.5), 30);
+        PhysicsBody planet_2 = PhysicsBody(coord(-200, -180), coord(-.5, .2), 256, 18);
 
 
         planet.id = 1;
@@ -44,6 +45,7 @@ public:
         bodies->addBody(star);
         bodies->addBody(mewn);
         bodies->addBody(planet_2);
+        bodies->addBody(mewn_2);
         return true;
     }
 
