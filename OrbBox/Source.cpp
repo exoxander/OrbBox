@@ -45,6 +45,11 @@ public:
         star.id = 2;
         mewn.id = 3;
         planet_2.id = 4;
+        planet_3.id = 5;
+        mewn_2.id = 6;
+        mewn_3.id = 7;
+        mewn_4.id = 8;
+
 
         bodies->addBody(planet);
         bodies->addBody(star);
