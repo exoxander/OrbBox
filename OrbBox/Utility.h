@@ -233,6 +233,7 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 
 
 //-------------------< UTILITY CLASS >---------------------------
+//dev console and debug utilities
 class Utility {
 
 

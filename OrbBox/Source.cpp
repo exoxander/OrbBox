@@ -34,6 +34,7 @@ public:
         PhysicsBody mewn = PhysicsBody(coord(-200, -200), coord(-.5, .2), 30);
         PhysicsBody mewn_2 = PhysicsBody(coord(150, 70), coord(1, -.5), 30);
         PhysicsBody planet_2 = PhysicsBody(coord(-200, -180), coord(-.5, .2), 256, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(300, 70), coord(.5, -1), 350, 24);
 
 
         planet.id = 1;
@@ -46,6 +47,7 @@ public:
         bodies->addBody(mewn);
         bodies->addBody(planet_2);
         bodies->addBody(mewn_2);
+        bodies->addBody(planet_3);
         return true;
     }
 
