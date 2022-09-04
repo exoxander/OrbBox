@@ -31,8 +31,8 @@ public:
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         viewport.zoom = 1;
 
-        PhysicsBody planet = PhysicsBody(coord(100, 0), coord(0, -.1), 1000,24);
-        PhysicsBody star = PhysicsBody(coord(0, 0), coord(0,10), 1000, 32);
+        PhysicsBody planet = PhysicsBody(coord(10, 0), coord(0, -.5), 5000,24);
+        PhysicsBody star = PhysicsBody(coord(-10, 0), coord(0,.5), 5000, 32);
 
         PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
         PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
@@ -53,14 +53,15 @@ public:
         mewn_4.id = 8;
 
 
-        bodies->addBody(planet);
-        bodies->addBody(star);
-        bodies->addBody(mewn);
+        //bodies->addBody(mewn);
         bodies->addBody(planet_2);
-        bodies->addBody(mewn_2);
+        //bodies->addBody(mewn_2);
         bodies->addBody(planet_3);
         bodies->addBody(mewn_3);
         bodies->addBody(mewn_4);
+
+        bodies->addBody(planet);
+        bodies->addBody(star);
         return true;
     }
 
