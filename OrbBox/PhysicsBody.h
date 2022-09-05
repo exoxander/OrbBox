@@ -13,6 +13,7 @@ public:
 	double mass;
 	coord velocity;
 	coord position;
+	coord accelleration;
 private:
 	mesh body;
 
@@ -20,6 +21,7 @@ private:
 public: PhysicsBody() {
 	position = coord();
 	velocity = coord();
+	accelleration = coord();
 	mass = 10;
 	id = -1;
 	body = mesh();

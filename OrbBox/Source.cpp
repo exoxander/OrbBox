@@ -31,16 +31,16 @@ public:
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         viewport.zoom = 3;
 
-        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.5), 100,24);
-        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0,-.005), 5000, 32);
+        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.5), 300,24);
+        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0.1,0), 5000, 32);
 
         PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
         PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
         PhysicsBody mewn_3 = PhysicsBody(coord(-20, 100), coord(-.3, .5), 30);
         PhysicsBody mewn_4 = PhysicsBody(coord(40, -90), coord(0, -.5), 30);
 
-        PhysicsBody planet_2 = PhysicsBody(coord(-70, -12), coord(-.5, .8), 100, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(50, 70), coord(.1,-.7), 90, 24);
+        PhysicsBody planet_2 = PhysicsBody(coord(-70, -12), coord(-.5, -.8), 250, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(50, 70), coord(.1,.7), 320, 24);
 
 
         planet.id = 1;
@@ -53,12 +53,12 @@ public:
         mewn_4.id = 8;
 
 
-        //bodies->addBody(mewn);
-        //bodies->addBody(planet_2);
-        //bodies->addBody(mewn_2);
-        //bodies->addBody(planet_3);
-        //bodies->addBody(mewn_3);
-        //bodies->addBody(mewn_4);
+        bodies->addBody(mewn);
+        bodies->addBody(planet_2);
+        bodies->addBody(mewn_2);
+        bodies->addBody(planet_3);
+        bodies->addBody(mewn_3);
+        bodies->addBody(mewn_4);
 
         bodies->addBody(planet);
         bodies->addBody(star);
@@ -69,10 +69,10 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //camera control
-        if (GetKey(olc::Key::LEFT).bHeld) viewport.location.x += 2;
-        if (GetKey(olc::Key::RIGHT).bHeld) viewport.location.x -= 2;
-        if (GetKey(olc::Key::UP).bHeld) viewport.location.y += 2;
-        if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 2;
+        if (GetKey(olc::Key::LEFT).bHeld) viewport.location.x += 1 * viewport.panSpeed;
+        if (GetKey(olc::Key::RIGHT).bHeld) viewport.location.x -= 1 * viewport.panSpeed;
+        if (GetKey(olc::Key::UP).bHeld) viewport.location.y += 1 * viewport.panSpeed;
+        if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 1 * viewport.panSpeed;
         if (GetKey(olc::Key::NP_ADD).bHeld) viewport.zoom += .05;
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= .05;
         //fill screen with color
@@ -143,6 +143,9 @@ public:
         //draw circle for velocity
         FillCircle(int((viewport.translate(p->position,coord(p->velocity.x*10,0))).x),
             int((viewport.translate(p->position,coord(0,p->velocity.y*10))).y), 5);
+        //draw circle for accelleration
+        FillCircle(int((viewport.translate(p->position, coord(p->accelleration.x * 300, 0))).x),
+            int((viewport.translate(p->position, coord(0, p->accelleration.y * 300))).y), 3, olc::RED);
     }
         
 

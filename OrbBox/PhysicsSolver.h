@@ -120,6 +120,7 @@ public:void step(double stepFactor = 1) {
 		double dx = 0;
 		double dy = 0;
 		double linkMass = 0;
+		currentBody->item->accelleration = coord();
 		int currentId = currentBody->item->id;
 		while (actingBody != nullptr) {
 			if (actingBody->item->id != currentBody->item->id) {
@@ -128,17 +129,18 @@ public:void step(double stepFactor = 1) {
 				double y =  currentBody->item->position.y - actingBody->item->position.y;
 				double distanceFactor = 1 / sqrt(x * x + y * y);
 				//made a vector
-				x *= distanceFactor;
-				y *= distanceFactor;
+				x *= distanceFactor;//normallized x component of force vector
+				y *= distanceFactor;//normallized y component of force vector
 				//normalized a vector
 				//process of normalizing and changing mass creates a distance squared
 				dx -= actingBody->item->mass * distanceFactor * x;
-				dy -= actingBody->item->mass * distanceFactor * y;				
+				dy -= actingBody->item->mass * distanceFactor * y;
+				currentBody->item->accelleration.add((dx)*stepFactor, (dy)*stepFactor);
 			}
 			actingBody = actingBody->next;//move to next
 		}
 		// / currentBody->item->mass
-		currentBody->item->velocity.add(coord((dx) * stepFactor, (dy) * stepFactor));//change existing velocity
+		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next
 	}

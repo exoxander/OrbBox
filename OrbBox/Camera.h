@@ -10,13 +10,13 @@ public:
 public:Camera() {
 	location = coord(0, 0);
 	zoom = 1;
-	panSpeed = 0.01;
+	panSpeed = 4;
 	zoomSpeed = 0.1;
 }
 public:Camera(double _x, double _y, double _zoom = 1) {
 	location = coord(_x, _y);
 	zoom = _zoom;
-	panSpeed = 0.01;
+	panSpeed = 4;
 	zoomSpeed = 0.1;
 }
 public:coord translate(coord parent, coord vertex) {//returns the coordinant of a vertex after converting between object and camera space
