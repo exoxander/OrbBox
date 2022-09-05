@@ -146,7 +146,7 @@ public: mesh(double mass, int _vertecies) {
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
 		//create vertex by angle * i starting at vector (radius, 0)
-		vector next = vector(mass * cos(angle * i), mass * sin(angle * i));//vectorinant of next vertex
+		vector next = vector(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
 		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
 
 		//add to vertex chain and increase vexlength
@@ -206,7 +206,7 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
 		//create vertex by angle * i starting at vector (radius, 0)
-		vector next = vector(_radius * cos(angle * i), _radius * sin(angle * i));//vectorinant of next vertex
+		vector next = vector(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
 		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
 
 		//add to vertex chain and increase vexlength

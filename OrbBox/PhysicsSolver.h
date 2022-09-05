@@ -131,10 +131,10 @@ public:void step(double stepFactor = 1) {
 				double x = currentBody->item->position.x - actingBody->item->position.x;
 				double y =  currentBody->item->position.y - actingBody->item->position.y;
 				double distanceFactor = 1 / sqrt(x * x + y * y);
-				//made a vector
+				
 				x *= distanceFactor;//normallized x component of force vector
 				y *= distanceFactor;//normallized y component of force vector
-				//normalized a vector
+
 				//process of normalizing and changing mass creates a 1 / distance ^ (3/2)
 				dx -= actingBody->item->mass * distanceFactor * distanceFactor * x;
 				dy -= actingBody->item->mass * distanceFactor * distanceFactor * y;
