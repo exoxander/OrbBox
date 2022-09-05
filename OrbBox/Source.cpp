@@ -29,10 +29,10 @@ public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
-        viewport.zoom = 1;
+        viewport.zoom = 3;
 
-        PhysicsBody planet = PhysicsBody(coord(10, 0), coord(0, -.5), 5000,24);
-        PhysicsBody star = PhysicsBody(coord(-10, 0), coord(0,.5), 5000, 32);
+        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.5), 100,24);
+        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0,-.005), 5000, 32);
 
         PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
         PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
@@ -54,11 +54,11 @@ public:
 
 
         //bodies->addBody(mewn);
-        bodies->addBody(planet_2);
+        //bodies->addBody(planet_2);
         //bodies->addBody(mewn_2);
-        bodies->addBody(planet_3);
-        bodies->addBody(mewn_3);
-        bodies->addBody(mewn_4);
+        //bodies->addBody(planet_3);
+        //bodies->addBody(mewn_3);
+        //bodies->addBody(mewn_4);
 
         bodies->addBody(planet);
         bodies->addBody(star);
@@ -68,6 +68,13 @@ public:
     //-------------------------< ON USER UPDATE >----------------------------
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
+        //camera control
+        if (GetKey(olc::Key::LEFT).bHeld) viewport.location.x += 2;
+        if (GetKey(olc::Key::RIGHT).bHeld) viewport.location.x -= 2;
+        if (GetKey(olc::Key::UP).bHeld) viewport.location.y += 2;
+        if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 2;
+        if (GetKey(olc::Key::NP_ADD).bHeld) viewport.zoom += .05;
+        if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= .05;
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
@@ -89,7 +96,7 @@ public:
     void drawMesh(shared_ptr<body> _entity, bool filled = false) {
         shared_ptr<body> current = _entity;
         shared_ptr<PhysicsBody> p = current->item;
-        mesh m = current->item->getMesh();
+        mesh m = current->item->getMesh();        
         if (filled) {
 
             //loop through all polygons and draw to screen
@@ -133,6 +140,9 @@ public:
                 }
             }
         }
+        //draw circle for velocity
+        FillCircle(int((viewport.translate(p->position,coord(p->velocity.x*10,0))).x),
+            int((viewport.translate(p->position,coord(0,p->velocity.y*10))).y), 5);
     }
         
 

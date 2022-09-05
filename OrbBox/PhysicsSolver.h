@@ -110,39 +110,33 @@ public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 public:void step(double stepFactor = 1) {
 	shared_ptr<body> currentBody = allBodies->head;
 	//create the matrix for this step	
-	distMatrix.generateMatrix(true);
+	//distMatrix.generateMatrix(true);
 
 	//velocity to add  = sum of all (other objects mass * distanceFactor factor)
 	//loop through each body in the body list and calculate the forces of all other bodies from the distanceFactor matrix
 	while (currentBody != nullptr) {//for each body in the global list
-		shared_ptr<matrixItem> currentItem = distMatrix.head;
+		//shared_ptr<matrixItem> currentItem = distMatrix.head;
+		shared_ptr<body> actingBody = allBodies->head;
 		double dx = 0;
 		double dy = 0;
 		double linkMass = 0;
 		int currentId = currentBody->item->id;
-		while(currentItem != nullptr){
-			//if there is a link
-			if (currentId == currentItem->b) {//need to know which one is the other object and get *its* mass for hte link mass
-				if (allBodies->exists(currentItem->a)) {
-					linkMass = allBodies->getBody(currentItem->a)->item->mass;
-					//adding velocities
-					dx += linkMass * currentItem->x * currentItem->distanceFactor;
-					dy += linkMass * currentItem->y * currentItem->distanceFactor;
-				}
-				
+		while (actingBody != nullptr) {
+			if (actingBody->item->id != currentBody->item->id) {
+				//get distance
+				double x = currentBody->item->position.x - actingBody->item->position.x;
+				double y =  currentBody->item->position.y - actingBody->item->position.y;
+				double distanceFactor = 1 / sqrt(x * x + y * y);
+				//made a vector
+				x *= distanceFactor;
+				y *= distanceFactor;
+				//normalized a vector
+				//process of normalizing and changing mass creates a distance squared
+				dx -= actingBody->item->mass * distanceFactor * x;
+				dy -= actingBody->item->mass * distanceFactor * y;				
 			}
-			else if (currentId == currentItem->a) {
-				if (allBodies->exists(currentItem->b)) {
-					linkMass = allBodies->getBody(currentItem->b)->item->mass;
-					//adding velocities
-					dx -= linkMass * currentItem->x * currentItem->distanceFactor;
-					dy -= linkMass * currentItem->y * currentItem->distanceFactor;
-				}
-			}			
-
-			currentItem = currentItem->next;//move to next
+			actingBody = actingBody->next;//move to next
 		}
-
 		// / currentBody->item->mass
 		currentBody->item->velocity.add(coord((dx) * stepFactor, (dy) * stepFactor));//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
