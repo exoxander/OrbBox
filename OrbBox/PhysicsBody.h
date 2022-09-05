@@ -133,6 +133,7 @@ public:shared_ptr<body> getBody(int _id) {
 		}
 		currentBody = currentBody->next;
 	}
+	return shared_ptr<body>();//to make the compiler happy, never actually gets used
 }
 public: void removeBody(int _id) {
 	bool found = false;
@@ -149,6 +150,7 @@ public: void removeBody(int _id) {
 	} while (current->next);
 	if (!found) {
 		//throw an error
+		//or could just use .exists to check beforehand
 	}
 }
 

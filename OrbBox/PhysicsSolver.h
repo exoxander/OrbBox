@@ -122,6 +122,9 @@ public:void step(double stepFactor = 1) {
 		double linkMass = 0;
 		currentBody->item->accelleration = coord();
 		int currentId = currentBody->item->id;
+
+		//loop through all bodies
+		//replace with distance matrix later on
 		while (actingBody != nullptr) {
 			if (actingBody->item->id != currentBody->item->id) {
 				//get distance
@@ -132,7 +135,7 @@ public:void step(double stepFactor = 1) {
 				x *= distanceFactor;//normallized x component of force vector
 				y *= distanceFactor;//normallized y component of force vector
 				//normalized a vector
-				//process of normalizing and changing mass creates a 1 / distance squared
+				//process of normalizing and changing mass creates a 1 / distance ^ (3/2)
 				dx -= actingBody->item->mass * distanceFactor * distanceFactor * x;
 				dy -= actingBody->item->mass * distanceFactor * distanceFactor * y;
 				currentBody->item->accelleration.add(dx, dy);
