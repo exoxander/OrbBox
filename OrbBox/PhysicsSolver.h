@@ -109,7 +109,7 @@ public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 	  //step function does all the calculations
 public:void step(double stepFactor = 1) {
 	shared_ptr<body> currentBody = allBodies->head;
-	//create the matrix for this step	
+	//create the matrix for this step
 	//distMatrix.generateMatrix(true);
 
 	//velocity to add  = sum of all (other objects mass * distanceFactor factor)
@@ -132,9 +132,9 @@ public:void step(double stepFactor = 1) {
 				x *= distanceFactor;//normallized x component of force vector
 				y *= distanceFactor;//normallized y component of force vector
 				//normalized a vector
-				//process of normalizing and changing mass creates a distance squared
-				dx -= actingBody->item->mass * distanceFactor * x;
-				dy -= actingBody->item->mass * distanceFactor * y;
+				//process of normalizing and changing mass creates a 1 / distance squared
+				dx -= actingBody->item->mass * distanceFactor * distanceFactor * x;
+				dy -= actingBody->item->mass * distanceFactor * distanceFactor * y;
 				currentBody->item->accelleration.add(dx, dy);
 			}
 			actingBody = actingBody->next;//move to next

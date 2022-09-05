@@ -32,7 +32,7 @@ public:
         viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         viewport.zoom = 3;
 
-        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.5), 300,24);
+        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.2), 300,24);
         PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0.01,0), 5000, 32);
 
         PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
@@ -40,8 +40,8 @@ public:
         PhysicsBody mewn_3 = PhysicsBody(coord(-20, 100), coord(-.3, .5), 30);
         PhysicsBody mewn_4 = PhysicsBody(coord(40, -90), coord(0, -.5), 30);
 
-        PhysicsBody planet_2 = PhysicsBody(coord(-70, -12), coord(-.5, -.8), 250, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(50, 70), coord(.1,.7), 320, 24);
+        PhysicsBody planet_2 = PhysicsBody(coord(-100, -12), coord(-.5, -.8), 250, 18);
+        PhysicsBody planet_3 = PhysicsBody(coord(80, 70), coord(.1,.8), 320, 24);
 
 
         planet.id = 1;
@@ -54,12 +54,12 @@ public:
         mewn_4.id = 8;
 
 
-        bodies->addBody(mewn);
-        bodies->addBody(planet_2);
-        bodies->addBody(mewn_2);
-        bodies->addBody(planet_3);
-        bodies->addBody(mewn_3);
-        bodies->addBody(mewn_4);
+        //bodies->addBody(mewn);
+        //bodies->addBody(planet_2);
+        //bodies->addBody(mewn_2);
+        //bodies->addBody(planet_3);
+        //bodies->addBody(mewn_3);
+        //bodies->addBody(mewn_4);
 
         bodies->addBody(planet);
         bodies->addBody(star);
@@ -90,7 +90,7 @@ public:
         //finished
 
         //do physics
-        solver.step(.0001);
+        solver.step(.001);
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
