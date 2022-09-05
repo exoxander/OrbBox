@@ -4,13 +4,13 @@ using std::make_shared;
 
 #define PI 3.14159265//used in trig functions
 
-//===================-< COORDINANT >-==================
-struct coord {
+//===================-< VECTOR >-==================
+struct vector {
 
 	double x;
 	double y;
 
-public: coord(double _x = 0, double _y = 0) {
+public: vector(double _x = 0, double _y = 0) {
 	set(_x, _y);
 }
 public: void set(double _x, double _y) {
@@ -21,11 +21,11 @@ public: void add(double _x, double _y) {
 	x += _x;
 	y += _y;
 }
-public: void add(coord _value) {
+public: void add(vector _value) {
 	x += _value.x;
 	y += _value.y;
 }
-public:void multiply(coord _value) {
+public:void multiply(vector _value) {
 	x *= _value.x;
 	y *= _value.y;
 }
@@ -33,19 +33,26 @@ public:void multiply(double _value) {
 	x *= _value;
 	y *= _value;
 }
+public:double getMagnitude() {
+	return sqrt(x*x + y*y);
+}
+public:vector normalize() {
+	double magnitude = getMagnitude();
+	return vector(x / magnitude, y / magnitude);
+}
 };
 
 
 //---------------< VERTEX > --------------
 struct vertex {
 public:
-	coord position;
+	vector position;
 	int id;
 	shared_ptr<vertex> next;
 	shared_ptr<vertex> prev;
 
 public: vertex() {
-	position = coord();
+	position = vector();
 	id = -1;
 	next = nullptr;
 	prev = nullptr;
@@ -58,7 +65,7 @@ public: vertex(double _a, double _b, int _id = -1) {
 	next = nullptr;
 	prev = nullptr;
 }
-public: vertex(coord _position, int _id = -1) {
+public: vertex(vector _position, int _id = -1) {
 	position.x = _position.x;
 	position.y = _position.y;
 	id = _id;
@@ -138,8 +145,8 @@ public: mesh(double mass, int _vertecies) {
 		//generate vertecies and add to vertexList
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at coord (radius, 0)
-		coord next = coord(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
+		//create vertex by angle * i starting at vector (radius, 0)
+		vector next = vector(mass * cos(angle * i), mass * sin(angle * i));//vectorinant of next vertex
 		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
 
 		//add to vertex chain and increase vexlength
@@ -198,8 +205,8 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 		//generate vertecies and add to vertexList
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at coord (radius, 0)
-		coord next = coord(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
+		//create vertex by angle * i starting at vector (radius, 0)
+		vector next = vector(_radius * cos(angle * i), _radius * sin(angle * i));//vectorinant of next vertex
 		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
 
 		//add to vertex chain and increase vexlength

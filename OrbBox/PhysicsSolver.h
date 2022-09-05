@@ -65,7 +65,7 @@ public:void generateMatrix(bool regen = false) {
 		shared_ptr<matrixItem> lastLinked = nullptr;
 		while (activeBody != nullptr) {//loop through all bodies in the bodylist and create links to all bodies after it	
 			int a = activeBody->item->id;
-			coord activePosition = activeBody->item->position;
+			vector activePosition = activeBody->item->position;
 
 			while (linkingBody != nullptr) {//going through each body needing to be linked by the active one
 				//difference between x and y coords of the two bodies
@@ -120,7 +120,7 @@ public:void step(double stepFactor = 1) {
 		double dx = 0;
 		double dy = 0;
 		double linkMass = 0;
-		currentBody->item->accelleration = coord();
+		currentBody->item->accelleration = vector();
 		int currentId = currentBody->item->id;
 
 		//loop through all bodies

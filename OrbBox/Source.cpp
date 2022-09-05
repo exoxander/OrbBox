@@ -29,19 +29,19 @@ private:
 public:
     bool OnUserCreate() override {
         //initialize camera
-        viewport.location = coord(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
+        viewport.location = vector(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         viewport.zoom = 3;
 
-        PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.8), 300,24);
-        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0.01,0), 5000, 32);
+        PhysicsBody planet = PhysicsBody(vector(70, -4), vector(0,.8), 300,24);
+        PhysicsBody star = PhysicsBody(vector(-10, 14), vector(0.01,0), 5000, 32);
 
-        PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
-        PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
-        PhysicsBody mewn_3 = PhysicsBody(coord(-20, 100), coord(-.3, .5), 30);
-        PhysicsBody mewn_4 = PhysicsBody(coord(120, 75), coord(.3, 1), 30);
+        PhysicsBody mewn = PhysicsBody(vector(-70, -20), vector(-.5, .2), 30);
+        PhysicsBody mewn_2 = PhysicsBody(vector(80, 35), vector(.3, 0), 30);
+        PhysicsBody mewn_3 = PhysicsBody(vector(-20, 100), vector(-.3, .5), 30);
+        PhysicsBody mewn_4 = PhysicsBody(vector(120, 75), vector(.3, 1), 30);
 
-        PhysicsBody planet_2 = PhysicsBody(coord(-100, -12), coord(-.4, -.8), 250, 18);
-        PhysicsBody planet_3 = PhysicsBody(coord(80, 70), coord(.1,1), 320, 24);
+        PhysicsBody planet_2 = PhysicsBody(vector(-100, -12), vector(-.4, -.8), 250, 18);
+        PhysicsBody planet_3 = PhysicsBody(vector(80, 70), vector(.1,1), 320, 24);
 
 
         planet.id = 1;
@@ -102,10 +102,10 @@ public:
         //loop through all polygons and draw to screen
         shared_ptr<polygon> currentPgon = m.polygonList;
         for (int i = 0; i < m.pgonLength; i++) {
-            coord a = currentPgon->a->position;
-            coord b = currentPgon->b->position;
-            coord c = currentPgon->c->position;
-            coord parent = p->position;
+            vector a = currentPgon->a->position;
+            vector b = currentPgon->b->position;
+            vector c = currentPgon->c->position;
+            vector parent = p->position;
             olc::Pixel polygonColor;
 
             if (show_polygons) {
@@ -127,21 +127,21 @@ public:
             }
         }
 
-        //int((viewport.translate(p->position, coord())).x)
+        //int((viewport.translate(p->position, vector())).x)
         if (show_velocity) {
             //draw circle for velocity
-            int x = int((viewport.translate(p->position, coord(p->velocity.x * 10, 0))).x);
-            int y = int((viewport.translate(p->position, coord(0, p->velocity.y * 10))).y);
-            DrawLine(int((viewport.translate(p->position, coord())).x),
-                int((viewport.translate(p->position, coord())).y),
+            int x = int((viewport.translate(p->position, vector(p->velocity.x * 10, 0))).x);
+            int y = int((viewport.translate(p->position, vector(0, p->velocity.y * 10))).y);
+            DrawLine(int((viewport.translate(p->position, vector())).x),
+                int((viewport.translate(p->position, vector())).y),
                 x, y, olc::MAGENTA);
         }
         if (show_accelleration) {
             //draw circle for accelleration
-            int x = int((viewport.translate(p->position, coord(p->accelleration.x * 500, 0))).x);
-            int y = int((viewport.translate(p->position, coord(0, p->accelleration.y * 500))).y);
-            DrawLine(int((viewport.translate(p->position, coord())).x),
-                int((viewport.translate(p->position, coord())).y),
+            int x = int((viewport.translate(p->position, vector(p->accelleration.x * 500, 0))).x);
+            int y = int((viewport.translate(p->position, vector(0, p->accelleration.y * 500))).y);
+            DrawLine(int((viewport.translate(p->position, vector())).x),
+                int((viewport.translate(p->position, vector())).y),
                 x, y, olc::CYAN);
             
         }

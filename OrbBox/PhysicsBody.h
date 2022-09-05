@@ -11,23 +11,23 @@ class PhysicsBody
 public:
 	int id;
 	double mass;
-	coord velocity;
-	coord position;
-	coord accelleration;
+	vector velocity;
+	vector position;
+	vector accelleration;
 private:
 	mesh body;
 
 	//default
 public: PhysicsBody() {
-	position = coord();
-	velocity = coord();
-	accelleration = coord();
+	position = vector();
+	velocity = vector();
+	accelleration = vector();
 	mass = 10;
 	id = -1;
 	body = mesh();
 }
 	  //complete
-public: PhysicsBody(coord _posistion, coord _velocity, double _mass = 10, int _vertecies = 12) {
+public: PhysicsBody(vector _posistion, vector _velocity, double _mass = 10, int _vertecies = 12) {
 	position = _posistion;
 	velocity = _velocity;
 	mass = _mass;
