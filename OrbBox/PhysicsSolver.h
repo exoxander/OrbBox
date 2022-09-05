@@ -135,11 +135,12 @@ public:void step(double stepFactor = 1) {
 				//process of normalizing and changing mass creates a distance squared
 				dx -= actingBody->item->mass * distanceFactor * x;
 				dy -= actingBody->item->mass * distanceFactor * y;
-				currentBody->item->accelleration.add((dx)*stepFactor, (dy)*stepFactor);
+				currentBody->item->accelleration.add(dx, dy);
 			}
 			actingBody = actingBody->next;//move to next
 		}
 		// / currentBody->item->mass
+		currentBody->item->accelleration.multiply(stepFactor);
 		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;//move to next

@@ -25,6 +25,14 @@ public: void add(coord _value) {
 	x += _value.x;
 	y += _value.y;
 }
+public:void multiply(coord _value) {
+	x *= _value.x;
+	y *= _value.y;
+}
+public:void multiply(double _value) {
+	x *= _value;
+	y *= _value;
+}
 };
 
 

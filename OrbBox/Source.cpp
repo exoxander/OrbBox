@@ -32,7 +32,7 @@ public:
         viewport.zoom = 3;
 
         PhysicsBody planet = PhysicsBody(coord(70, -4), coord(0,.5), 300,24);
-        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0.1,0), 5000, 32);
+        PhysicsBody star = PhysicsBody(coord(-10, 14), coord(0.01,0), 5000, 32);
 
         PhysicsBody mewn = PhysicsBody(coord(-70, -20), coord(-.5, .2), 30);
         PhysicsBody mewn_2 = PhysicsBody(coord(80, 35), coord(.3, 0), 30);
@@ -83,7 +83,7 @@ public:
         //drawMesh(bodies.head,true);
         shared_ptr<body> currentBody = bodies->head;
         while (currentBody != nullptr) {
-            drawMesh(currentBody,true);
+            drawMesh(currentBody,false, true, true);
             currentBody = currentBody->next;
         }
         //finished
@@ -93,59 +93,48 @@ public:
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
-    void drawMesh(shared_ptr<body> _entity, bool filled = false) {
-        shared_ptr<body> current = _entity;
-        shared_ptr<PhysicsBody> p = current->item;
-        mesh m = current->item->getMesh();        
-        if (filled) {
+    void drawMesh(shared_ptr<body> _entity, bool show_polygons = false, bool show_velocity = false, bool show_accelleration = false) {
+        shared_ptr<body> currentBody = _entity;
+        shared_ptr<PhysicsBody> p = currentBody->item;
+        mesh m = currentBody->item->getMesh();   
 
-            //loop through all polygons and draw to screen
-            shared_ptr<polygon> current = m.polygonList;
-            for (int i = 0; i < m.pgonLength; i++) {
-                coord a = current->a->position;
-                coord b = current->b->position;
-                coord c = current->c->position;
-                coord parent = p->position;
+        //loop through all polygons and draw to screen
+        shared_ptr<polygon> currentPgon = m.polygonList;
+        for (int i = 0; i < m.pgonLength; i++) {
+            coord a = currentPgon->a->position;
+            coord b = currentPgon->b->position;
+            coord c = currentPgon->c->position;
+            coord parent = p->position;
+            olc::Pixel polygonColor;
 
+            if (show_polygons) {
                 //make color result of % between polygon id and color list
-                olc::Pixel polygonColor = colorList[current->id % 4];
-                FillTriangle(
-                    int((viewport.translate(parent, a)).x), int((viewport.translate(parent, a)).y),//A
-                    int((viewport.translate(parent, b)).x), int((viewport.translate(parent, b)).y),//B
-                    int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
-                    polygonColor);
-                
-                //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
-                if (current->next != nullptr) {
-                    current = current->next;
-                }
+                 polygonColor = colorList[currentPgon->id % 4];
+            }
+            else {
+                polygonColor = colorList[currentBody->item->id % 4];
+            }
+            FillTriangle(
+                int((viewport.translate(parent, a)).x), int((viewport.translate(parent, a)).y),//A
+                int((viewport.translate(parent, b)).x), int((viewport.translate(parent, b)).y),//B
+                int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
+                polygonColor);
+
+            //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
+            if (currentPgon->next != nullptr) {
+                currentPgon = currentPgon->next;
             }
         }
-        else {
-            //draw circles on vertecies
-            shared_ptr<vertex> current = p->getMesh().vertexList;
-            for (int i = 0; i < p->getMesh().vexLength; i++) {
-                if (current != nullptr) {
-                    //make circle
-                    olc::Pixel vertexColor = colorList[current->id % 4];
-                    FillCircle(
-                        int((viewport.translate(p->position, current->position)).x),
-                        int((viewport.translate(p->position, current->position)).y),
-                        vertexDrawScale, vertexColor);
-                    current = current->next;
-                }
-                else {
-                    //throw an error or something idk
-                    std::cout << "vexlength exceeded actual" << std::endl;
-                }
-            }
+        if (show_velocity) {
+            //draw circle for velocity
+            FillCircle(int((viewport.translate(p->position, coord(p->velocity.x * 10, 0))).x),
+                int((viewport.translate(p->position, coord(0, p->velocity.y * 10))).y), 5, olc::MAGENTA);
         }
-        //draw circle for velocity
-        FillCircle(int((viewport.translate(p->position,coord(p->velocity.x*10,0))).x),
-            int((viewport.translate(p->position,coord(0,p->velocity.y*10))).y), 5);
-        //draw circle for accelleration
-        FillCircle(int((viewport.translate(p->position, coord(p->accelleration.x * 300, 0))).x),
-            int((viewport.translate(p->position, coord(0, p->accelleration.y * 300))).y), 3, olc::RED);
+        if (show_accelleration) {
+            //draw circle for accelleration
+            FillCircle(int((viewport.translate(p->position, coord(p->accelleration.x * 500, 0))).x),
+                int((viewport.translate(p->position, coord(0, p->accelleration.y * 500))).y), 3, olc::CYAN);
+        }
     }
         
 
