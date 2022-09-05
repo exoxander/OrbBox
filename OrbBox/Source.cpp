@@ -18,7 +18,8 @@ public:
 
 private:
     int vertexDrawScale = 4;
-    olc::Pixel colorList[4] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED };
+    olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
+    int colorListLength = 7;
     Utility u;
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
@@ -109,10 +110,10 @@ public:
 
             if (show_polygons) {
                 //make color result of % between polygon id and color list
-                 polygonColor = colorList[currentPgon->id % 4];
+                 polygonColor = colorList[currentPgon->id % colorListLength];
             }
             else {
-                polygonColor = colorList[currentBody->item->id % 4];
+                polygonColor = colorList[currentBody->item->id % colorListLength];
             }
             FillTriangle(
                 int((viewport.translate(parent, a)).x), int((viewport.translate(parent, a)).y),//A
@@ -125,15 +126,24 @@ public:
                 currentPgon = currentPgon->next;
             }
         }
+
+        //int((viewport.translate(p->position, coord())).x)
         if (show_velocity) {
             //draw circle for velocity
-            FillCircle(int((viewport.translate(p->position, coord(p->velocity.x * 10, 0))).x),
-                int((viewport.translate(p->position, coord(0, p->velocity.y * 10))).y), 5, olc::MAGENTA);
+            int x = int((viewport.translate(p->position, coord(p->velocity.x * 10, 0))).x);
+            int y = int((viewport.translate(p->position, coord(0, p->velocity.y * 10))).y);
+            DrawLine(int((viewport.translate(p->position, coord())).x),
+                int((viewport.translate(p->position, coord())).y),
+                x, y, olc::MAGENTA);
         }
         if (show_accelleration) {
             //draw circle for accelleration
-            FillCircle(int((viewport.translate(p->position, coord(p->accelleration.x * 500, 0))).x),
-                int((viewport.translate(p->position, coord(0, p->accelleration.y * 500))).y), 3, olc::CYAN);
+            int x = int((viewport.translate(p->position, coord(p->accelleration.x * 500, 0))).x);
+            int y = int((viewport.translate(p->position, coord(0, p->accelleration.y * 500))).y);
+            DrawLine(int((viewport.translate(p->position, coord())).x),
+                int((viewport.translate(p->position, coord())).y),
+                x, y, olc::CYAN);
+            
         }
     }
         
