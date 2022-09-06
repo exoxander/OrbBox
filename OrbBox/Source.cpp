@@ -85,7 +85,7 @@ public:
         //drawMesh(bodies.head,true);
         shared_ptr<body> currentBody = bodies->head;
         while (currentBody != nullptr) {
-            drawMesh(currentBody, false, true, true);
+            drawMesh(currentBody, false, false, false);
             currentBody = currentBody->next;
         }
         //finished
