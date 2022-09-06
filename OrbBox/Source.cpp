@@ -5,6 +5,7 @@
 #include "Utility.h"
 #include "Camera.h"
 #include "PhysicsSolver.h"
+#include "SubWindow.h"
 
 //const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
@@ -24,6 +25,7 @@ private:
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
+    SubWindow UI;
 
 
 public:
@@ -38,7 +40,9 @@ public:
 
         bodies->createBody(vector2d(-300, 40), vector2d(.1, .45), 2000);//planet 2
 
-        bodies->createBody(vector2d(-290, 50), vector2d(.1, .75), 300);//moon of planet 2
+        bodies->createBody(vector2d(-290, 45), vector2d(-.5, 1), 300);//moon of planet 2
+
+        bodies->createBody(vector2d(-30, -170), vector2d(-1.2,-.1), 600);//planet 3
         
         return true;
     }
@@ -60,6 +64,7 @@ public:
         if (GetKey(olc::Key::F2).bPressed) { u.velocity_debug_draw = (u.velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { u.accelleration_debug_draw = (u.accelleration_debug_draw ? false : true); }
 
+
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
@@ -72,6 +77,9 @@ public:
             currentBody = currentBody->next;
         }
         //finished
+
+        //draw interface to view
+        drawInterface(UI);
 
         //do physics
         if (!u.game_paused) {
@@ -136,6 +144,17 @@ public:
                 int((viewport.translate(p->position, a)).y),
                 olc::CYAN);
             
+        }
+    }
+
+    //----------------------< DRAW USER INTERFACE >-----------------------
+    void drawInterface(SubWindow _window) {
+        //use 2d loop to fill a rectancle specified by window position and dimensions
+        for (int i = 1; i <= _window.dimensions.x; i++) {
+            for (int u = 1; u <= _window.dimensions.y; u++) {
+                //draw a pixel at position + i x u
+                Draw(int(_window.position.x) + i, int(_window.position.y) + u, _window.primary);
+            }
         }
     }
 };
