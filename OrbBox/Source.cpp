@@ -20,6 +20,8 @@ private:
     int vertexDrawScale = 4;
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
+    bool paused = false;
+
     Utility u;
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
@@ -36,7 +38,7 @@ public:
         PhysicsBody star = PhysicsBody(vector2d(-10, 14), vector2d(0.01,0), 50000, 32);
 
         //PhysicsBody mewn = PhysicsBody(vector2d(-50, -200), vector2d(.4,.1), 300);
-        PhysicsBody mewn_2 = PhysicsBody(vector2d(80, 35), vector2d(.3, 1), 300);
+        PhysicsBody mewn_2 = PhysicsBody(vector2d(80, 35), vector2d(-.3, 1), 300);
         PhysicsBody mewn_3 = PhysicsBody(vector2d(-20, 100), vector2d(-.5, .3), 300);
         PhysicsBody mewn_4 = PhysicsBody(vector2d(120, 75), vector2d(-1, .3), 300);
 
@@ -77,6 +79,7 @@ public:
         if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 1 * viewport.panSpeed;
         if (GetKey(olc::Key::NP_ADD).bHeld) viewport.zoom += viewport.zoomSpeed;
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= viewport.zoomSpeed;
+        if (GetKey(olc::Key::P).bPressed) { paused = (paused ? false : true); }
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
@@ -91,7 +94,9 @@ public:
         //finished
 
         //do physics
-        solver.step(.001);
+        if (!paused) {
+            solver.step(.001);
+        }
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------

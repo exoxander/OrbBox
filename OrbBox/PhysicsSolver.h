@@ -112,7 +112,6 @@ public:void step(double stepFactor = 1) {
 	//create the matrix for this step
 	//distMatrix.generateMatrix(true);
 
-	//velocity to add  = sum of all (other objects mass * distanceFactor factor)
 	//loop through each body in the body list and calculate the forces of all other bodies from the distanceFactor matrix
 	//update all accellerations first
 	while (currentBody != nullptr) {//for each body in the global list
@@ -148,7 +147,7 @@ public:void step(double stepFactor = 1) {
 		currentBody = currentBody->next;//move to next
 	}
 
-	//update all velocities
+	//update all velocities, doing this seperate seems to solve an energy leak in the system
 	currentBody = allBodies->head;
 	while (currentBody != nullptr) {
 		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
