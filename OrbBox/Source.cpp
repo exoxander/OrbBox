@@ -29,19 +29,19 @@ private:
 public:
     bool OnUserCreate() override {
         //initialize camera
-        viewport.location = vector(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
+        viewport.location = vector2d(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
         viewport.zoom = 3;
 
-        PhysicsBody planet = PhysicsBody(vector(70, -4), vector(0,.8), 300,24);
-        PhysicsBody star = PhysicsBody(vector(-10, 14), vector(0.01,0), 5000, 32);
+        PhysicsBody planet = PhysicsBody(vector2d(70, -4), vector2d(0,.8), 3000,24);
+        PhysicsBody star = PhysicsBody(vector2d(-10, 14), vector2d(0.01,0), 50000, 32);
 
-        PhysicsBody mewn = PhysicsBody(vector(-70, -20), vector(-.5, .2), 30);
-        PhysicsBody mewn_2 = PhysicsBody(vector(80, 35), vector(.3, 0), 30);
-        PhysicsBody mewn_3 = PhysicsBody(vector(-20, 100), vector(-.3, .5), 30);
-        PhysicsBody mewn_4 = PhysicsBody(vector(120, 75), vector(.3, 1), 30);
+        PhysicsBody mewn = PhysicsBody(vector2d(-50, -200), vector2d(.4,.1), 30);
+        PhysicsBody mewn_2 = PhysicsBody(vector2d(80, 35), vector2d(.3, 1), 30);
+        PhysicsBody mewn_3 = PhysicsBody(vector2d(-20, 100), vector2d(-.3, 1), 30);
+        PhysicsBody mewn_4 = PhysicsBody(vector2d(120, 75), vector2d(.3, 1), 30);
 
-        PhysicsBody planet_2 = PhysicsBody(vector(-100, -12), vector(-.4, -.8), 250, 18);
-        PhysicsBody planet_3 = PhysicsBody(vector(80, 70), vector(.1,1), 320, 24);
+        PhysicsBody planet_2 = PhysicsBody(vector2d(-100, -12), vector2d(0, -.8), 2500, 18);
+        PhysicsBody planet_3 = PhysicsBody(vector2d(180, -50), vector2d(-.1,.5), 4500, 24);
 
 
         planet.id = 1;
@@ -54,12 +54,12 @@ public:
         mewn_4.id = 8;
 
 
-        bodies->addBody(mewn);
+        //bodies->addBody(mewn);
         bodies->addBody(planet_2);
-        bodies->addBody(mewn_2);
+        //bodies->addBody(mewn_2);
         bodies->addBody(planet_3);
-        bodies->addBody(mewn_3);
-        bodies->addBody(mewn_4);
+        //bodies->addBody(mewn_3);
+        //bodies->addBody(mewn_4);
 
         bodies->addBody(planet);
         bodies->addBody(star);
@@ -90,7 +90,7 @@ public:
         //finished
 
         //do physics
-        solver.step(.01);
+        solver.step(.001);
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
@@ -102,10 +102,10 @@ public:
         //loop through all polygons and draw to screen
         shared_ptr<polygon> currentPgon = m.polygonList;
         for (int i = 0; i < m.pgonLength; i++) {
-            vector a = currentPgon->a->position;
-            vector b = currentPgon->b->position;
-            vector c = currentPgon->c->position;
-            vector parent = p->position;
+            vector2d a = currentPgon->a->position;
+            vector2d b = currentPgon->b->position;
+            vector2d c = currentPgon->c->position;
+            vector2d parent = p->position;
             olc::Pixel polygonColor;
 
             if (show_polygons) {
@@ -127,22 +127,28 @@ public:
             }
         }
 
-        //int((viewport.translate(p->position, vector())).x)
+        //int((viewport.translate(p->position, vector2d())).x)
         if (show_velocity) {
             //draw circle for velocity
-            int x = int((viewport.translate(p->position, vector(p->velocity.x * 10, 0))).x);
-            int y = int((viewport.translate(p->position, vector(0, p->velocity.y * 10))).y);
-            DrawLine(int((viewport.translate(p->position, vector())).x),
-                int((viewport.translate(p->position, vector())).y),
-                x, y, olc::MAGENTA);
+            vector2d v = p->velocity;
+            v = v.normalize();
+            v.multiply(10);
+            DrawLine(int((viewport.translate(p->position, vector2d())).x),
+                int((viewport.translate(p->position, vector2d())).y),
+                int((viewport.translate(p->position, v)).x),
+                int((viewport.translate(p->position, v)).y),
+                olc::MAGENTA);
         }
         if (show_accelleration) {
-            //draw circle for accelleration
-            int x = int((viewport.translate(p->position, vector(p->accelleration.x * 500, 0))).x);
-            int y = int((viewport.translate(p->position, vector(0, p->accelleration.y * 500))).y);
-            DrawLine(int((viewport.translate(p->position, vector())).x),
-                int((viewport.translate(p->position, vector())).y),
-                x, y, olc::CYAN);
+            //draw line showing accelleration
+            vector2d a = p->accelleration;
+            a = a.normalize();
+            a.multiply(10);
+            DrawLine(int((viewport.translate(p->position, vector2d())).x),
+                int((viewport.translate(p->position, vector2d())).y),
+                int((viewport.translate(p->position, a)).x),
+                int((viewport.translate(p->position, a)).y),
+                olc::CYAN);
             
         }
     }

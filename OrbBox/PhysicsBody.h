@@ -11,28 +11,28 @@ class PhysicsBody
 public:
 	int id;
 	double mass;
-	vector velocity;
-	vector position;
-	vector accelleration;
+	vector2d velocity;
+	vector2d position;
+	vector2d accelleration;
 private:
 	mesh body;
 
 	//default
 public: PhysicsBody() {
-	position = vector();
-	velocity = vector();
-	accelleration = vector();
+	position = vector2d();
+	velocity = vector2d();
+	accelleration = vector2d();
 	mass = 10;
 	id = -1;
 	body = mesh();
 }
 	  //complete
-public: PhysicsBody(vector _posistion, vector _velocity, double _mass = 10, int _vertecies = 12) {
+public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, int _vertecies = 12) {
 	position = _posistion;
 	velocity = _velocity;
 	mass = _mass;
 	id = -1;
-	body = mesh(sqrt(_mass/10),_vertecies);
+	body = mesh(sqrt(_mass/100),_vertecies);
 }
 
 	  //create mesh from vertex list | impliment later
