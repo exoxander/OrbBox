@@ -114,6 +114,7 @@ public:void step(double stepFactor = 1) {
 
 	//velocity to add  = sum of all (other objects mass * distanceFactor factor)
 	//loop through each body in the body list and calculate the forces of all other bodies from the distanceFactor matrix
+	//update all accellerations first
 	while (currentBody != nullptr) {//for each body in the global list
 		//shared_ptr<matrixItem> currentItem = distMatrix.head;
 		shared_ptr<body> actingBody = allBodies->head;
@@ -143,10 +144,16 @@ public:void step(double stepFactor = 1) {
 			actingBody = actingBody->next;//move to next
 		}
 		// / currentBody->item->mass
-		currentBody->item->accelleration.multiply(stepFactor);
+		currentBody->item->accelleration.multiply(stepFactor);		
+		currentBody = currentBody->next;//move to next
+	}
+
+	//update all velocities
+	currentBody = allBodies->head;
+	while (currentBody != nullptr) {
 		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
-		currentBody = currentBody->next;//move to next
+		currentBody = currentBody->next;
 	}
 }
 };
