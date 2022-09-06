@@ -23,4 +23,8 @@ public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coord
 	vector2d result = vector2d(((vertex.x + parent.x) * zoom + location.x), ((vertex.y + parent.y) * zoom + location.y));
 	return result;
 }
+public:vector2d reverseTranslate(vector2d input) {
+	vector2d result;
+	return result;
+}
 };

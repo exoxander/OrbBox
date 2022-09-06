@@ -27,12 +27,12 @@ public: PhysicsBody() {
 	body = mesh();
 }
 	  //complete
-public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, int _vertecies = 12) {
+public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, int _id = -1) {
 	position = _posistion;
 	velocity = _velocity;
 	mass = _mass;
-	id = -1;
-	body = mesh(sqrt(_mass/100),_vertecies);
+	id = _id;
+	body = mesh(sqrt(_mass/100),6+(_mass/100));
 }
 
 	  //create mesh from vertex list | impliment later
@@ -78,11 +78,13 @@ public:
 	shared_ptr<body> head;
 	shared_ptr<body> tail;
 	int length;
+	int createdBodies;
 
 public:bodyList() {
 	head = nullptr;
 	tail = nullptr;
 	length = -1;
+	createdBodies = 0;
 }
 public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
 	addBody(make_shared<PhysicsBody>(_body));
@@ -153,7 +155,11 @@ public: void removeBody(int _id) {
 		//or could just use .exists to check beforehand
 	}
 }
-
+public:void createBody(vector2d _position, vector2d _velocity, double _mass) {
+	createdBodies++;
+	PhysicsBody newPhysicsBody = PhysicsBody(_position, _velocity, _mass, createdBodies);//create physics body
+	addBody(newPhysicsBody);//add to global list
+}
 };
 
 

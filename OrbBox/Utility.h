@@ -1,6 +1,7 @@
 #pragma once
 using std::shared_ptr;
 using std::make_shared;
+using std::string;
 
 #define PI 3.14159265//used in trig functions
 
@@ -245,16 +246,32 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 }
 };
 
+//-----------------< BUTTON >-----------------
+struct button {
+	bool active;
+	vector2d location;
+	vector2d dimensions;
+	string info;
+	//shared_ptr<action> activate;
+};
+
 
 
 //-------------------< UTILITY CLASS >---------------------------
 //dev console and debug utilities
 class Utility {
-
+public:
+	bool polygon_debug_draw;
+	bool velocity_debug_draw;
+	bool accelleration_debug_draw;
+	bool game_paused;
 
 public:Utility() {
+	//game data
+	polygon_debug_draw = false;
+	velocity_debug_draw = false;
+	accelleration_debug_draw = false;
+	game_paused = true;
 	//default constructor
 }
-
-
 };
