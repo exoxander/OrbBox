@@ -39,7 +39,12 @@ public:double getMagnitude() {
 }
 public:vector2d normalize() {
 	double magnitude = getMagnitude();
-	return vector2d(x / magnitude, y / magnitude);
+	if (magnitude != 0) {
+		return vector2d(x / magnitude, y / magnitude);
+	}
+	else {
+		return vector2d();
+	}
 }
 };
 

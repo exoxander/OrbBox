@@ -20,8 +20,6 @@ private:
     int vertexDrawScale = 4;
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
-    bool paused = false;
-
     Utility u;
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
@@ -40,7 +38,7 @@ public:
 
         bodies->createBody(vector2d(-300, 40), vector2d(.1, .45), 2000);//planet 2
 
-        bodies->createBody(vector2d(-280, 30), vector2d(.1, .65), 300);//moon of planet 2
+        bodies->createBody(vector2d(-290, 50), vector2d(.1, .75), 300);//moon of planet 2
         
         return true;
     }
@@ -76,7 +74,7 @@ public:
         //finished
 
         //do physics
-        if (u.game_paused) {
+        if (!u.game_paused) {
             solver.step(.001);
         }
         return true;
