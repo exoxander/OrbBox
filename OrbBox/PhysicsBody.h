@@ -32,7 +32,7 @@ public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, 
 	velocity = _velocity;
 	mass = _mass;
 	id = _id;
-	body = mesh(sqrt(_mass/100),6+(_mass/100));
+	body = mesh(sqrt(_mass/100),int(6+sqrt(_mass/100)));
 }
 
 	  //create mesh from vertex list | impliment later
@@ -151,7 +151,7 @@ public: void removeBody(int _id) {
 		}
 	} while (current->next);
 	if (!found) {
-		//throw an error
+		//throw an error?
 		//or could just use .exists to check beforehand
 	}
 }

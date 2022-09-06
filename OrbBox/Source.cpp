@@ -38,7 +38,9 @@ public:
         
         bodies->createBody(vector2d(150, 0), vector2d(-.1, -.8), 3500);//planet 1
 
-        bodies->createBody(vector2d(-300, 40), vector2d(.1, .5), 300);
+        bodies->createBody(vector2d(-300, 40), vector2d(.1, .45), 2000);//planet 2
+
+        bodies->createBody(vector2d(-280, 30), vector2d(.1, .65), 300);//moon of planet 2
         
         return true;
     }
@@ -53,7 +55,13 @@ public:
         if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 1 * viewport.panSpeed;
         if (GetKey(olc::Key::NP_ADD).bHeld) viewport.zoom += viewport.zoomSpeed;
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= viewport.zoomSpeed;
+
+        //utility settings
         if (GetKey(olc::Key::P).bPressed) { u.game_paused = (u.game_paused ? false : true); }
+        if (GetKey(olc::Key::F1).bPressed) { u.polygon_debug_draw = (u.polygon_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F2).bPressed) { u.velocity_debug_draw = (u.velocity_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F3).bPressed) { u.accelleration_debug_draw = (u.accelleration_debug_draw ? false : true); }
+
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
