@@ -25,7 +25,7 @@ public:SubWindow(vector2d _position, vector2d _dimensions) {
 	dimensions = _dimensions;
 	border = 5;
 	primary = Pixel(255, 150, 0);
-	secondary = Pixel(50, 240, 255);
+	secondary = Pixel(10, 48, 52);
 	highlight = Pixel(240, 240, 0);
 }
 };
