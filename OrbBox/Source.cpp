@@ -18,14 +18,13 @@ public:
     }
 
 private:
-    int vertexDrawScale = 4;
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
     Utility u;
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
-    SubWindow UI;
+    SubWindow UI = SubWindow(vector2d(0, double(ScreenHeight())*2 + 100), vector2d(double(ScreenWidth())*4, double(ScreenHeight())*2));
 
 
 public:
@@ -38,9 +37,9 @@ public:
         
         bodies->createBody(vector2d(150, 0), vector2d(-.1, -.8), 3500);//planet 1
 
-        bodies->createBody(vector2d(-300, 40), vector2d(.1, .45), 2000);//planet 2
+        bodies->createBody(vector2d(-300, 40), vector2d(.1, .6), 2000);//planet 2
 
-        bodies->createBody(vector2d(-290, 45), vector2d(-.5, 1), 300);//moon of planet 2
+        bodies->createBody(vector2d(-290, 45), vector2d(-.1, 1.15), 300);//moon of planet 2
 
         bodies->createBody(vector2d(-30, -170), vector2d(-1.2,-.1), 600);//planet 3
         
@@ -153,7 +152,7 @@ public:
         for (int i = 1; i <= _window.dimensions.x; i++) {
             for (int u = 1; u <= _window.dimensions.y; u++) {
                 //draw a pixel at position + i x u
-                Draw(int(_window.position.x) + i, int(_window.position.y) + u, _window.primary);
+                Draw(int(_window.position.x) + i, int(_window.position.y) + u, _window.secondary);
             }
         }
     }
