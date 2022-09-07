@@ -18,6 +18,7 @@ public: void set(double _x, double _y) {
 	x = _x;
 	y = _y;
 }
+	  //math on self
 public: void add(double _x, double _y) {
 	x += _x;
 	y += _y;
@@ -270,6 +271,7 @@ public:
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
 	bool game_paused;
+	bool show_user_interface;
 
 public:Utility() {
 	//game data
@@ -277,6 +279,7 @@ public:Utility() {
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
 	game_paused = true;
+	show_user_interface = true;
 	//default constructor
 }
 };

@@ -20,9 +20,11 @@ public:SubWindow() {
 	secondary = Pixel(50, 240, 255);
 	highlight = Pixel(240, 240, 0);
 }
-public:SubWindow(vector2d _position, vector2d _dimensions) {
+public:SubWindow(vector2d _position, vector2d _dimensions, vector2d _screen) {
 	position = _position;
+	position.multiply(_screen);
 	dimensions = _dimensions;
+	dimensions.multiply(_screen);
 	border = 5;
 	primary = Pixel(255, 150, 0);
 	secondary = Pixel(10, 48, 52);

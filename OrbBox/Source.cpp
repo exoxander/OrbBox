@@ -24,18 +24,19 @@ private:
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
-    SubWindow UI = SubWindow(vector2d(0, double(ScreenHeight())*2 + 100), vector2d(double(ScreenWidth())*4, double(ScreenHeight())*2));
+    SubWindow UI = SubWindow(vector2d(0,.9), vector2d(1,1), vector2d(double(ScreenWidth()), double(ScreenHeight())));
 
 
 public:
     bool OnUserCreate() override {
         //initialize camera
         viewport.location = vector2d(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
-        viewport.zoom = 3;
+        u.show_user_interface = false;
+        viewport.zoom = 1;
 
         bodies->createBody(vector2d(), vector2d(), 50000);//central star
         
-        bodies->createBody(vector2d(150, 0), vector2d(-.1, -.8), 3500);//planet 1
+        bodies->createBody(vector2d(150, 0), vector2d(-.1, -1.0), 3500);//planet 1
 
         bodies->createBody(vector2d(-300, 40), vector2d(.1, .6), 2000);//planet 2
 
@@ -78,7 +79,9 @@ public:
         //finished
 
         //draw interface to view
-        drawInterface(UI);
+        if (u.show_user_interface) {
+            drawInterface(UI);
+        }
 
         //do physics
         if (!u.game_paused) {
