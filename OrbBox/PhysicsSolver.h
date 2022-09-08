@@ -130,7 +130,8 @@ public:void step(double stepFactor = 1) {
 				//get distance
 				double x = currentBody->item->position.x - actingBody->item->position.x;
 				double y =  currentBody->item->position.y - actingBody->item->position.y;
-				double distanceFactor = 1 / sqrt(x * x + y * y);
+				double rawDistance = sqrt(x * x + y * y);
+				double distanceFactor = 1 / (rawDistance >= 1 ? rawDistance : 1);//prevent acellerating to infinity at impossible distances
 				
 				x *= distanceFactor;//normallized x component of force vector2d
 				y *= distanceFactor;//normallized y component of force vector2d

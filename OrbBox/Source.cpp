@@ -30,19 +30,15 @@ private:
 public:
     bool OnUserCreate() override {
         //initialize camera
-        viewport.location = vector2d(double(ScreenWidth() / 2), double(ScreenHeight()) / 2);
+        viewport = Camera(vector2d(),vector2d(double(ScreenWidth()),double(ScreenHeight())));
         u.show_user_interface = false;
         viewport.zoom = 1;
 
         bodies->createBody(vector2d(), vector2d(), 50000);//central star
-        
-        bodies->createBody(vector2d(150, 0), vector2d(-.1, -1.0), 3500);//planet 1
-
+        bodies->createBody(vector2d(100, 0), vector2d(-.1, -1.4), 3500);//planet 1
         bodies->createBody(vector2d(-300, 40), vector2d(.1, .6), 2000);//planet 2
-
         bodies->createBody(vector2d(-290, 45), vector2d(-.1, 1.15), 300);//moon of planet 2
-
-        bodies->createBody(vector2d(-30, -170), vector2d(-1.2,-.1), 600);//planet 3
+        bodies->createBody(vector2d(60, 350), vector2d(.75,-.2), 600);//planet 3
         
         return true;
     }
@@ -59,10 +55,13 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= viewport.zoomSpeed;
 
         //utility settings
-        if (GetKey(olc::Key::P).bPressed) { u.game_paused = (u.game_paused ? false : true); }
+        if (GetKey(olc::Key::SPACE).bPressed) { u.game_paused = (u.game_paused ? false : true); }
         if (GetKey(olc::Key::F1).bPressed) { u.polygon_debug_draw = (u.polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { u.velocity_debug_draw = (u.velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { u.accelleration_debug_draw = (u.accelleration_debug_draw ? false : true); }
+
+        //interface teseting
+        if (GetKey(olc::Key::N).bPressed) { UI.takeAction(3, bodies, make_shared<Utility>(u), make_shared<Camera>(viewport)); }
 
 
         //fill screen with color
