@@ -273,6 +273,12 @@ public:
 	bool game_paused;
 	bool show_user_interface;
 
+	//stash variables
+	bool stash_bool_a;
+	double stash_double_a;
+	double stash_double_b;
+	vector2d stash_vector_a;
+
 public:Utility() {
 	//game data
 	polygon_debug_draw = false;
@@ -280,6 +286,16 @@ public:Utility() {
 	accelleration_debug_draw = false;
 	game_paused = true;
 	show_user_interface = true;
+	stash_bool_a = false;
+	stash_double_a = 0;
+	stash_double_b = 0;
+	stash_vector_a = vector2d();
 	//default constructor
+}
+public:void resetStash() {
+	stash_bool_a = false;
+	stash_double_a = 0;
+	stash_double_b = 0;
+	stash_vector_a = vector2d();
 }
 };
