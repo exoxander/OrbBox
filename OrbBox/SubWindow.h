@@ -43,11 +43,12 @@ public:void takeAction(int _action, shared_ptr<bodyList> _bodyList, shared_ptr<U
 		break;
 	case 3://pause and create new (virtual?) body at camera position
 		_u->game_paused = true;
-		vector2d temp = _viewport->location;
-		temp.multiply(-.5);
-		_u->stash_vector_a = _viewport->location;
-		_u->stash_vector_a.add(temp);
-		_bodyList->createBody(temp, vector2d(), 300);
+		vector2d temp = _viewport->reverseTranslate(vector2d());
+		temp.multiply(-1);
+		temp.x += _viewport->screen.x;
+		temp.y += _viewport->screen.y;
+
+		_bodyList->createBody(temp, vector2d((double(rand() % 10) / 10) - 1, (double(rand() % 10) / 10) - 1), 300);
 		break;
 	}
 

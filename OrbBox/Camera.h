@@ -17,7 +17,7 @@ public:Camera() {
 	zoomSpeed = 0.1;
 }
 public:Camera(vector2d _position, vector2d _screen) {
-	location = vector2d(_position.x - (screen.x / 2), _position.y - (screen.y / 2));
+	location = vector2d(_position.x + (_screen.x), _position.y + (_screen.y));
 	screen = _screen;
 	zoom = 1;
 	panSpeed = 4;
@@ -27,8 +27,8 @@ public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coord
 	vector2d result = vector2d(((vertex.x + parent.x) + location.x), ((vertex.y + parent.y) + location.y));
 	return result;
 }
-public:vector2d reverseTranslate(vector2d input) {
-	vector2d result = vector2d(input.x - location.x + (screen.x / 2),input.y - location.y + (screen.y / 2));
+public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	
+	vector2d result = vector2d(location.x, location.y);
 	return result;
 }
 };

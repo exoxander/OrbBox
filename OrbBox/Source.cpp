@@ -24,15 +24,17 @@ private:
     Camera viewport;
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
-    SubWindow UI = SubWindow(vector2d(0,.9), vector2d(1,1), vector2d(double(ScreenWidth()), double(ScreenHeight())));
+    SubWindow UI;
 
 
 public:
     bool OnUserCreate() override {
         //initialize camera
-        viewport = Camera(vector2d(),vector2d(double(ScreenWidth()),double(ScreenHeight())));
+        //viewport = Camera(vector2d(),vector2d(double(ScreenWidth()),double(ScreenHeight())));
         u.show_user_interface = false;
-        viewport.zoom = 1;
+        viewport = Camera(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
+        //viewport.zoom = 1;
+        UI = SubWindow(vector2d(0, .9), vector2d(1, 1), vector2d(double(ScreenWidth()), double(ScreenHeight())));
 
         bodies->createBody(vector2d(), vector2d(), 50000);//central star
         bodies->createBody(vector2d(100, 0), vector2d(-.1, -1.4), 3500);//planet 1
