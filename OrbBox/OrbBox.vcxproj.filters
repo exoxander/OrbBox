@@ -30,7 +30,7 @@
     <ClInclude Include="PhysicsSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SubWindow.h">
+    <ClInclude Include="InterfaceRegion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

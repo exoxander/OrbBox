@@ -143,7 +143,7 @@
     <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="PhysicsSolver.h" />
-    <ClInclude Include="SubWindow.h" />
+    <ClInclude Include="InterfaceRegion.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <ItemGroup>

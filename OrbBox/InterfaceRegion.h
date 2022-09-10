@@ -1,10 +1,15 @@
 #pragma once
 #include "Utility.h"
 #include "olcPixelGameEngine.h"
+using std::cout;
+using std::endl;
 using olc::Pixel;
 
-class SubWindow {
+class InterfaceRegion {
 public:
+	//shared_ptr<bodyList> allBodies;
+	//shared_ptr<Utility> util;
+	//shared_ptr<Camera> viewport;
 	vector2d position;
 	vector2d dimensions;
 	int border;
@@ -12,7 +17,10 @@ public:
 	Pixel secondary;
 	Pixel highlight;
 
-public:SubWindow() {
+public:InterfaceRegion() {
+	//allBodies = nullptr;
+	//util = nullptr;
+	//viewport = nullptr;
 	position = vector2d();
 	dimensions = vector2d(150,100);
 	border = 5;
@@ -20,11 +28,14 @@ public:SubWindow() {
 	secondary = Pixel(50, 240, 255);
 	highlight = Pixel(240, 240, 0);
 }
-public:SubWindow(vector2d _position, vector2d _dimensions, vector2d _screen) {
+public:InterfaceRegion(vector2d _position, vector2d _dimensions) {
+	//allBodies = _bodyList;
+	//util = _u;
+	//viewport = _viewport;
 	position = _position;
-	position.multiply(_screen);
+	position.multiply(_position);
 	dimensions = _dimensions;
-	dimensions.multiply(_screen);
+	dimensions.multiply(_position);
 	border = 5;
 	primary = Pixel(255, 150, 0);
 	secondary = Pixel(10, 48, 52);
@@ -33,6 +44,8 @@ public:SubWindow(vector2d _position, vector2d _dimensions, vector2d _screen) {
 public:void takeAction(int _action, shared_ptr<bodyList> _bodyList, shared_ptr<Utility> _u, shared_ptr<Camera> _viewport) {
 	switch (_action) {
 	case 0://toggle pause / play
+		//cout << "attempt to toggle pause";
+		//s
 		_u->game_paused = (_u->game_paused ? false : true);
 		break;
 	case 1://force play
@@ -43,11 +56,12 @@ public:void takeAction(int _action, shared_ptr<bodyList> _bodyList, shared_ptr<U
 		break;
 	case 3://pause and create new (virtual?) body at camera position
 		_u->game_paused = true;
+		//create virtual body at camera center
+		//grab mass from slider / numerical input
+		//use mouse to position
+		//make new interfaceRegion and use widget to make a velocity vector with prediction path
+		//use that data in _bodyList->createBody();
 		vector2d temp = _viewport->reverseTranslate(vector2d());
-		temp.multiply(-1);
-		temp.x += _viewport->screen.x;
-		temp.y += _viewport->screen.y;
-
 		_bodyList->createBody(temp, vector2d((double(rand() % 10) / 10) - 1, (double(rand() % 10) / 10) - 1), 300);
 		break;
 	}

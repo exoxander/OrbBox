@@ -298,4 +298,7 @@ public:void resetStash() {
 	stash_double_b = 0;
 	stash_vector_a = vector2d();
 }
+public:void setPaused(bool _input) {
+	game_paused = _input;
+}
 };

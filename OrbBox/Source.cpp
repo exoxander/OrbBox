@@ -5,7 +5,7 @@
 #include "Utility.h"
 #include "Camera.h"
 #include "PhysicsSolver.h"
-#include "SubWindow.h"
+#include "InterfaceRegion.h"
 
 //const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
@@ -20,22 +20,21 @@ public:
 private:
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
-    Utility u;
-    Camera viewport;
+    shared_ptr<Utility> u = make_shared<Utility>();
+    shared_ptr<Camera> viewport = make_shared<Camera>();
     shared_ptr<bodyList> bodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(bodies);
-    SubWindow UI;
+    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1));
 
 
 public:
     bool OnUserCreate() override {
         //initialize camera
         //viewport = Camera(vector2d(),vector2d(double(ScreenWidth()),double(ScreenHeight())));
-        u.show_user_interface = false;
-        viewport = Camera(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-        //viewport.zoom = 1;
-        UI = SubWindow(vector2d(0, .9), vector2d(1, 1), vector2d(double(ScreenWidth()), double(ScreenHeight())));
-
+        u->show_user_interface = true;
+        viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
+        //viewport->zoom = 1;
+        
         bodies->createBody(vector2d(), vector2d(), 50000);//central star
         bodies->createBody(vector2d(100, 0), vector2d(-.1, -1.4), 3500);//planet 1
         bodies->createBody(vector2d(-300, 40), vector2d(.1, .6), 2000);//planet 2
@@ -49,22 +48,22 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //camera control
-        if (GetKey(olc::Key::LEFT).bHeld) viewport.location.x += 1 * viewport.panSpeed;
-        if (GetKey(olc::Key::RIGHT).bHeld) viewport.location.x -= 1 * viewport.panSpeed;
-        if (GetKey(olc::Key::UP).bHeld) viewport.location.y += 1 * viewport.panSpeed;
-        if (GetKey(olc::Key::DOWN).bHeld) viewport.location.y -= 1 * viewport.panSpeed;
-        if (GetKey(olc::Key::NP_ADD).bHeld) viewport.zoom += viewport.zoomSpeed;
-        if (GetKey(olc::Key::NP_SUB).bHeld) viewport.zoom -= viewport.zoomSpeed;
+        if (GetKey(olc::Key::LEFT).bHeld) viewport->location.x += 1 * viewport->panSpeed;
+        if (GetKey(olc::Key::RIGHT).bHeld) viewport->location.x -= 1 * viewport->panSpeed;
+        if (GetKey(olc::Key::UP).bHeld) viewport->location.y += 1 * viewport->panSpeed;
+        if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= 1 * viewport->panSpeed;
+        if (GetKey(olc::Key::NP_ADD).bHeld) viewport->zoom += viewport->zoomSpeed;
+        if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoom -= viewport->zoomSpeed;
 
         //utility settings
-        if (GetKey(olc::Key::SPACE).bPressed) { u.game_paused = (u.game_paused ? false : true); }
-        if (GetKey(olc::Key::F1).bPressed) { u.polygon_debug_draw = (u.polygon_debug_draw ? false : true); }
-        if (GetKey(olc::Key::F2).bPressed) { u.velocity_debug_draw = (u.velocity_debug_draw ? false : true); }
-        if (GetKey(olc::Key::F3).bPressed) { u.accelleration_debug_draw = (u.accelleration_debug_draw ? false : true); }
+        if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0, bodies, u, viewport); }
+        if (GetKey(olc::Key::F1).bPressed) {}
+        if (GetKey(olc::Key::F2).bPressed) { u->velocity_debug_draw = (u->velocity_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F3).bPressed) { u->accelleration_debug_draw = (u->accelleration_debug_draw ? false : true); }
 
         //interface teseting
-        if (GetKey(olc::Key::N).bPressed) { UI.takeAction(3, bodies, make_shared<Utility>(u), make_shared<Camera>(viewport)); }
-
+        if (GetKey(olc::Key::N).bPressed) { UI.takeAction(3, bodies, u, viewport); }
+        if (GetKey(olc::Key::P).bPressed) { u->game_paused = (u->game_paused ? false : true); }
 
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
@@ -74,18 +73,18 @@ public:
         //drawMesh(bodies.head,true);
         shared_ptr<body> currentBody = bodies->head;
         while (currentBody != nullptr) {
-            drawMesh(currentBody, u.polygon_debug_draw, u.velocity_debug_draw, u.accelleration_debug_draw);
+            drawMesh(currentBody, u->polygon_debug_draw, u->velocity_debug_draw, u->accelleration_debug_draw);
             currentBody = currentBody->next;
         }
         //finished
 
         //draw interface to view
-        if (u.show_user_interface) {
+        if (u->show_user_interface) {
             drawInterface(UI);
         }
 
         //do physics
-        if (!u.game_paused) {
+        if (!u->game_paused) {
             solver.step(.001);
         }
         return true;
@@ -113,27 +112,27 @@ public:
                 polygonColor = colorList[currentBody->item->id % colorListLength];
             }
             FillTriangle(
-                int((viewport.translate(parent, a)).x), int((viewport.translate(parent, a)).y),//A
-                int((viewport.translate(parent, b)).x), int((viewport.translate(parent, b)).y),//B
-                int((viewport.translate(parent, c)).x), int((viewport.translate(parent, c)).y),//C
+                int((viewport->translate(parent, a)).x), int((viewport->translate(parent, a)).y),//A
+                int((viewport->translate(parent, b)).x), int((viewport->translate(parent, b)).y),//B
+                int((viewport->translate(parent, c)).x), int((viewport->translate(parent, c)).y),//C
                 polygonColor);
 
-            //int((viewport.translate(parent, a)).x), int((viewport.translate(parent, b)).y)
+            //int((viewport->translate(parent, a)).x), int((viewport->translate(parent, b)).y)
             if (currentPgon->next != nullptr) {
                 currentPgon = currentPgon->next;
             }
         }
 
-        //int((viewport.translate(p->position, vector2d())).x)
+        //int((viewport->translate(p->position, vector2d())).x)
         if (show_velocity) {
             //draw normalized vector for velocity
             vector2d v = p->velocity;
             v = v.normalize();
             v.multiply(10);
-            DrawLine(int((viewport.translate(p->position, vector2d())).x),
-                int((viewport.translate(p->position, vector2d())).y),
-                int((viewport.translate(p->position, v)).x),
-                int((viewport.translate(p->position, v)).y),
+            DrawLine(int((viewport->translate(p->position, vector2d())).x),
+                int((viewport->translate(p->position, vector2d())).y),
+                int((viewport->translate(p->position, v)).x),
+                int((viewport->translate(p->position, v)).y),
                 olc::MAGENTA);
         }
         if (show_accelleration) {
@@ -141,17 +140,17 @@ public:
             vector2d a = p->accelleration;
             a = a.normalize();
             a.multiply(10);
-            DrawLine(int((viewport.translate(p->position, vector2d())).x),
-                int((viewport.translate(p->position, vector2d())).y),
-                int((viewport.translate(p->position, a)).x),
-                int((viewport.translate(p->position, a)).y),
+            DrawLine(int((viewport->translate(p->position, vector2d())).x),
+                int((viewport->translate(p->position, vector2d())).y),
+                int((viewport->translate(p->position, a)).x),
+                int((viewport->translate(p->position, a)).y),
                 olc::CYAN);
             
         }
     }
 
     //----------------------< DRAW USER INTERFACE >-----------------------
-    void drawInterface(SubWindow _window) {
+    void drawInterface(InterfaceRegion _window) {
         //use 2d loop to fill a rectancle specified by window position and dimensions
         for (int i = 1; i <= _window.dimensions.x; i++) {
             for (int u = 1; u <= _window.dimensions.y; u++) {

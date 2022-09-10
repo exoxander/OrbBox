@@ -29,6 +29,8 @@ public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coord
 }
 public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	
 	vector2d result = vector2d(location.x, location.y);
+	result.multiply(-1);
+	result.add(screen);
 	return result;
 }
 };
