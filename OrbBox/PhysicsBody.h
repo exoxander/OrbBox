@@ -54,6 +54,28 @@ public:shared_ptr<polygon> getPolygonList() {
 }
 };
 
+class virtualBody {
+	vector2d position;
+	vector2d velocity;
+	double mass;
+	int radius;
+	int id;
+public: virtualBody() {
+	position = vector2d();
+	velocity = vector2d();
+	mass = 1;
+	radius = 10;
+	int id = -1;
+}
+public:virtualBody(vector2d _position, vector2d _velocity, double _mass, int _id) {
+	position = _position;
+	velocity = _velocity;
+	mass = _mass;
+	radius = int(sqrt(_mass / 100));
+	id = _id;
+}
+};
+
 //-------------------------< GLOBAL OBJECT LIST >-------------------------
 struct body {
 	shared_ptr<PhysicsBody> item;

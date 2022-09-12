@@ -20,26 +20,24 @@ public:
 private:
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
-    shared_ptr<Utility> u = make_shared<Utility>();
+    shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
-    shared_ptr<bodyList> bodies = make_shared<bodyList>();
-    PhysicsSolver solver = PhysicsSolver(bodies);
-    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1));
+    shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
+    PhysicsSolver solver = PhysicsSolver(physicsBodies);
+    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, util, viewport);
 
 
 public:
-    bool OnUserCreate() override {
+    bool OnUserCreate() override {  
         //initialize camera
-        //viewport = Camera(vector2d(),vector2d(double(ScreenWidth()),double(ScreenHeight())));
-        u->show_user_interface = true;
+        util->show_user_interface = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-        //viewport->zoom = 1;
-        
-        bodies->createBody(vector2d(), vector2d(), 50000);//central star
-        bodies->createBody(vector2d(100, 0), vector2d(-.1, -1.4), 3500);//planet 1
-        bodies->createBody(vector2d(-300, 40), vector2d(.1, .6), 2000);//planet 2
-        bodies->createBody(vector2d(-290, 45), vector2d(-.1, 1.15), 300);//moon of planet 2
-        bodies->createBody(vector2d(60, 350), vector2d(.75,-.2), 600);//planet 3
+  
+        physicsBodies->createBody(vector2d(), vector2d(), 50000);//central star
+        physicsBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
+        physicsBodies->createBody(vector2d(-260, 40), vector2d(.1, .6), 2000);//planet 2
+        physicsBodies->createBody(vector2d(-250, 45), vector2d(-.1, 1.15), 300);//moon of planet 2
+        physicsBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
         
         return true;
     }
@@ -56,41 +54,38 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoom -= viewport->zoomSpeed;
 
         //utility settings
-        if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0, bodies, u, viewport); }
+        if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0); }
         if (GetKey(olc::Key::F1).bPressed) {}
-        if (GetKey(olc::Key::F2).bPressed) { u->velocity_debug_draw = (u->velocity_debug_draw ? false : true); }
-        if (GetKey(olc::Key::F3).bPressed) { u->accelleration_debug_draw = (u->accelleration_debug_draw ? false : true); }
-
-        //interface teseting
-        if (GetKey(olc::Key::N).bPressed) { UI.takeAction(3, bodies, u, viewport); }
-        if (GetKey(olc::Key::P).bPressed) { u->game_paused = (u->game_paused ? false : true); }
+        if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
 
         //fill screen with color
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(10,10,20));
+
         //drawing mesh to view
-        //drawMesh(bodies.head,true);
-        shared_ptr<body> currentBody = bodies->head;
+        //drawMesh(physicsBodies.head,true);
+        shared_ptr<body> currentBody = physicsBodies->head;
         while (currentBody != nullptr) {
-            drawMesh(currentBody, u->polygon_debug_draw, u->velocity_debug_draw, u->accelleration_debug_draw);
+            drawMesh(currentBody, util->polygon_debug_draw, util->velocity_debug_draw, util->accelleration_debug_draw);
             currentBody = currentBody->next;
         }
         //finished
 
         //draw interface to view
-        if (u->show_user_interface) {
+        if (util->show_user_interface) {
             drawInterface(UI);
         }
 
         //do physics
-        if (!u->game_paused) {
+        if (!util->game_paused) {
             solver.step(.001);
         }
         return true;
     }
     //-----------------------------< DRAWMESH >-----------------------------
-    void drawMesh(shared_ptr<body> _entity, bool show_polygons = false, bool show_velocity = false, bool show_accelleration = false) {
+    void drawMesh(shared_ptr<body> _entity, bool show_polygons, bool show_velocity, bool show_accelleration) {
         shared_ptr<body> currentBody = _entity;
         shared_ptr<PhysicsBody> p = currentBody->item;
         mesh m = currentBody->item->getMesh();   
@@ -108,7 +103,7 @@ public:
                 //make color result of % between polygon id and color list
                  polygonColor = colorList[currentPgon->id % colorListLength];
             }
-            else {
+            else {//for now color based on body ID, give actual texture later?
                 polygonColor = colorList[currentBody->item->id % colorListLength];
             }
             FillTriangle(
