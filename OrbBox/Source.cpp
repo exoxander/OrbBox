@@ -23,6 +23,7 @@ private:
     shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
     shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
+    shared_ptr<bodyList> virtualBodies = make_shared<bodyList>();
     PhysicsSolver solver = PhysicsSolver(physicsBodies);
     InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, util, viewport);
 
@@ -32,7 +33,7 @@ public:
         //initialize camera
         util->show_user_interface = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-  
+        util->game_state = 1;
         physicsBodies->createBody(vector2d(), vector2d(), 50000);//central star
         physicsBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
         physicsBodies->createBody(vector2d(-260, 40), vector2d(.1, .6), 2000);//planet 2
@@ -55,31 +56,34 @@ public:
 
         //utility settings
         if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0); }
-        if (GetKey(olc::Key::F1).bPressed) {}
+        if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
 
-        //fill screen with color
+        //-------------------< DRAW BACKGROUND >------------------------
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(10,10,20));
 
-        //drawing mesh to view
-        //drawMesh(physicsBodies.head,true);
-        shared_ptr<body> currentBody = physicsBodies->head;
-        while (currentBody != nullptr) {
-            drawMesh(currentBody, util->polygon_debug_draw, util->velocity_debug_draw, util->accelleration_debug_draw);
-            currentBody = currentBody->next;
+        //----------------------< DRAW VIRTUAL BODIES >------------------------------
+
+        //----------------------< DRAW PHYSICS BODIES >------------------------------
+        if (util->game_state == 1 || util->game_state == 2) {//only show during paused or active physics modes
+            shared_ptr<body> currentBody = physicsBodies->head;
+            while (currentBody != nullptr) {
+                drawMesh(currentBody, util->polygon_debug_draw, util->velocity_debug_draw, util->accelleration_debug_draw);
+                currentBody = currentBody->next;
+            }
         }
         //finished
 
-        //draw interface to view
+        //---------------------< DRAW INTERFACE >------------------------
         if (util->show_user_interface) {
             drawInterface(UI);
         }
 
-        //do physics
-        if (!util->game_paused) {
+        //-------------------------< DO PHYSICS STEP >---------------------
+        if (util->game_state == 2) {
             solver.step(.001);
         }
         return true;

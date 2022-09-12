@@ -55,18 +55,16 @@ public:bool checkMouseInBounds(int _x, int _y) {
 public:void takeAction(int _action) {
 	switch (_action) {
 	case 0://toggle pause / play
-		//cout << "attempt to toggle pause";
-		//s
-		util->game_paused = (util->game_paused ? false : true);
+		util->game_state = (util->game_state == 1 ? 2 : 1);
 		break;
 	case 1://force play
-		util->game_paused = false;
+		util->game_state = 2;
 		break;
 	case 2://force pause
-		util->game_paused = true;
+		util->game_state = 1;
 		break;
 	case 3://pause and create new (virtual?) body at camera position
-		util->game_paused = true;
+		//util->game_state;
 		//create virtual body at camera center
 		//grab mass from slider / numerical input
 		//use mouse to position

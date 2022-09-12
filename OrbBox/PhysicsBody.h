@@ -10,6 +10,7 @@ class PhysicsBody
 {
 public:
 	int id;
+	double radius;
 	double mass;
 	vector2d velocity;
 	vector2d position;
@@ -23,6 +24,7 @@ public: PhysicsBody() {
 	velocity = vector2d();
 	accelleration = vector2d();
 	mass = 10;
+	radius = 10;
 	id = -1;
 	body = mesh();
 }
@@ -32,7 +34,8 @@ public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, 
 	velocity = _velocity;
 	mass = _mass;
 	id = _id;
-	body = mesh(sqrt(_mass/100),int(6+sqrt(_mass/100)));
+	radius = sqrt(_mass / 100);
+	body = mesh(radius, int(6 + radius));
 }
 
 	  //create mesh from vertex list | impliment later
@@ -51,28 +54,6 @@ public: void setMesh(mesh _m) {
 }
 public:shared_ptr<polygon> getPolygonList() {
 	return body.polygonList;
-}
-};
-
-class virtualBody {
-	vector2d position;
-	vector2d velocity;
-	double mass;
-	int radius;
-	int id;
-public: virtualBody() {
-	position = vector2d();
-	velocity = vector2d();
-	mass = 1;
-	radius = 10;
-	int id = -1;
-}
-public:virtualBody(vector2d _position, vector2d _velocity, double _mass, int _id) {
-	position = _position;
-	velocity = _velocity;
-	mass = _mass;
-	radius = int(sqrt(_mass / 100));
-	id = _id;
 }
 };
 

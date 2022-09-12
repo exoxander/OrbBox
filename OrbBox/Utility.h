@@ -267,38 +267,30 @@ struct button {
 //dev console and debug utilities
 class Utility {
 public:
+	shared_ptr<bodyList> startingBodies;
+	shared_ptr<bodyList> existingBodies;
+
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
-	bool game_paused;
 	bool show_user_interface;
-
-	//stash variables
-	bool stash_bool_a;
-	double stash_double_a;
-	double stash_double_b;
-	vector2d stash_vector_a;
+	int game_state;
+	/*game_state codes
+	0: edit mode
+	1: paused simulation
+	2: active simulation
+	*/
 
 public:Utility() {
 	//game data
+	startingBodies = nullptr;
+	existingBodies = nullptr;
+
 	polygon_debug_draw = false;
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
-	game_paused = true;
 	show_user_interface = true;
-	stash_bool_a = false;
-	stash_double_a = 0;
-	stash_double_b = 0;
-	stash_vector_a = vector2d();
+	game_state = 0;
 	//default constructor
-}
-public:void resetStash() {
-	stash_bool_a = false;
-	stash_double_a = 0;
-	stash_double_b = 0;
-	stash_vector_a = vector2d();
-}
-public:void setPaused(bool _input) {
-	game_paused = _input;
 }
 };
