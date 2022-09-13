@@ -307,10 +307,24 @@ public: void markdownWriter() {
 	//text			| a comment
 
 	//EXAMPLE
-	<physicsbody>
-	{position_x:123}
-	{position_y:456}
-	{mass:500}
-	{id:42}
-	</physicsbody>
+	
+	game save format
+	<savelist>
+	<save>
+		<gamedata>
+			{data:000}
+			{data2:kfas}
+		</gamedata>
+			<virtualbodies>
+				<body>
+					{id:0}
+					{mass:120}
+					{positionx:150.29304}
+					{positiony:-384.332200}
+					{velocityx:-1.349}
+					{velocityy:.84648}
+				</body>
+			</virtualbodies>
+		</save>
+	</savelist>
 	*/
