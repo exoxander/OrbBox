@@ -15,6 +15,7 @@ public:
 	vector2d velocity;
 	vector2d position;
 	vector2d accelleration;
+	vector2d rotation;//x is angle in radians, y is rotation velocity
 private:
 	mesh body;
 
@@ -23,6 +24,7 @@ public: PhysicsBody() {
 	position = vector2d();
 	velocity = vector2d();
 	accelleration = vector2d();
+	rotation = vector2d();
 	mass = 10;
 	radius = 10;
 	id = -1;
@@ -32,6 +34,7 @@ public: PhysicsBody() {
 public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, int _id = -1) {
 	position = _posistion;
 	velocity = _velocity;
+	rotation = vector2d();
 	mass = _mass;
 	id = _id;
 	radius = sqrt(_mass / 100);

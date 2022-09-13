@@ -267,8 +267,8 @@ struct button {
 //dev console and debug utilities
 class Utility {
 public:
-	shared_ptr<bodyList> startingBodies;
-	shared_ptr<bodyList> existingBodies;
+	//shared_ptr<bodyList> startingBodies;//virtual bodies at start / load / save
+	//shared_ptr<bodyList> existingBodies;//all bodies in the sim currently
 
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
@@ -283,8 +283,8 @@ public:
 
 public:Utility() {
 	//game data
-	startingBodies = nullptr;
-	existingBodies = nullptr;
+	//startingBodies = nullptr;
+	//existingBodies = nullptr;
 
 	polygon_debug_draw = false;
 	velocity_debug_draw = false;
@@ -293,4 +293,24 @@ public:Utility() {
 	game_state = 0;
 	//default constructor
 }
+public:void markdownReader() {
+	
+}
+public: void markdownWriter() {
+
+}
 };
+/* SIMPLE MARKDOWN FORMAT SMF
+	<name>			| the start of a field
+	</name>			| the end of the most recent field of that type
+	{name:data}		| the name and value of a piece of data in a field
+	//text			| a comment
+
+	//EXAMPLE
+	<physicsbody>
+	{position_x:123}
+	{position_y:456}
+	{mass:500}
+	{id:42}
+	</physicsbody>
+	*/
