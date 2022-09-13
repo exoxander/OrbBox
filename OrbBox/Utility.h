@@ -1,4 +1,6 @@
 #pragma once
+#include <fstream>
+using std::fstream;
 using std::shared_ptr;
 using std::make_shared;
 using std::string;
@@ -261,6 +263,21 @@ struct button {
 	//shared_ptr<action> activate;
 };
 
+//------------------< MARKUP LAYER >---------------
+struct markupLayer {
+	int depth;
+	string identifier;
+	shared_ptr<markupLayer> prev;
+	shared_ptr<markupLayer> next;
+
+public:markupLayer(string _identifier, int _depth, shared_ptr<markupLayer> _prev = nullptr) {
+	depth = _depth++;
+	identifier = _identifier;
+	prev = _prev;
+	next = nullptr;
+}
+};
+
 
 
 //-------------------< UTILITY CLASS >---------------------------
@@ -293,28 +310,31 @@ public:Utility() {
 	game_state = 0;
 	//default constructor
 }
-public:void markdownReader() {
+public:void markupReader() {
 	
 }
-public: void markdownWriter() {
+public: void markupWriter() {
 
 }
 };
-/* SIMPLE MARKDOWN FORMAT SMF
-	<name>			| the start of a field
-	</name>			| the end of the most recent field of that type
-	{name:data}		| the name and value of a piece of data in a field
+/* SIMPLE MARKUP FORMAT SMF
+	<name>			| object / structure opening
+	</name>			| object / structure close
+	{name:data}		| variable and its associated data
 	//text			| a comment
-
-	//EXAMPLE
 	
-	game save format
+	//game save format
+	<readerinfo>
+		{formatversion:3}
+		{totalsaves:2}
+	</readerinfo>
 	<savelist>
-	<save>
-		<gamedata>
-			{data:000}
-			{data2:kfas}
-		</gamedata>
+		<save>
+			<gamedata>
+				{saveid:001}
+				{savename:thename}
+				{totalbodies:7}
+			</gamedata>
 			<virtualbodies>
 				<body>
 					{id:0}
@@ -323,6 +343,25 @@ public: void markdownWriter() {
 					{positiony:-384.332200}
 					{velocityx:-1.349}
 					{velocityy:.84648}
+
+					//use later?
+					<mesh>
+						<vertexlist>
+							<vertex>
+								{id:0}
+								{x:5.3}
+								{y:1.2}
+							</vertex>
+						</vertexlist>
+						<polygonlist>
+							<poylgon>
+								{id:0}
+								{aid:0}
+								{bid:1}
+								{cid:2}
+							</polygon>
+						</polygonlist>
+					</mesh>
 				</body>
 			</virtualbodies>
 		</save>
