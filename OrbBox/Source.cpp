@@ -61,6 +61,7 @@ public:
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
+        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { util->markupWriter(); }
 
         //-------------------< DRAW BACKGROUND >------------------------
         for (int x = 0; x < ScreenWidth(); x++)

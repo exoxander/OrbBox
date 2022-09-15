@@ -1,0 +1,4 @@
+<readerinfo>
+	{formatversion:1}
+	{savecounter:1}
+</readerinfo>

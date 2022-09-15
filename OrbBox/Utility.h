@@ -315,7 +315,7 @@ public:void markupReader() {
 }
 public: void markupWriter() {
 	fstream writer("GameData.txt");
-	writer << "asjdfhaksd";
+	writer << "<readerinfo>\n\t{formatversion:1}\n\t{savecounter:1}\n</readerinfo>";
 	writer.close();
 }
 };
