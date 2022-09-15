@@ -314,7 +314,9 @@ public:void markupReader() {
 	
 }
 public: void markupWriter() {
-
+	fstream writer("GameData.txt");
+	writer << "asjdfhaksd";
+	writer.close();
 }
 };
 /* SIMPLE MARKUP FORMAT SMF
@@ -326,7 +328,7 @@ public: void markupWriter() {
 	//game save format
 	<readerinfo>
 		{formatversion:3}
-		{totalsaves:2}
+		{savecounter:2}
 	</readerinfo>
 	<savelist>
 		<save>

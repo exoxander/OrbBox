@@ -16,8 +16,7 @@ public:
 	vector2d position;
 	vector2d accelleration;
 	vector2d rotation;//x is angle in radians, y is rotation velocity
-private:
-	mesh body;
+	mesh bodyMesh;
 
 	//default
 public: PhysicsBody() {
@@ -28,7 +27,7 @@ public: PhysicsBody() {
 	mass = 10;
 	radius = 10;
 	id = -1;
-	body = mesh();
+	bodyMesh = mesh();
 }
 	  //complete
 public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, int _id = -1) {
@@ -38,7 +37,17 @@ public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass = 10, 
 	mass = _mass;
 	id = _id;
 	radius = sqrt(_mass / 100);
-	body = mesh(radius, int(6 + radius));
+	bodyMesh = mesh(radius, int(6 + radius));
+}
+
+public: PhysicsBody(vector2d _posistion, vector2d _velocity, double _mass, int _id, mesh _mesh) {
+	position = _posistion;
+	velocity = _velocity;
+	rotation = vector2d();
+	mass = _mass;
+	id = _id;
+	radius = sqrt(_mass / 100);
+	bodyMesh = _mesh;
 }
 
 	  //create mesh from vertex list | impliment later
@@ -50,13 +59,13 @@ public:mesh createMesh() {
 }
 
 public:mesh getMesh() {
-	return body;
+	return bodyMesh;
 }
 public: void setMesh(mesh _m) {
-	body = _m;
+	bodyMesh = _m;
 }
 public:shared_ptr<polygon> getPolygonList() {
-	return body.polygonList;
+	return bodyMesh.polygonList;
 }
 };
 
@@ -165,6 +174,24 @@ public:void createBody(vector2d _position, vector2d _velocity, double _mass) {
 	createdBodies++;
 	PhysicsBody newPhysicsBody = PhysicsBody(_position, _velocity, _mass, createdBodies);//create physics body
 	addBody(newPhysicsBody);//add to global list
+}
+public:void createBody(vector2d _position, vector2d _velocity, double _mass, mesh _mesh) {//now with mesh!
+	createdBodies++;
+	PhysicsBody newPhysicsBody = PhysicsBody(_position, _velocity, _mass, createdBodies, _mesh);//create physics body
+	addBody(newPhysicsBody);//add to global list
+}
+public:void makeActual(shared_ptr<bodyList> _bodyList) {//copy all items from virtual list to actual list
+	shared_ptr<body> currentBody = _bodyList->head;
+		while (currentBody != nullptr) {
+			vector2d nextPosition = currentBody->item->position;
+			vector2d nextVelocity = currentBody->item->velocity;
+			int nextID = currentBody->item->id;
+			double nextMass = currentBody->item->mass;
+			mesh nextMesh = currentBody->item->bodyMesh;
+
+			createBody(nextPosition, nextVelocity, nextMass, nextMesh);
+			currentBody = currentBody->next;
+	}
 }
 };
 
