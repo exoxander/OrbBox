@@ -1,6 +1,8 @@
 #pragma once
 #include "Utility.h"
 #include "olcPixelGameEngine.h"
+#include "MarkupCore.h"
+
 using std::cout;
 using std::endl;
 using olc::Pixel;
@@ -10,6 +12,7 @@ public:
 	shared_ptr<bodyList> physicsBodies;
 	shared_ptr<Utility> util;
 	shared_ptr<Camera> viewport;
+	shared_ptr<MarkupCore> readWriter;
 	vector2d position;
 	vector2d dimensions;
 	int border;
@@ -21,6 +24,7 @@ public:InterfaceRegion() {
 	physicsBodies = nullptr;
 	util = nullptr;
 	viewport = nullptr;
+	readWriter = nullptr;
 	position = vector2d();
 	dimensions = vector2d(150,100);
 	border = 5;
@@ -28,10 +32,12 @@ public:InterfaceRegion() {
 	secondary = Pixel(50, 240, 255);
 	highlight = Pixel(240, 240, 0);
 }
-public:InterfaceRegion(vector2d _position, vector2d _dimensions, shared_ptr<bodyList> _bodyList, shared_ptr<Utility> _u, shared_ptr<Camera> _viewport) {
+public:InterfaceRegion(vector2d _position, vector2d _dimensions, shared_ptr<bodyList> _bodyList, shared_ptr<Utility> _u, shared_ptr<Camera> _viewport, shared_ptr<MarkupCore> _readWriter) {
 	physicsBodies = _bodyList;
 	util = _u;
 	viewport = _viewport;
+	readWriter = _readWriter;
+
 	position = _position;//position is given as a fraction of the screen, not a pixel distance, this was dumb
 	position.multiply(_position);
 	dimensions = _dimensions;
@@ -70,8 +76,12 @@ public:void takeAction(int _action) {
 		//use mouse to position
 		//make new interfaceRegion and use widget to make a velocity vector with prediction path
 		//use that data in _bodyList->createBody();
-		vector2d temp = viewport->reverseTranslate(vector2d());
-		physicsBodies->createBody(temp, vector2d((double(rand() % 10) / 10) - 1, (double(rand() % 10) / 10) - 1), 300);
+		//vector2d tempvec = ;
+		physicsBodies->createBody(viewport->reverseTranslate(vector2d()), vector2d((double(rand() % 10) / 10) - 1, (double(rand() % 10) / 10) - 1), 300);
+		break;
+	case 4:
+		//save to existing filepath
+		readWriter->markupWriter();
 		break;
 	}
 

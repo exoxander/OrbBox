@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "PhysicsSolver.h"
 #include "InterfaceRegion.h"
+#include "MarkupCore.h"
 
 //const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
@@ -24,8 +25,11 @@ private:
     shared_ptr<Camera> viewport = make_shared<Camera>();
     shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
     shared_ptr<bodyList> virtualBodies = make_shared<bodyList>();
+    shared_ptr<MarkupCore> readWriter = make_shared<MarkupCore>(virtualBodies, physicsBodies);
+
+
     PhysicsSolver solver = PhysicsSolver(physicsBodies);
-    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, util, viewport);
+    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, util, viewport, readWriter);
 
 
 public:
@@ -61,7 +65,7 @@ public:
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
-        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { util->markupWriter(); }
+        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { UI.takeAction(4); }
 
         //-------------------< DRAW BACKGROUND >------------------------
         for (int x = 0; x < ScreenWidth(); x++)

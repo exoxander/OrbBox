@@ -2,3 +2,43 @@
 	{formatversion:1}
 	{savecounter:1}
 </readerinfo>
+<object>
+	{objectid:1}
+	{positionx:0}
+	{positiony:0}
+	{velocityx:0}
+	{velocityy:0}
+	{mass:50000}
+</object>
+<object>
+	{objectid:2}
+	{positionx:100}
+	{positiony:0}
+	{velocityx:-0.1}
+	{velocityy:-1.5}
+	{mass:3500}
+</object>
+<object>
+	{objectid:3}
+	{positionx:-260}
+	{positiony:40}
+	{velocityx:0.2}
+	{velocityy:0.6}
+	{mass:2000}
+</object>
+<object>
+	{objectid:4}
+	{positionx:-250}
+	{positiony:45}
+	{velocityx:-0.25}
+	{velocityy:1.15}
+	{mass:300}
+</object>
+<object>
+	{objectid:5}
+	{positionx:60}
+	{positiony:350}
+	{velocityx:0.75}
+	{velocityy:-0.22}
+	{mass:600}
+</object>

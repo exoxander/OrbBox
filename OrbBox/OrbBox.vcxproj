@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="MarkupCore.h" />
     <ClInclude Include="PhysicsBody.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="PhysicsSolver.h" />
@@ -148,6 +149,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GameData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -284,8 +284,6 @@ public:markupLayer(string _identifier, int _depth, shared_ptr<markupLayer> _prev
 //dev console and debug utilities
 class Utility {
 public:
-	shared_ptr<bodyList> startingBodies;//virtual bodies at start / load / save
-	shared_ptr<bodyList> existingBodies;//all bodies in the sim currently
 
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
@@ -300,8 +298,6 @@ public:
 
 public:Utility() {
 	//game data
-	startingBodies = nullptr;
-	existingBodies = nullptr;
 
 	polygon_debug_draw = false;
 	velocity_debug_draw = false;
@@ -310,77 +306,6 @@ public:Utility() {
 	game_state = 0;
 	//default constructor
 }
-public:void markupReader() {
-	
-}
-public: void markupWriter() {
-	fstream writer("GameData.txt");
-	writer << "<readerinfo>\n\t{formatversion:1}\n\t{savecounter:1}\n</readerinfo>";
-	shared_ptr<body> currentBody = startingBodies->head;
 
-	while (currentBody != nullptr) {
-		writer << "<object>";
 
-		writer << "/t{objectid:" << currentBody->item->id << "}";
-		writer << "/t{positionx:" << currentBody->item->position.x << "}";
-		writer << "/t{positiony:" << currentBody->item->position.y << "}";
-		writer << "/t{velocityx:" << currentBody->item->velocity.x << "}";
-		writer << "/t{velocityy:" << currentBody->item->velocity.y << "}";
-		writer << "/t{mass" << currentBody->item->mass << "}";
-
-		writer << "</object>";
-	}
-	
-	writer.close();
-}
 };
-/* SIMPLE MARKUP FORMAT SMF
-	<name>			| object / structure opening
-	</name>			| object / structure close
-	{name:data}		| variable and its associated data
-	//text			| a comment
-	
-	//game save format
-	<readerinfo>
-		{formatversion:3}
-		{savecounter:2}
-	</readerinfo>
-	<savelist>
-		<save>
-			<gamedata>
-				{saveid:001}
-				{savename:thename}
-				{totalbodies:7}
-			</gamedata>
-			<virtualbodies>
-				<body>
-					{id:0}
-					{mass:120}
-					{positionx:150.29304}
-					{positiony:-384.332200}
-					{velocityx:-1.349}
-					{velocityy:.84648}
-
-					//use later?
-					<mesh>
-						<vertexlist>
-							<vertex>
-								{id:0}
-								{x:5.3}
-								{y:1.2}
-							</vertex>
-						</vertexlist>
-						<polygonlist>
-							<poylgon>
-								{id:0}
-								{aid:0}
-								{bid:1}
-								{cid:2}
-							</polygon>
-						</polygonlist>
-					</mesh>
-				</body>
-			</virtualbodies>
-		</save>
-	</savelist>
-	*/
