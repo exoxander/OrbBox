@@ -31,17 +31,17 @@ public:void markupReader() {
 }
 public: void markupWriter() {
 	fstream writer(filepath);
-	writer << "<readerinfo>\n\t{formatversion:1}\n\t{savecounter:1}\n</readerinfo>\n";
+	writer << "<readerInfo>\n\t{formatVersion:1}\n\t{saveCounter:1}\n</readerInfo>\n";
 	shared_ptr<body> currentBody = startingBodies->head;
 
 	while (currentBody != nullptr) {
 		writer << "<object>\n";
 
-		writer << "\t{objectid:" << currentBody->item->id << "}\n";
-		writer << "\t{positionx:" << currentBody->item->position.x << "}\n";
-		writer << "\t{positiony:" << currentBody->item->position.y << "}\n";
-		writer << "\t{velocityx:" << currentBody->item->velocity.x << "}\n";
-		writer << "\t{velocityy:" << currentBody->item->velocity.y << "}\n";
+		writer << "\t{objectID:" << currentBody->item->id << "}\n";
+		writer << "\t{positionX:" << currentBody->item->position.x << "}\n";
+		writer << "\t{positionY:" << currentBody->item->position.y << "}\n";
+		writer << "\t{velocityX:" << currentBody->item->velocity.x << "}\n";
+		writer << "\t{velocityY:" << currentBody->item->velocity.y << "}\n";
 		writer << "\t{mass:" << currentBody->item->mass << "}\n";
 
 		writer << "</object>\n";
