@@ -73,6 +73,9 @@ public:
                 Draw(x, y, olc::Pixel(10,10,20));
 
         //----------------------< DRAW VIRTUAL BODIES >------------------------------
+        if (util->game_state == 0) {//edit mode
+
+        }
 
         //----------------------< DRAW PHYSICS BODIES >------------------------------
         if (util->game_state == 1 || util->game_state == 2) {//only show during paused or active physics modes
@@ -91,9 +94,15 @@ public:
 
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == 2) {
+            //solver.matrixStep(.01);
             solver.step(.001);
         }
         return true;
+    }
+    void drawVirtuals(shared_ptr<bodyList> _bodies, int _scale = 1){
+    }
+    void drawPath(shared_ptr<body> _body ,int _iterations = 5) {
+
     }
     //-----------------------------< DRAWMESH >-----------------------------
     void drawMesh(shared_ptr<body> _entity, bool show_polygons, bool show_velocity, bool show_accelleration) {
@@ -134,7 +143,7 @@ public:
             //draw normalized vector for velocity
             vector2d v = p->velocity;
             v = v.normalize();
-            v.multiply(10);
+            v.multiply(25 * (1/viewport->zoom));
             DrawLine(int((viewport->translate(p->position, vector2d())).x),
                 int((viewport->translate(p->position, vector2d())).y),
                 int((viewport->translate(p->position, v)).x),
@@ -145,7 +154,7 @@ public:
             //draw normalized vector for accelleration
             vector2d a = p->accelleration;
             a = a.normalize();
-            a.multiply(10);
+            a.multiply(30 * (1/viewport->zoom));
             DrawLine(int((viewport->translate(p->position, vector2d())).x),
                 int((viewport->translate(p->position, vector2d())).y),
                 int((viewport->translate(p->position, a)).x),

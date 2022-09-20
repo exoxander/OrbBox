@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Utility.h";
-#include "PhysicsBody.h";
-#include <fstream>;
+#include "Utility.h"
+#include "PhysicsBody.h"
+#include <fstream>
 using std::fstream;
 using std::shared_ptr;
 using std::make_shared;
 using std::string;
-
+//https://en.cppreference.com/w/cpp/filesystem
 
 class MarkupCore {
 public:
@@ -30,77 +30,60 @@ public:void markupReader() {
 
 }
 public: void markupWriter() {
-	fstream writer(filepath);
-	writer << "<readerInfo>\n\t{formatVersion:1}\n\t{saveCounter:1}\n</readerInfo>\n";
-	shared_ptr<body> currentBody = startingBodies->head;
-	shared_ptr<vertex> currentVertex;
-	shared_ptr<polygon> currentPolygon;
+	if (filepath != "NO_PATH") {
+		fstream writer(filepath);
+		writer << "<readerInfo>\n\t{formatVersion:1}\n\t{saveCounter:1}\n</readerInfo>\n";
+		shared_ptr<body> currentBody = startingBodies->head;
+		shared_ptr<vertex> currentVertex;
+		shared_ptr<polygon> currentPolygon;
 
-	while (currentBody != nullptr) {
-		currentVertex = currentBody->item->bodyMesh.vertexList;
-		currentPolygon = currentBody->item->bodyMesh.polygonList;
-		writer << "<object>\n";
-		//basic object data
-		writer << "\t{objectID:" << currentBody->item->id << "}\n";
-		writer << "\t{positionX:" << currentBody->item->position.x << "}\n";
-		writer << "\t{positionY:" << currentBody->item->position.y << "}\n";
-		writer << "\t{velocityX:" << currentBody->item->velocity.x << "}\n";
-		writer << "\t{velocityY:" << currentBody->item->velocity.y << "}\n";
-		writer << "\t{mass:" << currentBody->item->mass << "}\n";
-		//mesh data
-		writer << "\t<mesh>\n";
-		//vertecies
-		writer << "\t\t<vertexList>\n";
-		while (currentVertex != nullptr) {
-			writer << "\t\t\t<vertex>\n";
-			writer << "\t\t\t\t{id:" << currentVertex->id << "}\n";
-			writer << "\t\t\t\t{positionX:" << currentVertex->position.x << "}\n";
-			writer << "\t\t\t\t{positionY:" << currentVertex->position.y << "}\n";
-			writer << "\t\t\t</vertex>\n";
+		while (currentBody != nullptr) {
+			currentVertex = currentBody->item->bodyMesh.vertexList;
+			currentPolygon = currentBody->item->bodyMesh.polygonList;
+			writer << "<object>\n";
+			//basic object data
+			writer << "\t{objectID:" << currentBody->item->id << "}\n";
+			writer << "\t{positionX:" << currentBody->item->position.x << "}\n";
+			writer << "\t{positionY:" << currentBody->item->position.y << "}\n";
+			writer << "\t{velocityX:" << currentBody->item->velocity.x << "}\n";
+			writer << "\t{velocityY:" << currentBody->item->velocity.y << "}\n";
+			writer << "\t{mass:" << currentBody->item->mass << "}\n";
+			//mesh data
+			writer << "\t<mesh>\n";
+			//vertecies
+			writer << "\t\t<vertexList>\n";
+			while (currentVertex != nullptr) {
+				writer << "\t\t\t<vertex>\n";
+				writer << "\t\t\t\t{id:" << currentVertex->id << "}\n";
+				writer << "\t\t\t\t{positionX:" << currentVertex->position.x << "}\n";
+				writer << "\t\t\t\t{positionY:" << currentVertex->position.y << "}\n";
+				writer << "\t\t\t</vertex>\n";
 
-			currentVertex = currentVertex->next;
+				currentVertex = currentVertex->next;
+			}
+			writer << "\t\t</vertexList>\n";
+			//polygons
+			writer << "\t\t<polygonList>\n";
+			while (currentPolygon != nullptr) {
+				writer << "\t\t\t<polygon>\n";
+				writer << "\t\t\t\t{id:" << currentPolygon->id << "}\n";
+				writer << "\t\t\t\t{vertexA:" << currentPolygon->a->id << "}\n";
+				writer << "\t\t\t\t{vertexB:" << currentPolygon->b->id << "}\n";
+				writer << "\t\t\t\t{vertexC:" << currentPolygon->c->id << "}\n";
+				writer << "\t\t\t</polygon>\n";
+
+				currentPolygon = currentPolygon->next;
+			}
+			writer << "\t\t</polygonList>\n";
+			writer << "\t</mesh>\n";
+			writer << "</object>\n";
+
+			//every fucking time
+			currentBody = currentBody->next;
 		}
-		writer << "\t\t</vertexList>\n";
-		//polygons
-		writer << "\t\t<polygonList>\n";
-		while (currentPolygon != nullptr) {
-			writer << "\t\t\t<polygon>\n";
-			writer << "\t\t\t\t{id:" << currentPolygon->id << "}\n";
-			writer << "\t\t\t\t{vertexA:" << currentPolygon->a->id << "}\n";
-			writer << "\t\t\t\t{vertexB:" << currentPolygon->b->id << "}\n";
-			writer << "\t\t\t\t{vertexC:" << currentPolygon->c->id << "}\n";
-			writer << "\t\t\t</polygon>\n";
 
-			currentPolygon = currentPolygon->next;
-		}
-		writer << "\t\t</polygonList>\n";
-		writer << "\t</mesh>\n";
-		/*
-		\t<mesh>\n
-			\t\t<vertexList>\n
-				\t\t\t<vertex>\n
-					\t\t\t\t{id:0}\n
-					\t\t\t\t{positionX:0}\n
-					\t\t\t\t{positionY:0}\n
-				\t\t\t</vertex>\n
-			\t\t</vertexList>\n
-			\t\t<polygonList>\n
-				\t\t\t<polygon>\n
-					\t\t\t\t{id:0}\n
-					\t\t\t\t{vertexA:0}\n
-					\t\t\t\t{vertexB:0}\n
-					\t\t\t\t{vertexC:0}\n
-				\t\t\t</polygon>\n
-			\t\t</polygonList>\n
-		\t</mesh>\n
-		*/
-		writer << "</object>\n";
-
-		//every fucking time
-		currentBody = currentBody->next;
+		writer.close();
 	}
-
-	writer.close();
 }
 };
 

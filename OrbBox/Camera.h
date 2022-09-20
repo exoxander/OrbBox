@@ -17,14 +17,20 @@ public:Camera() {
 	zoomSpeed = 0.1;
 }
 public:Camera(vector2d _position, vector2d _screen) {
-	location = vector2d(_position.x + (_screen.x), _position.y + (_screen.y));
+	location = vector2d(_position.x, _position.y);
 	screen = _screen;
 	zoom = 1;
 	panSpeed = 4;
 	zoomSpeed = 0.02;
 }
+public:void zoomIn() {
+
+}
+public: void zoomOut() {
+
+}
 public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coordinant of a vertex after converting between object and camera space
-	vector2d result = vector2d(((vertex.x + parent.x) + location.x), ((vertex.y + parent.y) + location.y));
+	vector2d result = vector2d(((vertex.x + parent.x)*zoom + location.x*zoom)+screen.x, ((vertex.y + parent.y)*zoom + location.y*zoom)+screen.y);
 	return result;
 }
 public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	
