@@ -53,12 +53,30 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //camera control
-        if (GetKey(olc::Key::LEFT).bHeld) viewport->location.x += 1 * viewport->panSpeed;
-        if (GetKey(olc::Key::RIGHT).bHeld) viewport->location.x -= 1 * viewport->panSpeed;
-        if (GetKey(olc::Key::UP).bHeld) viewport->location.y += 1 * viewport->panSpeed;
-        if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= 1 * viewport->panSpeed;
-        if (GetKey(olc::Key::NP_ADD).bHeld) viewport->zoom += viewport->zoomSpeed;
-        if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoom -= viewport->zoomSpeed;
+        if (viewport->target != nullptr) {
+            vector2d temp = viewport->target->item->position;
+            temp.multiply(-1);
+            viewport->location = temp;//force camera to follow a body
+            //may act unusually if body removed from list but not deleted
+        }
+        else {
+            if (GetKey(olc::Key::LEFT).bHeld) viewport->location.x += (1 / viewport->zoom) * viewport->panSpeed;
+            if (GetKey(olc::Key::RIGHT).bHeld) viewport->location.x -= (1 / viewport->zoom) * viewport->panSpeed;
+            if (GetKey(olc::Key::UP).bHeld) viewport->location.y += (1 / viewport->zoom) * viewport->panSpeed;
+            if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= (1 / viewport->zoom) * viewport->panSpeed;
+        }
+
+        if (GetKey(olc::Key::J).bPressed) {
+            if (viewport->target == nullptr || viewport->target->next == nullptr) {
+                viewport->target = physicsBodies->head;
+            }
+            else {
+                viewport->target = viewport->target->next;
+            }
+        }
+        if (GetKey(olc::Key::H).bPressed) viewport->target = nullptr;
+        if (GetKey(olc::Key::NP_ADD).bHeld) viewport->zoomIn();
+        if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
 
         //utility settings
         if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0); }
