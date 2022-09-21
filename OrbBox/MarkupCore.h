@@ -25,7 +25,12 @@ public:MarkupCore(shared_ptr<bodyList> _starting, shared_ptr<bodyList> _existing
 	existingBodies = _existing;
 	filepath = _path;
 }
+public:mesh meshReader() {
 
+}
+public:void meshWriter(fstream _writer, mesh _item) {
+
+}
 public:void markupReader() {
 
 }
@@ -83,6 +88,9 @@ public: void markupWriter() {
 		}
 
 		writer.close();
+	}
+	else {
+		//cout << "unable to save: path is \"NO_PATH\"\n";
 	}
 }
 };

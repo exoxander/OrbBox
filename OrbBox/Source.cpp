@@ -41,7 +41,7 @@ public:
         virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
         virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
         virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
-        virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.15), 300);//moon of planet 2
+        virtualBodies->createBody(vector2d(-250, 45), vector2d(-.2, 1.2), 300);//moon of planet 2
         virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
 
         physicsBodies->makeActual(virtualBodies);
@@ -118,6 +118,12 @@ public:
         return true;
     }
     void drawVirtuals(shared_ptr<bodyList> _bodies, int _scale = 1){
+        shared_ptr<body> currentBody = _bodies->head;
+
+        while (currentBody != nullptr) {
+            vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
+            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius));
+        }
     }
     void drawPath(shared_ptr<body> _body ,int _iterations = 5) {
 
@@ -131,10 +137,10 @@ public:
         //loop through all polygons and draw to screen
         shared_ptr<polygon> currentPgon = m.polygonList;
         for (int i = 0; i < m.pgonLength; i++) {
-            vector2d a = currentPgon->a->position;
-            vector2d b = currentPgon->b->position;
-            vector2d c = currentPgon->c->position;
             vector2d parent = p->position;
+            vector2d a = viewport->translate(parent, currentPgon->a->position);
+            vector2d b = viewport->translate(parent, currentPgon->b->position);
+            vector2d c = viewport->translate(parent, currentPgon->c->position);
             olc::Pixel polygonColor;
 
             if (show_polygons) {
@@ -145,9 +151,9 @@ public:
                 polygonColor = colorList[currentBody->item->id % colorListLength];
             }
             FillTriangle(
-                int((viewport->translate(parent, a)).x), int((viewport->translate(parent, a)).y),//A
-                int((viewport->translate(parent, b)).x), int((viewport->translate(parent, b)).y),//B
-                int((viewport->translate(parent, c)).x), int((viewport->translate(parent, c)).y),//C
+                int(a.x), int(a.y),//A
+                int(b.x), int(b.y),//B
+                int(c.x), int(c.y),//C
                 polygonColor);
 
             //int((viewport->translate(parent, a)).x), int((viewport->translate(parent, b)).y)

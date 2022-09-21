@@ -77,7 +77,10 @@ public:void takeAction(int _action) {
 		//make new interfaceRegion and use widget to make a velocity vector with prediction path
 		//use that data in _bodyList->createBody();
 		//vector2d tempvec = ;
-		physicsBodies->createBody(viewport->reverseTranslate(vector2d()), vector2d((double(rand() % 10) / 10) - 1, (double(rand() % 10) / 10) - 1), 300);
+		physicsBodies->createBody(
+			viewport->reverseTranslate(vector2d()),
+			vector2d((double(rand() % 10) / 10) - 1,
+			(double(rand() % 10) / 10) - 1), 300);
 		break;
 	case 4:
 		//save to existing filepath

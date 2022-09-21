@@ -602,8 +602,8 @@
 	{objectID:4}
 	{positionX:-250}
 	{positionY:45}
-	{velocityX:-0.25}
-	{velocityY:1.15}
+	{velocityX:-0.2}
+	{velocityY:1.2}
 	{mass:300}
 	<mesh>
 		<vertexList>
@@ -801,3 +801,4 @@
 		</polygonList>
 	</mesh>
 </object>
+
