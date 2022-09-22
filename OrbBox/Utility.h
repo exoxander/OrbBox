@@ -254,30 +254,6 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 }
 };
 
-//-----------------< BUTTON >-----------------
-struct button {
-	bool active;
-	vector2d location;
-	vector2d dimensions;
-	string info;
-	//shared_ptr<action> activate;
-};
-
-//------------------< MARKUP LAYER >---------------
-struct markupLayer {
-	int depth;
-	string identifier;
-	shared_ptr<markupLayer> prev;
-	shared_ptr<markupLayer> next;
-
-public:markupLayer(string _identifier, int _depth, shared_ptr<markupLayer> _prev = nullptr) {
-	depth = _depth++;
-	identifier = _identifier;
-	prev = _prev;
-	next = nullptr;
-}
-};
-
 
 
 //-------------------< UTILITY CLASS >---------------------------
@@ -288,7 +264,7 @@ public:
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
-	bool body_debug_draw;
+	int body_debug_draw;
 	bool show_user_interface;
 	bool virtual_list_changed;
 	int game_state;
@@ -304,7 +280,7 @@ public:Utility() {
 	polygon_debug_draw = false;
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
-	body_debug_draw = false;
+	body_debug_draw = 0;
 	show_user_interface = true;
 	virtual_list_changed = false;
 	game_state = 0;

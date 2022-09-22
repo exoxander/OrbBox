@@ -39,12 +39,17 @@ public:void track(shared_ptr<body> _target) {
 public:void freeCamera() {
 	target = nullptr;
 }
+public:void home() {
+	location = vector2d();
+}
 public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coordinant of a vertex after converting between object and camera space
 	vector2d result = vector2d(
 		((vertex.x + parent.x) * zoom + location.x * zoom) + screen.x,
 		((vertex.y + parent.y) * zoom + location.y * zoom) + screen.y);
 	return result;
 }
+
+	  //NEEDS TO BE REDONE TO DEAL WITH ZOOM
 public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	
 	vector2d result = vector2d(location.x, location.y);
 	result.multiply(-1);

@@ -26,9 +26,9 @@ public:MarkupCore(shared_ptr<bodyList> _starting, shared_ptr<bodyList> _existing
 	filepath = _path;
 }
 public:mesh meshReader() {
-
+	return mesh();
 }
-public:void meshWriter(fstream _writer, mesh _item) {
+public:void meshWriter(mesh _item) {
 
 }
 public:void markupReader() {

@@ -31,6 +31,7 @@ private:
     string frameTime = "Frame Time:";
     string bodyCount = "Scene Bodies:";
     Pixel BGC = Pixel(10, 10, 10);//background color
+    Pixel textColor = Pixel(140, 140, 140);
 
     PhysicsSolver solver = PhysicsSolver(physicsBodies);
     InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, virtualBodies, util, viewport, readWriter);
@@ -96,7 +97,14 @@ public:
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
-        if (GetKey(olc::Key::F4).bPressed) { util->body_debug_draw = (util->body_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F4).bPressed) { 
+            if (util->body_debug_draw < 3) {
+                util->body_debug_draw++;
+            }
+            else {
+                util->body_debug_draw = 0;
+            }
+        }
         if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { UI.takeAction(4); }
 
         //-------------------< DRAW BACKGROUND >------------------------
@@ -104,7 +112,7 @@ public:
             BGC = Pixel(10,10,200);
         }
         else if (util->game_state == 1) {
-            BGC = Pixel(30,30,60);
+            BGC = Pixel(60,60,100);
         }
         else {
             BGC = Pixel(10, 10, 20);
@@ -122,7 +130,7 @@ public:
         if (util->game_state == 1 || util->game_state == 2) {//only show during paused or active physics modes
             shared_ptr<body> currentBody = physicsBodies->head;
             while (currentBody != nullptr) {//do culling check later
-                drawMesh(currentBody, util->polygon_debug_draw, util->velocity_debug_draw, util->accelleration_debug_draw);
+                drawMesh(currentBody);
                 currentBody = currentBody->next;
             }
         }
@@ -177,7 +185,7 @@ public:
 
     }
     //-----------------------------< DRAWMESH >-----------------------------
-    void drawMesh(shared_ptr<body> _entity, bool show_polygons, bool show_velocity, bool show_accelleration) {
+    void drawMesh(shared_ptr<body> _entity) {
         shared_ptr<body> currentBody = _entity;
         vector2d tpp = viewport->translate(_entity->item->position, vector2d());
         shared_ptr<PhysicsBody> p = currentBody->item;
@@ -192,7 +200,7 @@ public:
             vector2d c = viewport->translate(parent, currentPgon->c->position);
             olc::Pixel polygonColor;
 
-            if (show_polygons) {
+            if (util->polygon_debug_draw) {
                 //make color result of % between polygon id and color list
                  polygonColor = colorList[currentPgon->id % colorListLength];
             }
@@ -212,7 +220,7 @@ public:
         }
 
         //int((viewport->translate(p->position, vector2d())).x)
-        if (show_velocity) {
+        if (util->velocity_debug_draw) {
             //draw normalized vector for velocity
             vector2d v = p->velocity;
             v = v.normalize();
@@ -223,7 +231,7 @@ public:
                 int((viewport->translate(p->position, v)).y),
                 olc::MAGENTA);
         }
-        if (show_accelleration) {
+        if (util->accelleration_debug_draw) {
             //draw normalized vector for accelleration
             vector2d a = p->accelleration;
             a = a.normalize();
@@ -234,19 +242,21 @@ public:
                 int((viewport->translate(p->position, a)).y),
                 olc::CYAN);            
         }
-        if (util->body_debug_draw) {
+        if (util->body_debug_draw != 0) {
             string temp = "ID:";
             temp.append(to_string(currentBody->item->id));
-            DrawString(int(tpp.x), int(tpp.y), temp, Pixel(100,100,100));//id
-            temp = "Mass:";
-            temp.append(to_string(currentBody->item->mass));
-            DrawString(int(tpp.x), int(tpp.y)+15, temp, Pixel(100, 100, 100));//mass
-            temp = "Velocity:(";
-            temp.append(to_string(currentBody->item->velocity.x));
-            temp.append(",");
-            temp.append(to_string(currentBody->item->velocity.y));
-            temp.append(")");
-            DrawString(int(tpp.x), int(tpp.y)+30, temp, Pixel(100, 100, 100));//velocity?
+            DrawString(int(tpp.x), int(tpp.y), temp, textColor);//id
+            if (util->body_debug_draw > 1) {
+                temp = "Mass:";
+                temp.append(to_string(currentBody->item->mass));
+                DrawString(int(tpp.x), int(tpp.y) + 15, temp, textColor);//mass
+                temp = "Velocity:(";
+                temp.append(to_string(currentBody->item->velocity.x));
+                temp.append(",");
+                temp.append(to_string(currentBody->item->velocity.y));
+                temp.append(")");
+                DrawString(int(tpp.x), int(tpp.y) + 30, temp, textColor);//velocity?
+            }
         }
     }
 
