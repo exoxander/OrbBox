@@ -101,6 +101,12 @@ public:bodyList() {
 	length = -1;
 	createdBodies = 0;
 }
+public:void reset() {
+	head = nullptr;
+	tail = nullptr;
+	length = 0;
+	createdBodies = 0;
+}
 public:void addBody(PhysicsBody _body) {//call addbody overload for pointer
 	addBody(make_shared<PhysicsBody>(_body));
 }

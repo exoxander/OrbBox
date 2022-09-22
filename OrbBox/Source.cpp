@@ -7,6 +7,7 @@
 #include "PhysicsSolver.h"
 #include "InterfaceRegion.h"
 #include "MarkupCore.h"
+using std::to_string;
 
 //const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
@@ -27,9 +28,12 @@ private:
     shared_ptr<bodyList> virtualBodies = make_shared<bodyList>();
     shared_ptr<MarkupCore> readWriter = make_shared<MarkupCore>(virtualBodies, physicsBodies);
 
+    string frameTime = "Frame Time:";
+    string bodyCount = "Scene Bodies:";
+    Pixel BGC = Pixel(10, 10, 10);//background color
 
     PhysicsSolver solver = PhysicsSolver(physicsBodies);
-    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, util, viewport, readWriter);
+    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, virtualBodies, util, viewport, readWriter);
 
 
 public:
@@ -37,14 +41,13 @@ public:
         //initialize camera
         util->show_user_interface = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-        util->game_state = 1;
+        util->game_state = 0;
         virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
         virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
         virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
-        virtualBodies->createBody(vector2d(-250, 45), vector2d(-.2, 1.2), 300);//moon of planet 2
+        virtualBodies->createBody(vector2d(-240, 50), vector2d(-.1, .9), 300);//moon of planet 2
         virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
-
-        physicsBodies->makeActual(virtualBodies);
+        //physicsBodies->makeActual(virtualBodies);
         
         return true;
     }
@@ -66,7 +69,7 @@ public:
             if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= (1 / viewport->zoom) * viewport->panSpeed;
         }
 
-        if (GetKey(olc::Key::J).bPressed) {
+        if (GetKey(olc::Key::J).bPressed) {//(J)ump to next body as camera target
             if (viewport->target == nullptr || viewport->target->next == nullptr) {
                 viewport->target = physicsBodies->head;
             }
@@ -79,26 +82,45 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
 
         //utility settings
-        if (GetKey(olc::Key::SPACE).bPressed) { UI.takeAction(0); }
+        if (GetKey(olc::Key::R).bPressed) { UI.takeAction(5); }//any->edit
+        if (GetKey(olc::Key::SPACE).bPressed) {
+            if (util->game_state == 0) {
+                UI.takeAction(6);//edit->paused
+            }
+            else {
+                UI.takeAction(0);//toggle play/paused
+            }
+        }
+
+        //----------------< DEBUG >--------------------
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
         if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { UI.takeAction(4); }
 
         //-------------------< DRAW BACKGROUND >------------------------
+        if (util->game_state == 0) {
+            BGC = Pixel(10,10,200);
+        }
+        else if (util->game_state == 1) {
+            BGC = Pixel(30,30,60);
+        }
+        else {
+            BGC = Pixel(10, 10, 20);
+        }
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
-                Draw(x, y, olc::Pixel(10,10,20));
+                Draw(x, y, BGC);
 
         //----------------------< DRAW VIRTUAL BODIES >------------------------------
         if (util->game_state == 0) {//edit mode
-
+            drawVirtuals(virtualBodies, viewport->zoom);
         }
 
         //----------------------< DRAW PHYSICS BODIES >------------------------------
         if (util->game_state == 1 || util->game_state == 2) {//only show during paused or active physics modes
             shared_ptr<body> currentBody = physicsBodies->head;
-            while (currentBody != nullptr) {
+            while (currentBody != nullptr) {//do culling check later
                 drawMesh(currentBody, util->polygon_debug_draw, util->velocity_debug_draw, util->accelleration_debug_draw);
                 currentBody = currentBody->next;
             }
@@ -108,21 +130,41 @@ public:
         //---------------------< DRAW INTERFACE >------------------------
         if (util->show_user_interface) {
             drawInterface(UI);
+            string temp = frameTime;
+            temp.append(to_string(fElapsedTime));
+            DrawString(0, 5, temp, olc::RED, 1);
+
+            temp = bodyCount;
+            temp.append(to_string(physicsBodies->length));
+            DrawString(0, 15, temp, olc::RED, 1);
         }
 
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == 2) {
             //solver.matrixStep(.01);
-            solver.step(.001);
+            solver.step(physicsBodies, .001);
         }
+
         return true;
     }
-    void drawVirtuals(shared_ptr<bodyList> _bodies, int _scale = 1){
-        shared_ptr<body> currentBody = _bodies->head;
 
-        while (currentBody != nullptr) {
+    //---------------------< DRAW VIRTUALS >------------------------------
+    void drawVirtuals(shared_ptr<bodyList> _bodies, double _scale = 1){
+        shared_ptr<body> currentBody = _bodies->head;
+        shared_ptr<bodyList> pathList = make_shared<bodyList>();
+
+        while (currentBody != nullptr) {//virtuals
             vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
-            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius));
+            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale));
+            currentBody = currentBody->next;
+        }
+
+        solver.step(pathList, 1);
+        currentBody = pathList->head;
+        while (currentBody != nullptr) {//virtuals
+            vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
+            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale * .5), olc::RED);
+            currentBody = currentBody->next;
         }
     }
     void drawPath(shared_ptr<body> _body ,int _iterations = 5) {

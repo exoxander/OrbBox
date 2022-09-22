@@ -600,10 +600,10 @@
 </object>
 <object>
 	{objectID:4}
-	{positionX:-250}
-	{positionY:45}
-	{velocityX:-0.2}
-	{velocityY:1.2}
+	{positionX:-240}
+	{positionY:50}
+	{velocityX:-0.1}
+	{velocityY:0.9}
 	{mass:300}
 	<mesh>
 		<vertexList>

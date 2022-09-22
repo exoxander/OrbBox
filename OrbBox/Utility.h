@@ -289,6 +289,7 @@ public:
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
 	bool show_user_interface;
+	bool virtual_list_changed;
 	int game_state;
 	/*game_state codes
 	0: edit mode
@@ -303,6 +304,7 @@ public:Utility() {
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
 	show_user_interface = true;
+	virtual_list_changed = false;
 	game_state = 0;
 	//default constructor
 }

@@ -103,8 +103,8 @@ public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 }
 
 	  //step function does all the calculations
-public:void step(double stepFactor = 1) {
-	shared_ptr<body> currentBody = allBodies->head;
+public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
+	shared_ptr<body> currentBody = _bodies->head;
 	//create the matrix for this step
 	//distMatrix.generateMatrix(true);
 
@@ -112,7 +112,7 @@ public:void step(double stepFactor = 1) {
 	//update all accellerations first
 	while (currentBody != nullptr) {//for each body in the global list
 		//shared_ptr<matrixItem> currentItem = distMatrix.head;
-		shared_ptr<body> actingBody = allBodies->head;
+		shared_ptr<body> actingBody = _bodies->head;
 		double dx = 0;
 		double dy = 0;
 		double linkMass = 0;

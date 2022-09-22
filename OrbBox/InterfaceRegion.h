@@ -10,6 +10,7 @@ using olc::Pixel;
 class InterfaceRegion {
 public:
 	shared_ptr<bodyList> physicsBodies;
+	shared_ptr<bodyList> virtualBodies;
 	shared_ptr<Utility> util;
 	shared_ptr<Camera> viewport;
 	shared_ptr<MarkupCore> readWriter;
@@ -22,6 +23,7 @@ public:
 
 public:InterfaceRegion() {
 	physicsBodies = nullptr;
+	virtualBodies = nullptr;
 	util = nullptr;
 	viewport = nullptr;
 	readWriter = nullptr;
@@ -32,8 +34,11 @@ public:InterfaceRegion() {
 	secondary = Pixel(50, 240, 255);
 	highlight = Pixel(240, 240, 0);
 }
-public:InterfaceRegion(vector2d _position, vector2d _dimensions, shared_ptr<bodyList> _bodyList, shared_ptr<Utility> _u, shared_ptr<Camera> _viewport, shared_ptr<MarkupCore> _readWriter) {
+public:InterfaceRegion(
+	vector2d _position, vector2d _dimensions, shared_ptr<bodyList> _bodyList, shared_ptr<bodyList>  _virtuals,
+	shared_ptr<Utility> _u, shared_ptr<Camera> _viewport, shared_ptr<MarkupCore> _readWriter) {
 	physicsBodies = _bodyList;
+	virtualBodies = _virtuals;
 	util = _u;
 	viewport = _viewport;
 	readWriter = _readWriter;
@@ -61,7 +66,7 @@ public:bool checkMouseInBounds(int _x, int _y) {
 public:void takeAction(int _action) {
 	switch (_action) {
 	case 0://toggle pause / play
-		util->game_state = (util->game_state == 1 ? 2 : 1);
+		util->game_state = (util->game_state == 2 ? 1 : 2);
 		break;
 	case 1://force play
 		util->game_state = 2;
@@ -85,6 +90,16 @@ public:void takeAction(int _action) {
 	case 4:
 		//save to existing filepath
 		readWriter->markupWriter();
+		break;
+	case 5://force edit mode
+		util->game_state = 0;
+		physicsBodies->reset();
+		viewport->location = vector2d();//not working?
+		viewport->zoom = 1;
+		break;
+	case 6://edit mode -> sim paused
+		util->game_state = 1;
+		physicsBodies->makeActual(virtualBodies);
 		break;
 	}
 
