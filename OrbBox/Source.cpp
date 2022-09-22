@@ -96,6 +96,7 @@ public:
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F4).bPressed) { util->body_debug_draw = (util->body_debug_draw ? false : true); }
         if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { UI.takeAction(4); }
 
         //-------------------< DRAW BACKGROUND >------------------------
@@ -167,7 +168,7 @@ public:
             currentBody = pathList->head;
             while (currentBody != nullptr) {//virtuals path
                 vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
-                FillCircle(int(tPos.x), int(tPos.y), 3, olc::RED);
+                FillCircle(int(tPos.x), int(tPos.y), 3, olc::Pixel(60,60,120));
                 currentBody = currentBody->next;
             }
         }
@@ -178,6 +179,7 @@ public:
     //-----------------------------< DRAWMESH >-----------------------------
     void drawMesh(shared_ptr<body> _entity, bool show_polygons, bool show_velocity, bool show_accelleration) {
         shared_ptr<body> currentBody = _entity;
+        vector2d tpp = viewport->translate(_entity->item->position, vector2d());
         shared_ptr<PhysicsBody> p = currentBody->item;
         mesh m = currentBody->item->getMesh();   
 
@@ -215,8 +217,8 @@ public:
             vector2d v = p->velocity;
             v = v.normalize();
             v.multiply(25 * (1/viewport->zoom));
-            DrawLine(int((viewport->translate(p->position, vector2d())).x),
-                int((viewport->translate(p->position, vector2d())).y),
+            DrawLine(int(tpp.x),
+                int(tpp.y),
                 int((viewport->translate(p->position, v)).x),
                 int((viewport->translate(p->position, v)).y),
                 olc::MAGENTA);
@@ -226,12 +228,25 @@ public:
             vector2d a = p->accelleration;
             a = a.normalize();
             a.multiply(30 * (1/viewport->zoom));
-            DrawLine(int((viewport->translate(p->position, vector2d())).x),
-                int((viewport->translate(p->position, vector2d())).y),
+            DrawLine(int(tpp.x),
+                int(tpp.y),
                 int((viewport->translate(p->position, a)).x),
                 int((viewport->translate(p->position, a)).y),
-                olc::CYAN);
-            
+                olc::CYAN);            
+        }
+        if (util->body_debug_draw) {
+            string temp = "ID:";
+            temp.append(to_string(currentBody->item->id));
+            DrawString(int(tpp.x), int(tpp.y), temp, Pixel(100,100,100));//id
+            temp = "Mass:";
+            temp.append(to_string(currentBody->item->mass));
+            DrawString(int(tpp.x), int(tpp.y)+15, temp, Pixel(100, 100, 100));//mass
+            temp = "Velocity:(";
+            temp.append(to_string(currentBody->item->velocity.x));
+            temp.append(",");
+            temp.append(to_string(currentBody->item->velocity.y));
+            temp.append(")");
+            DrawString(int(tpp.x), int(tpp.y)+30, temp, Pixel(100, 100, 100));//velocity?
         }
     }
 

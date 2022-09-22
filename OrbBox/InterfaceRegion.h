@@ -74,18 +74,7 @@ public:void takeAction(int _action) {
 	case 2://force pause
 		util->game_state = 1;
 		break;
-	case 3://pause and create new (virtual?) body at camera position
-		//util->game_state;
-		//create virtual body at camera center
-		//grab mass from slider / numerical input
-		//use mouse to position
-		//make new interfaceRegion and use widget to make a velocity vector with prediction path
-		//use that data in _bodyList->createBody();
-		//vector2d tempvec = ;
-		physicsBodies->createBody(
-			viewport->reverseTranslate(vector2d()),
-			vector2d((double(rand() % 10) / 10) - 1,
-			(double(rand() % 10) / 10) - 1), 300);
+	case 3://go into edit (NOT RESET) mode and add virtual body with handles
 		break;
 	case 4:
 		//save to existing filepath
