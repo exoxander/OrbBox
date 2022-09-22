@@ -45,7 +45,7 @@ public:
         virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
         virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
         virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
-        virtualBodies->createBody(vector2d(-240, 50), vector2d(-.1, .9), 300);//moon of planet 2
+        virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
         virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
         //physicsBodies->makeActual(virtualBodies);
         
@@ -152,6 +152,7 @@ public:
     void drawVirtuals(shared_ptr<bodyList> _bodies, double _scale = 1){
         shared_ptr<body> currentBody = _bodies->head;
         shared_ptr<bodyList> pathList = make_shared<bodyList>();
+        pathList->makeActual(virtualBodies);
 
         while (currentBody != nullptr) {//virtuals
             vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
@@ -159,12 +160,16 @@ public:
             currentBody = currentBody->next;
         }
 
-        solver.step(pathList, 1);
-        currentBody = pathList->head;
-        while (currentBody != nullptr) {//virtuals
-            vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
-            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale * .5), olc::RED);
-            currentBody = currentBody->next;
+        for (int n = 0; n < 15; n++) {
+            for (int i = 0; i < 10; i++) {
+                solver.step(pathList, .001);
+            }
+            currentBody = pathList->head;
+            while (currentBody != nullptr) {//virtuals path
+                vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
+                FillCircle(int(tPos.x), int(tPos.y), 3, olc::RED);
+                currentBody = currentBody->next;
+            }
         }
     }
     void drawPath(shared_ptr<body> _body ,int _iterations = 5) {

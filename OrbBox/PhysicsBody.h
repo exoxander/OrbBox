@@ -186,12 +186,12 @@ public:void createBody(vector2d _position, vector2d _velocity, double _mass, mes
 	PhysicsBody newPhysicsBody = PhysicsBody(_position, _velocity, _mass, createdBodies, _mesh);//create physics body
 	addBody(newPhysicsBody);//add to global list
 }
-public:void makeActual(shared_ptr<bodyList> _bodyList) {//copy all items from virtual list to actual list
-	shared_ptr<body> currentBody = _bodyList->head;
+public:void makeActual(shared_ptr<bodyList> _virtualList) {//copy all items from virtual list to actual list
+	shared_ptr<body> currentBody = _virtualList->head;
 		while (currentBody != nullptr) {
 			vector2d nextPosition = currentBody->item->position;
 			vector2d nextVelocity = currentBody->item->velocity;
-			int nextID = currentBody->item->id;
+			//int nextID = currentBody->item->id;
 			double nextMass = currentBody->item->mass;
 			mesh nextMesh = currentBody->item->bodyMesh;
 

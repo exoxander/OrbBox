@@ -94,7 +94,8 @@ public:void takeAction(int _action) {
 	case 5://force edit mode
 		util->game_state = 0;
 		physicsBodies->reset();
-		viewport->location = vector2d();//not working?
+		viewport->location = vector2d(0,0);//not working?
+		viewport->target = nullptr;
 		viewport->zoom = 1;
 		break;
 	case 6://edit mode -> sim paused

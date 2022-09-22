@@ -145,7 +145,7 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 	}
 
 	//update all velocities, doing this seperate seems to solve an energy leak in the system
-	currentBody = allBodies->head;
+	currentBody = _bodies->head;
 	while (currentBody != nullptr) {
 		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
