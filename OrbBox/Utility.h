@@ -202,7 +202,7 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
 	mesh m;
 	//origin vertex
-	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	shared_ptr<vertex> origin = make_shared<vertex>(0,0,0);
 	shared_ptr<vertex> currentVex = origin;
 	shared_ptr<polygon> currentPgon;
 	m.vertexList = origin;
@@ -252,6 +252,7 @@ public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a
 	}
 	return m;
 }
+	  
 };
 
 
@@ -286,6 +287,48 @@ public:Utility() {
 	game_state = 0;
 	//default constructor
 }
+public:mesh generateBox(double _radius) {
+	mesh m;
+	shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
+	shared_ptr<vertex> currentVex = origin;
+	shared_ptr<vertex> nextVex;
+	shared_ptr<polygon> currentPgon;
+	shared_ptr<polygon> nextPgon;
+	m.vertexList = origin;
+	m.vexLength = 1;
 
+	//top left
+	nextVex = make_shared<vertex>(-_radius, -_radius, 1);
+	currentVex->next = nextVex;
+	currentVex = nextVex;
+	//top right
+	nextVex = make_shared<vertex>(_radius, -_radius, 2);
+	currentVex->next = nextVex;
+	currentVex = nextVex;
+	//bottom right
+	nextVex = make_shared<vertex>(_radius, _radius, 3);
+	currentVex->next = nextVex;
+	currentVex = nextVex;
+	//bottom left
+	nextVex = make_shared<vertex>(-_radius, _radius, 4);
+	currentVex->next = nextVex;
+	currentVex = nextVex;
+	m.vexLength = 5;
+
+	//polygons
+	currentPgon = make_shared<polygon>(m.vertexList, m.vertexList->next, m.vertexList->next->next, 0);
+	m.polygonList = currentPgon;
+	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next, m.vertexList->next->next->next, 1);
+	currentPgon->next = nextPgon;
+	currentPgon = nextPgon;
+	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next->next, m.vertexList->next->next->next->next, 2);
+	currentPgon->next = nextPgon;
+	currentPgon = nextPgon;
+	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next->next->next, m.vertexList->next, 3);
+	currentPgon->next = nextPgon;
+	m.pgonLength = 4;
+
+	return m;
+}
 
 };

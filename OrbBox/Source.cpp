@@ -22,12 +22,14 @@ public:
 private:
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
+    int colorOffset = rand();
     shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
     shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
     shared_ptr<bodyList> virtualBodies = make_shared<bodyList>();
     shared_ptr<MarkupCore> readWriter = make_shared<MarkupCore>(virtualBodies, physicsBodies);
 
+    shared_ptr<vertex> virtualPath = nullptr;
     string frameTime = "Frame Time:";
     string bodyCount = "Scene Bodies:";
     Pixel BGC = Pixel(10, 10, 10);//background color
@@ -41,11 +43,14 @@ public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
-        viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         util->game_state = 0;
+        util->virtual_list_changed = true;
+        viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
         virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
         virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
+        //make planet 2 a box
+        virtualBodies->head->next->next->item->bodyMesh = util->generateBox(6);
         virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
         virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
         //physicsBodies->makeActual(virtualBodies);
@@ -123,7 +128,7 @@ public:
 
         //----------------------< DRAW VIRTUAL BODIES >------------------------------
         if (util->game_state == 0) {//edit mode
-            drawVirtuals(virtualBodies, viewport->zoom);
+            virtualPath = drawVirtuals(virtualBodies, virtualPath, viewport->zoom);
         }
 
         //----------------------< DRAW PHYSICS BODIES >------------------------------
@@ -158,8 +163,11 @@ public:
     }
 
     //---------------------< DRAW VIRTUALS >------------------------------
-    void drawVirtuals(shared_ptr<bodyList> _bodies, double _scale = 1){
+    shared_ptr<vertex> drawVirtuals(shared_ptr<bodyList> _bodies, shared_ptr<vertex> _vPath, double _scale = 1){
         shared_ptr<body> currentBody = _bodies->head;
+        shared_ptr<vertex> nextHead = nullptr;
+        shared_ptr<vertex> currentVertex;
+        shared_ptr<vertex> nextVertex;
         shared_ptr<bodyList> pathList = make_shared<bodyList>();
         pathList->makeActual(virtualBodies);
 
@@ -168,17 +176,44 @@ public:
             FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale));
             currentBody = currentBody->next;
         }
-
-        for (int n = 0; n < 15; n++) {
-            for (int i = 0; i < 10; i++) {
-                solver.step(pathList, .001);
+        currentBody = pathList->head;
+        if (util->virtual_list_changed) {//use chain of vertecies for positions, vertex ID = body ID
+            for (int n = 0; n < 15; n++) {
+                for (int i = 0; i < 10; i++) {
+                    solver.step(pathList, .001);
+                }
+                while (currentBody != nullptr) {//virtuals path
+                    vector2d tPos = currentBody->item->position;
+                    if (nextHead != nullptr) {
+                        nextVertex = make_shared<vertex>(tPos, currentBody->item->id);
+                        currentVertex->next = nextVertex;
+                        currentVertex = nextVertex;
+                        //DrawString(0, 60, "drawing to vPath");
+                    }
+                    else {
+                        nextHead = make_shared<vertex>(tPos, currentBody->item->id);
+                        currentVertex = nextHead;
+                    }
+                    currentBody = currentBody->next;
+                }
+                currentBody = pathList->head;
             }
-            currentBody = pathList->head;
-            while (currentBody != nullptr) {//virtuals path
-                vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
-                FillCircle(int(tPos.x), int(tPos.y), 3, olc::Pixel(60,60,120));
-                currentBody = currentBody->next;
+            
+        }
+        else {
+            currentVertex = _vPath;
+            while (currentVertex != nullptr) {
+                vector2d vertPos = viewport->translate(currentVertex->position,vector2d());
+                DrawCircle(int(vertPos.x), int(vertPos.y), 4, olc::RED);
+                currentVertex = currentVertex->next;
             }
+        }
+        util->virtual_list_changed = false;       
+        if (nextHead != nullptr) {
+            return nextHead;
+        }
+        else {
+            return _vPath;
         }
     }
     void drawPath(shared_ptr<body> _body ,int _iterations = 5) {
@@ -205,7 +240,7 @@ public:
                  polygonColor = colorList[currentPgon->id % colorListLength];
             }
             else {//for now color based on body ID, give actual texture later?
-                polygonColor = colorList[currentBody->item->id % colorListLength];
+                polygonColor = colorList[(currentBody->item->id + colorOffset) % colorListLength];
             }
             FillTriangle(
                 int(a.x), int(a.y),//A
