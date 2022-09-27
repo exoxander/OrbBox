@@ -2,7 +2,7 @@
 #include <memory>
 #include "PhysicsBody.h"
 using std::shared_ptr;
-
+double collision_factor = 1.2;
 
 //--------------< MATRIX ITEM >---------------
 struct matrixItem {
@@ -96,10 +96,14 @@ public:void generateMatrix() {
 //--------------------< PHYSICS SOLVER >------------------------
 class PhysicsSolver {
 	distanceFactorMatrix distMatrix;
+	eventPairList physicsEvents;
 	shared_ptr<bodyList> allBodies;
+	double impactForceTransfer;
 public:PhysicsSolver(shared_ptr<bodyList> _bodyList) {
 	distMatrix = distanceFactorMatrix(_bodyList);
 	allBodies = _bodyList;
+	physicsEvents = eventPairList();
+	impactForceTransfer = 1;
 }
 
 	  //step function does all the calculations
@@ -136,6 +140,14 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 				dx -= actingBody->item->mass * distanceFactor * distanceFactor * x;
 				dy -= actingBody->item->mass * distanceFactor * distanceFactor * y;
 				currentBody->item->accelleration.add(dx, dy);
+
+				//check if close enough for collision to be an issue
+				if (rawDistance < (currentBody->item->radius + actingBody->item->radius)*collision_factor) {
+					//check if already marked for event
+					if (!physicsEvents.checkPair(currentBody->item->id, actingBody->item->id, 0)) {
+						physicsEvents.createPair(currentBody, actingBody, 0);//mark for better collision detection
+					}
+				}
 			}
 			actingBody = actingBody->next;//move to next
 		}
@@ -151,6 +163,47 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
 		currentBody = currentBody->next;
 	}
+
+	//check for collisions
+	shared_ptr<eventPair> currentPair = physicsEvents.head;
+	while (currentPair != nullptr) {
+		computeRadiusCollision(currentPair, _bodies);
+		currentPair = currentPair->next;
+	}
+	physicsEvents.head = nullptr;
+}
+
+	  //----------------------------< COMPUTE COLLISIONS >------------------------------
+public:void computeRadiusCollision(shared_ptr<eventPair> _eventPair, shared_ptr<bodyList> _bodies) {
+	//if raw distance is less than the two radiuses, use distance vector to move both bodies away and apply force equivalent to their masses
+	double distance = 0;
+	double intersect = 0;
+	vector2d normalizedDiff;
+	vector2d difference = _eventPair->first->item->position;
+	difference.subtract(_eventPair->second->item->position);
+	distance = difference.getMagnitude();
+	normalizedDiff = difference.normalize();
+	intersect = abs(distance) - (_eventPair->first->item->radius + _eventPair->second->item->radius);//if positive, colliding, else, no collision
+
+	//if colliding, do physics stuff
+	if (intersect > 0) {
+		//teleport out of colliding
+		//normalizedDiff.multiply(intersect);
+		//first should subtract, second should add
+		//_eventPair->first->item->position.subtract(normalizedDiff);
+		//_eventPair->second->item->position.add(normalizedDiff);
+		//change velocities to post collision values
+		_eventPair->first->item->position = vector2d(-100, 0);
+		_eventPair->first->item->velocity = vector2d();
+
+		_eventPair->second->item->position = (vector2d(100, 0));
+		_eventPair->second->item->velocity = vector2d();
+		
+	}
+
+}
+public:void computeMeshCollision() {
+
 }
 
 	  //-------------------------< USING DISTANCE MATRIX >------------------------------
@@ -206,5 +259,6 @@ public: void matrixStep(double stepFactor = 1) {
 		currentBody = currentBody->next;
 	}
 }
+	 
 };
 

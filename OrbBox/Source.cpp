@@ -46,14 +46,17 @@ public:
         util->game_state = 0;
         util->virtual_list_changed = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-        virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
-        virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
-        virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
-        //make planet 2 a box
-        virtualBodies->head->next->next->item->bodyMesh = util->generateBox(6);
-        virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
-        virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
-        //physicsBodies->makeActual(virtualBodies);
+
+        //default system
+        //virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
+        //virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
+        //virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
+        ////make planet 2 a box
+        //virtualBodies->head->next->next->item->bodyMesh = util->generateBox(6);
+        //virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
+        //virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
+        virtualBodies->createBody(vector2d(-50, 0), vector2d(0,.01), 4000);//left one
+        virtualBodies->createBody(vector2d(50, 0), vector2d(), 2000);
         
         return true;
     }
@@ -110,7 +113,7 @@ public:
                 util->body_debug_draw = 0;
             }
         }
-        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld) { UI.takeAction(4); }
+        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld && (util->game_state == 1 || util->game_state == 2)) { UI.takeAction(4); }
 
         //-------------------< DRAW BACKGROUND >------------------------
         if (util->game_state == 0) {

@@ -29,6 +29,10 @@ public: void add(vector2d _value) {
 	x += _value.x;
 	y += _value.y;
 }
+public:void subtract(vector2d _value) {
+	x -= _value.x;
+	y -= _value.y;
+}
 public:void multiply(vector2d _value) {
 	x *= _value.x;
 	y *= _value.y;
@@ -198,60 +202,6 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 	vexLength = _vexLength;
 	pgonLength = _pgonLength;
 }
-	  //------------< GENERATE CIRCLE FUNCTION >------------------
-public:mesh generateCircle(int _radius = 10, int _vertecies = 12) {//generates a circle with the desired radius and vertex count
-	mesh m;
-	//origin vertex
-	shared_ptr<vertex> origin = make_shared<vertex>(0,0,0);
-	shared_ptr<vertex> currentVex = origin;
-	shared_ptr<polygon> currentPgon;
-	m.vertexList = origin;
-	m.vexLength = 1;
-
-	double angle = (2 * PI) / double(_vertecies);//angle needs to be in radians
-
-	for (int i = 0; i < _vertecies; i++) {
-		//generate vertecies and add to vertexList
-		//x1 = x0*cos() - y0*sin()
-		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at vector2d (radius, 0)
-		vector2d next = vector2d(_radius * cos(angle * i), _radius * sin(angle * i));//coordinant of next vertex
-		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
-
-		//add to vertex chain and increase vexlength
-		currentVex->next = vert;
-		vert->prev = currentVex;
-		vert->id = i + 1;
-		m.vexLength++;
-		currentVex = vert;
-
-		//make polygons
-		if (m.vexLength == 3) {//first polygon
-			m.polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
-			m.pgonLength = 1;
-			currentPgon = m.polygonList;
-		}
-		else if (m.vexLength > 3 && i < _vertecies) {//middle polygons
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			m.pgonLength++;
-			currentPgon = pgon;
-
-		}
-		//if near end, create final polygon
-		if (m.vexLength == _vertecies + 1) {//final polygon
-		//origin, most recent vertex, first polygon.b
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			m.pgonLength++;
-			currentPgon = pgon;
-		}
-
-	}
-	return m;
-}
 	  
 };
 
@@ -329,6 +279,58 @@ public:mesh generateBox(double _radius) {
 	m.pgonLength = 4;
 
 	return m;
+}
+public:mesh generateCircle(double mass, int _vertecies) {
+	mesh m;
+	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
+	shared_ptr<vertex> currentVex = origin;
+	shared_ptr<polygon> currentPgon;
+	m.vertexList = origin;
+	m.vexLength = 1;
+	int vertecies = _vertecies;
+
+	double angle = (2 * PI) / double(vertecies);//angle needs to be in radians
+
+	for (int i = 0; i < vertecies; i++) {
+		//generate vertecies and add to vertexList
+		//x1 = x0*cos() - y0*sin()
+		//y1 = x0*sin() + y0*cos()
+		//create vertex by angle * i starting at vector2d (radius, 0)
+		vector2d next = vector2d(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
+		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
+
+		//add to vertex chain and increase vexlength
+		currentVex->next = vert;
+		vert->prev = currentVex;
+		vert->id = i + 1;
+		m.vexLength++;
+		currentVex = vert;
+
+		//make polygons
+		if (m.vexLength == 3) {//first polygon
+			m.polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
+			m.pgonLength = 1;
+			currentPgon = m.polygonList;
+		}
+		else if (m.vexLength > 3 && i < vertecies) {//middle polygons
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			m.pgonLength++;
+			currentPgon = pgon;
+
+		}
+		//if near end, create final polygon
+		if (m.vexLength == vertecies + 1) {//final polygon
+		//origin, most recent vertex, first polygon.b
+			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
+			currentPgon->next = pgon;
+			pgon->prev = currentPgon;
+			m.pgonLength++;
+			currentPgon = pgon;
+		}
+
+	}
 }
 
 };

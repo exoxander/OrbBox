@@ -200,7 +200,66 @@ public:void makeActual(shared_ptr<bodyList> _virtualList) {//copy all items from
 	}
 }
 };
+//-----------------< EVENT PAIR LIST >------------------------
 
+struct eventPair {
+	shared_ptr<body> first;
+	shared_ptr<body> second;
+	shared_ptr<eventPair> next;
+	shared_ptr<eventPair> prev;
+	int eventID;
+	/*event IDs
+	0: collision with radius
+	1: collision with mesh
+	*/
+public:eventPair(shared_ptr<body> _first, shared_ptr<body> _second, int _eventID = 0) {
+	first = _first;
+	second = _second;
+	eventID = _eventID;
+	next = nullptr;
+	prev = nullptr;
+}
+
+};
+struct eventPairList {
+	shared_ptr<eventPair> head;
+public: eventPairList() {
+	head = nullptr;
+}
+public:void reset() {
+	head = nullptr;
+}
+public:bool checkPair(int firstID, int secondID, int eventID = 0) {
+	//checks if a given pair exists
+	shared_ptr<eventPair> currentPair = head;
+	while (currentPair != nullptr) {
+		if (currentPair->first->item->id == firstID && currentPair->second->item->id == secondID && currentPair->eventID == eventID) {
+			return true;
+		}
+		else if (currentPair->first->item->id == secondID && currentPair->second->item->id == firstID && currentPair->eventID == eventID) {
+			return true;
+		}
+		currentPair = currentPair->next;
+	}
+	return false;
+}
+public:void createPair(shared_ptr<body> _first, shared_ptr<body> _second, int _eventID = 0) {
+	shared_ptr<eventPair> temp = head;
+	shared_ptr<eventPair> newPair = nullptr;
+	if (head == nullptr) {
+		head = make_shared<eventPair>(_first, _second, _eventID);
+	}
+	else {
+		while (temp->next != nullptr) {
+			temp = temp->next;//once temp->next is nullptr, stop and add
+		}
+		newPair = make_shared<eventPair>(_first, _second, _eventID);
+		temp->next = newPair;
+		newPair->prev = temp;
+	}
+
+}
+};
 
 
 

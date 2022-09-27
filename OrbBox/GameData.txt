@@ -485,114 +485,48 @@
 			</vertex>
 			<vertex>
 				{id:1}
-				{positionX:4.47214}
-				{positionY:0}
+				{positionX:-6}
+				{positionY:-6}
 			</vertex>
 			<vertex>
 				{id:2}
-				{positionX:3.61803}
-				{positionY:2.62866}
+				{positionX:6}
+				{positionY:-6}
 			</vertex>
 			<vertex>
 				{id:3}
-				{positionX:1.38197}
-				{positionY:4.25325}
+				{positionX:6}
+				{positionY:6}
 			</vertex>
 			<vertex>
 				{id:4}
-				{positionX:-1.38197}
-				{positionY:4.25325}
-			</vertex>
-			<vertex>
-				{id:5}
-				{positionX:-3.61803}
-				{positionY:2.62866}
-			</vertex>
-			<vertex>
-				{id:6}
-				{positionX:-4.47214}
-				{positionY:1.6054e-08}
-			</vertex>
-			<vertex>
-				{id:7}
-				{positionX:-3.61803}
-				{positionY:-2.62866}
-			</vertex>
-			<vertex>
-				{id:8}
-				{positionX:-1.38197}
-				{positionY:-4.25325}
-			</vertex>
-			<vertex>
-				{id:9}
-				{positionX:1.38197}
-				{positionY:-4.25325}
-			</vertex>
-			<vertex>
-				{id:10}
-				{positionX:3.61803}
-				{positionY:-2.62866}
+				{positionX:-6}
+				{positionY:6}
 			</vertex>
 		</vertexList>
 		<polygonList>
 			<polygon>
-				{id:1}
+				{id:0}
 				{vertexA:0}
 				{vertexB:1}
 				{vertexC:2}
 			</polygon>
 			<polygon>
-				{id:2}
+				{id:1}
 				{vertexA:0}
 				{vertexB:2}
 				{vertexC:3}
 			</polygon>
 			<polygon>
-				{id:3}
+				{id:2}
 				{vertexA:0}
 				{vertexB:3}
 				{vertexC:4}
 			</polygon>
 			<polygon>
-				{id:4}
+				{id:3}
 				{vertexA:0}
 				{vertexB:4}
-				{vertexC:5}
-			</polygon>
-			<polygon>
-				{id:5}
-				{vertexA:0}
-				{vertexB:5}
-				{vertexC:6}
-			</polygon>
-			<polygon>
-				{id:6}
-				{vertexA:0}
-				{vertexB:6}
-				{vertexC:7}
-			</polygon>
-			<polygon>
-				{id:7}
-				{vertexA:0}
-				{vertexB:7}
-				{vertexC:8}
-			</polygon>
-			<polygon>
-				{id:8}
-				{vertexA:0}
-				{vertexB:8}
-				{vertexC:9}
-			</polygon>
-			<polygon>
-				{id:9}
-				{vertexA:0}
-				{vertexB:9}
-				{vertexC:10}
-			</polygon>
-			<polygon>
-				{id:10}
-				{vertexA:0}
-				{vertexB:10}
 				{vertexC:1}
 			</polygon>
 		</polygonList>
@@ -600,10 +534,10 @@
 </object>
 <object>
 	{objectID:4}
-	{positionX:-240}
-	{positionY:50}
-	{velocityX:-0.1}
-	{velocityY:0.9}
+	{positionX:-250}
+	{positionY:45}
+	{velocityX:-0.25}
+	{velocityY:1.2}
 	{mass:300}
 	<mesh>
 		<vertexList>
@@ -731,6 +665,77 @@
 			<vertex>
 				{id:5}
 				{positionX:-2.44949}
+				{positionY:8.79316e-09}
+			</vertex>
+			<vertex>
+				{id:6}
+				{positionX:-1.73205}
+				{positionY:-1.73205}
+			</vertex>
+			<vertex>
+				{id:7}
+				{positionX:-1.31897e-08}
+				{positionY:-2.44949}
+			</vertex>
+			<vertex>
+				{id:8}
+				{positionX:1.73205}
+				{positionY:-1.73205}
+			</vertex>
+		</vertexList>
+		<polygonList>
+			<polygon>
+				{id:1}
+				{vertexA:0}
+				{vertexB:1}
+				{vertexC:2}
+			</polygon>
+			<polygon>
+				{id:2}
+				{vertexA:0}
+				{vertexB:2}
+				{vertexC:3}
+			</polygon>
+			<polygon>
+				{id:3}
+				{vertexA:0}
+				{vertexB:3}
+				{vertexC:4}
+			</polygon>
+			<polygon>
+				{id:4}
+				{vertexA:0}
+				{vertexB:4}
+				{vertexC:5}
+			</polygon>
+			<polygon>
+				{id:5}
+				{vertexA:0}
+				{vertexB:5}
+				{vertexC:6}
+			</polygon>
+			<polygon>
+				{id:6}
+				{vertexA:0}
+				{vertexB:6}
+				{vertexC:7}
+			</polygon>
+			<polygon>
+				{id:7}
+				{vertexA:0}
+				{vertexB:7}
+				{vertexC:8}
+			</polygon>
+			<polygon>
+				{id:8}
+				{vertexA:0}
+				{vertexB:8}
+				{vertexC:1}
+			</polygon>
+		</polygonList>
+	</mesh>
+</object>
+-2.44949}
 				{positionY:8.79316e-09}
 			</vertex>
 			<vertex>
