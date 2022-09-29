@@ -160,8 +160,22 @@ public: void removeBody(int _id) {
 	shared_ptr<body> current = head;
 	while (current != nullptr) {
 		if (current->item->id == _id) {
-			current->prev->next = current->next;
-			current->next->prev = current->prev->next;
+			if (current == head && current == tail) {
+				head = nullptr;
+				tail = nullptr;
+			}else if (current == head && current != tail) {
+				head = current->next;
+				current->next->prev = nullptr;
+			}
+			else if (current != head && current == tail) {
+				current->prev->next = nullptr;
+				tail = current->prev;
+			}
+			else {
+				current->prev->next = current->next;
+				current->next->prev = current->prev;
+			}
+			length--;
 			current->next = nullptr;
 			current->prev = nullptr;
 			break;

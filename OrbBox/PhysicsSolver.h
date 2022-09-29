@@ -170,22 +170,24 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 		shared_ptr<body> second = currentEvent->second;
 		if (currentEvent->eventID == 0 && simpleCollision(currentEvent, _bodies)) {
 			if (_bodies->exists(first->item->id) && _bodies->exists(second->item->id)) {
-				//double newMass = first->item->mass + second->item->mass;
-				//vector2d difference = first->item->position;
-				//difference.subtract(second->item->position);
-				//difference.multiply(.5);//fix to accurately transform new body later
-				//
-				//vector2d newPosition = first->item->position;
-				//newPosition.add(difference);
-				//vector2d newVelocity = first->item->velocity;
-				//newVelocity.multiply(first->item->mass);
-				//vector2d impactorMomentum = second->item->velocity;
-				//impactorMomentum.multiply(second->item->mass);
-				//
-				//newVelocity.add(impactorMomentum);
-				//newVelocity.multiply(1 / newMass);
-				//first->item->position = newPosition;
-				//first->item->velocity = newVelocity;
+				double newMass = first->item->mass + second->item->mass;
+				vector2d difference = first->item->position;
+				difference.subtract(second->item->position);
+				difference.multiply(.5);//fix to accurately transform new body later
+				
+				vector2d newPosition = first->item->position;
+				newPosition.add(difference);
+				vector2d newVelocity = first->item->velocity;
+				newVelocity.multiply(first->item->mass);
+				vector2d impactorMomentum = second->item->velocity;
+				impactorMomentum.multiply(second->item->mass);
+				
+				newVelocity.add(impactorMomentum);
+				newVelocity.multiply(1 / newMass);
+
+				first->item->mass = newMass;
+				first->item->position = newPosition;
+				first->item->velocity = newVelocity;
 				_bodies->removeBody(second->item->id);
 			}
 		}
