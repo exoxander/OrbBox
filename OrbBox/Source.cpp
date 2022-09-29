@@ -55,8 +55,9 @@ public:
         //virtualBodies->head->next->next->item->bodyMesh = util->generateBox(6);
         //virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
         //virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
-        virtualBodies->createBody(vector2d(-50, 0), vector2d(0,.01), 4000);//left one
-        virtualBodies->createBody(vector2d(50, 0), vector2d(), 2000);
+        virtualBodies->createBody(vector2d(-10, 0), vector2d(.1,.01), 4000);//left one
+        virtualBodies->createBody(vector2d(10, 0), vector2d(-.1,0), 2000);
+        virtualBodies->createBody(vector2d(0, 40), vector2d(0,-.1), 3000);
         
         return true;
     }

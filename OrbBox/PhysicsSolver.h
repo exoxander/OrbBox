@@ -161,20 +161,48 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 	while (currentBody != nullptr) {
 		currentBody->item->velocity.add(currentBody->item->accelleration);//change existing velocity
 		currentBody->item->position.add(currentBody->item->velocity);//add velocity to position
-		currentBody = currentBody->next;
+		currentBody = currentBody->next;		
+	}
+	//on simple collision, merge bodies
+	shared_ptr<eventPair> currentEvent = physicsEvents.head;
+	while (currentEvent != nullptr) {
+		shared_ptr<body> first = currentEvent->first;
+		shared_ptr<body> second = currentEvent->second;
+		if (currentEvent->eventID == 0 && simpleCollision(currentEvent, _bodies)) {
+			if (_bodies->exists(first->item->id) && _bodies->exists(second->item->id)) {
+				//double newMass = first->item->mass + second->item->mass;
+				//vector2d difference = first->item->position;
+				//difference.subtract(second->item->position);
+				//difference.multiply(.5);//fix to accurately transform new body later
+				//
+				//vector2d newPosition = first->item->position;
+				//newPosition.add(difference);
+				//vector2d newVelocity = first->item->velocity;
+				//newVelocity.multiply(first->item->mass);
+				//vector2d impactorMomentum = second->item->velocity;
+				//impactorMomentum.multiply(second->item->mass);
+				//
+				//newVelocity.add(impactorMomentum);
+				//newVelocity.multiply(1 / newMass);
+				//first->item->position = newPosition;
+				//first->item->velocity = newVelocity;
+				_bodies->removeBody(second->item->id);
+			}
+		}
+		currentEvent = currentEvent->next;
 	}
 
-	//check for collisions
-	shared_ptr<eventPair> currentPair = physicsEvents.head;
-	while (currentPair != nullptr) {
-		computeRadiusCollision(currentPair, _bodies);
-		currentPair = currentPair->next;
-	}
+	////check for collisions
+	//shared_ptr<eventPair> currentPair = physicsEvents.head;
+	//while (currentPair != nullptr) {
+	//	computeRadiusCollision(currentPair, _bodies);
+	//	currentPair = currentPair->next;
+	//}
 	physicsEvents.head = nullptr;
 }
 
 	  //----------------------------< COMPUTE COLLISIONS >------------------------------
-public:void computeRadiusCollision(shared_ptr<eventPair> _eventPair, shared_ptr<bodyList> _bodies) {
+public:bool simpleCollision(shared_ptr<eventPair> _eventPair, shared_ptr<bodyList> _bodies) {
 	//if raw distance is less than the two radiuses, use distance vector to move both bodies away and apply force equivalent to their masses
 	double distance = 0;
 	double intersect = 0;
@@ -186,21 +214,10 @@ public:void computeRadiusCollision(shared_ptr<eventPair> _eventPair, shared_ptr<
 	intersect = abs(distance) - (_eventPair->first->item->radius + _eventPair->second->item->radius);//if positive, colliding, else, no collision
 
 	//if colliding, do physics stuff
-	if (intersect > 0) {
-		//teleport out of colliding
-		//normalizedDiff.multiply(intersect);
-		//first should subtract, second should add
-		//_eventPair->first->item->position.subtract(normalizedDiff);
-		//_eventPair->second->item->position.add(normalizedDiff);
-		//change velocities to post collision values
-		_eventPair->first->item->position = vector2d(-100, 0);
-		_eventPair->first->item->velocity = vector2d();
-
-		_eventPair->second->item->position = (vector2d(100, 0));
-		_eventPair->second->item->velocity = vector2d();
-		
+	if (intersect > 0) {		
+		return true;
 	}
-
+	return false;
 }
 public:void computeMeshCollision() {
 

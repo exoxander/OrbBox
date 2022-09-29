@@ -66,7 +66,7 @@ public:bool checkMouseInBounds(int _x, int _y) {
 public:void takeAction(int _action) {
 	switch (_action) {
 	case 0://toggle pause / play
-		util->game_state = (util->game_state == 2 ? 1 : 2);
+		util->game_state = (util->game_state == 1 ? 2 : 1);
 		break;
 	case 1://force play
 		util->game_state = 2;
@@ -88,7 +88,7 @@ public:void takeAction(int _action) {
 		viewport->zoom = 1;
 		break;
 	case 6://edit mode -> sim paused
-		util->game_state = 1;
+		util->game_state = 2;
 		physicsBodies->makeActual(virtualBodies);
 		break;
 	}

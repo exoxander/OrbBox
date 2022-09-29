@@ -134,19 +134,17 @@ public:void addBody(shared_ptr<PhysicsBody> _body) {
 	}
 }
 public:bool exists(int _id) {
-	bool found = false;
 	shared_ptr<body> currentBody = head;
 	while (currentBody != nullptr) {
 		if (currentBody->item->id == _id) {
-			found = true;
-			break;
+			return true;
 		}
 		else {
 			currentBody = currentBody->next;
 		}
 
 	}
-	return found;
+	return false;
 }
 public:shared_ptr<body> getBody(int _id) {
 	shared_ptr<body> currentBody = head;
@@ -159,21 +157,16 @@ public:shared_ptr<body> getBody(int _id) {
 	return shared_ptr<body>();//to make the compiler happy, never actually gets used
 }
 public: void removeBody(int _id) {
-	bool found = false;
 	shared_ptr<body> current = head;
-	do {
+	while (current != nullptr) {
 		if (current->item->id == _id) {
-			//logically remove from list
 			current->prev->next = current->next;
-			current->next->prev = current->prev;
-			//call deconstructor on current once thats completed
-			length--;
+			current->next->prev = current->prev->next;
+			current->next = nullptr;
+			current->prev = nullptr;
 			break;
 		}
-	} while (current->next);
-	if (!found) {
-		//throw an error?
-		//or could just use .exists to check beforehand
+		current = current->next;
 	}
 }
 public:void createBody(vector2d _position, vector2d _velocity, double _mass) {
@@ -237,6 +230,16 @@ public:bool checkPair(int firstID, int secondID, int eventID = 0) {
 			return true;
 		}
 		else if (currentPair->first->item->id == secondID && currentPair->second->item->id == firstID && currentPair->eventID == eventID) {
+			return true;
+		}
+		currentPair = currentPair->next;
+	}
+	return false;
+}
+public:bool checkIn(int bodyID) {
+	shared_ptr<eventPair> currentPair = head;
+	while (currentPair != nullptr) {
+		if (currentPair->first->item->id == bodyID || currentPair->second->item->id == bodyID) {
 			return true;
 		}
 		currentPair = currentPair->next;
