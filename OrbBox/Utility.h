@@ -8,8 +8,109 @@ using std::string;
 #define PI 3.14159265//used in trig functions
 
 //general list to replace the horrendous random implimentations
-//struct List<Type t> {
-//};
+//"bin" each link in the list
+template <typename T> struct bin {
+	shared_ptr<T> item;
+	int item_id;
+	shared_ptr<bin> next;
+	shared_ptr<bin> prev;
+public:bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id = -1) {
+	item = _item;
+	next = nullptr;
+	prev = _prev;
+	id = _id;
+}
+};
+
+//the list itself and its functions
+template <typename T> struct list {
+	shared_ptr<bin> head;
+	shared_ptr<bin> tail;
+
+public:
+	list<T>() {
+	head = nullptr;
+	tail = nullptr;
+}
+
+	//adds shared pointer of the specified type to the list
+	add(shared_ptr<T> _item) {
+		shared_ptr<bin> currentItem = head;
+		shared_ptr<bin> nextItem = make_shared<bin>(_item);
+
+		if (tail == nullptr) {
+			//if the list is empty
+			head = _item;
+			tail = _item;
+		}
+		else {
+			//if list has > 1 entries
+			tail->next = nextItem;
+			nextItem->prev = tail;
+			tail = nextItem;
+		}
+
+	}
+
+	//removes an item of the matching shared pointer from the list (if it exists)
+	remove(shared_ptr<T> _item) {
+		shared_ptr<bin> currentBin = head;
+		if (tail == nullptr) {
+			//list empty, warn user?
+		}
+		else {
+			while (currentBin != nullptr) {
+				if (currentBin->item == _item) {
+					//if pointer matches
+					if (currentBin == head && currentBin == tail) {
+						//if only item in list
+						head = nullptr;
+						tail = nullptr;
+					}
+					else if (currentBin == head) {
+						//if the head of the list
+						head = currentBin->next;
+					}
+					else if (currentbin == tail) {
+						//if the tail of the list
+						tail = currentBin->prev;
+					}
+					else {
+						//if in the middle somewhere
+						currentBin->prev->next = currentBin->next;
+						currentBin->next->prev = currentBin->prev;
+					}
+
+					break;
+				}
+				currentBin = currentBin->next;
+			}
+		}
+
+	}
+	removeByBinID(int _id) {
+		//loop through until bin->ID == _id and call remove() on bin->item
+		shared_ptr<bin> currentBin = head;
+		while (currentBin != nullptr) {
+			if (currentBin->id == _id) {
+				remove(currentBin->item);
+				break;
+			}
+			currentBin = currentBin->next;
+		}
+
+	}
+	shared_ptr<T> getByBinID(int _id) {
+		//return pointer to bin->item if bin->id == _id
+		shared_ptr<bin> currentBin = head;
+		while (currentBin != nullptr) {
+			if (currentBin->id == _id) {
+				return currentBin->item;
+			}
+		}
+		return nullptr;
+	}
+};
 
 //game states
 enum struct GAME_STATE {
