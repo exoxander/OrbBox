@@ -1,4 +1,4 @@
-the plan
+THE PLAN:
      mesh list                               object list                                    body list
         |                                         |                                             |
         |                                         |                                             |
@@ -8,4 +8,4 @@ the plan
                                                                              |
                                                                --------------------------------------------------------------------
                                                                |         |          |            |             |         |        |
-                                                               ID     location   velocity   acceleration   rotation    scale     mass
+                                                               ID     position   velocity   acceleration   rotation    scale     mass
