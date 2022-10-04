@@ -178,6 +178,7 @@ public: void removeBody(int _id) {
 			length--;
 			current->next = nullptr;
 			current->prev = nullptr;
+			current->item->id = -1;
 			break;
 		}
 		current = current->next;
@@ -206,6 +207,13 @@ public:void makeActual(shared_ptr<bodyList> _virtualList) {//copy all items from
 			currentBody = currentBody->next;
 	}
 }
+	  public: void createDefaultSystem() {
+		  createBody(vector2d(), vector2d(), 50000);//central star
+		  createBody(vector2d(100, 0), vector2d(-.1, -1.5), 5500);//planet 1
+		  createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
+		  createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
+		  createBody(vector2d(60, 350), vector2d(.75, -.22), 600);//planet 3
+	  }
 };
 //-----------------< EVENT PAIR LIST >------------------------
 

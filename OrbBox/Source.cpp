@@ -22,7 +22,7 @@ public:
 private:
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
-    int colorOffset = rand();
+    int colorOffset = 3;
     shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
     shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
@@ -34,9 +34,9 @@ private:
     string bodyCount = "Scene Bodies:";
     Pixel BGC = Pixel(10, 10, 10);//background color
     Pixel textColor = Pixel(140, 140, 140);
-
+    double GRAVITY_CONSTANT = 0.001;
     PhysicsSolver solver = PhysicsSolver(physicsBodies);
-    InterfaceRegion UI = InterfaceRegion(vector2d(0, .9), vector2d(1, 1), physicsBodies, virtualBodies, util, viewport, readWriter);
+    InterfaceRegion UI = InterfaceRegion(vector2d(0, 0), vector2d(80, 12), physicsBodies, virtualBodies, util, viewport, readWriter);
 
 
 public:
@@ -48,16 +48,11 @@ public:
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
 
         //default system
-        //virtualBodies->createBody(vector2d(), vector2d(), 50000);//central star
-        //virtualBodies->createBody(vector2d(100, 0), vector2d(-.1, -1.5), 3500);//planet 1
-        //virtualBodies->createBody(vector2d(-260, 40), vector2d(.2, .6), 2000);//planet 2
-        ////make planet 2 a box
-        //virtualBodies->head->next->next->item->bodyMesh = util->generateBox(6);
-        //virtualBodies->createBody(vector2d(-250, 45), vector2d(-.25, 1.2), 300);//moon of planet 2
-        //virtualBodies->createBody(vector2d(60, 350), vector2d(.75,-.22), 600);//planet 3
-        virtualBodies->createBody(vector2d(-10, 0), vector2d(.1,.01), 4000);//left one
-        virtualBodies->createBody(vector2d(10, 0), vector2d(-.1,0), 2000);
-        virtualBodies->createBody(vector2d(0, 40), vector2d(0,-.1), 3000);
+        virtualBodies->createDefaultSystem();
+        virtualBodies->getBody(3)->item->bodyMesh = util->generateBox(6);
+        //virtualBodies->createBody(vector2d(), vector2d(), 100000);
+        //virtualBodies->createBody(vector2d(-80,0), vector2d(0,2), 1000);//mercury :D
+        //virtualBodies->createBody(vector2d(190, 0), vector2d(0, -util->getStableSpeed(100000, 190, GRAVITY_CONSTANT)), 67000);
         
         return true;
     }
@@ -66,7 +61,7 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //camera control
-        if (viewport->target != nullptr) {
+        if (viewport->target != nullptr && viewport->target->item->id != -1) {
             vector2d temp = viewport->target->item->position;
             temp.multiply(-1);
             viewport->location = temp;//force camera to follow a body
@@ -160,7 +155,7 @@ public:
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == 2) {
             //solver.matrixStep(.01);
-            solver.step(physicsBodies, .001);
+            solver.step(physicsBodies, GRAVITY_CONSTANT);
         }
 
         return true;
@@ -176,7 +171,7 @@ public:
         pathList->makeActual(virtualBodies);
 
         while (currentBody != nullptr) {//virtuals
-            vector2d tPos = viewport->translate(currentBody->item->position, vector2d());
+            vector2d tPos = viewport->translate(currentBody->item->position );
             FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale));
             currentBody = currentBody->next;
         }
@@ -226,7 +221,7 @@ public:
     //-----------------------------< DRAWMESH >-----------------------------
     void drawMesh(shared_ptr<body> _entity) {
         shared_ptr<body> currentBody = _entity;
-        vector2d tpp = viewport->translate(_entity->item->position, vector2d());
+        vector2d tpp = viewport->translate(_entity->item->position );
         shared_ptr<PhysicsBody> p = currentBody->item;
         mesh m = currentBody->item->getMesh();   
 
@@ -258,7 +253,7 @@ public:
             }
         }
 
-        //int((viewport->translate(p->position, vector2d())).x)
+        //int((viewport->translate(p->position )).x)
         if (util->velocity_debug_draw) {
             //draw normalized vector for velocity
             vector2d v = p->velocity;
@@ -301,13 +296,11 @@ public:
 
     //----------------------< DRAW USER INTERFACE >-----------------------
     void drawInterface(InterfaceRegion _window) {
-        //use 2d loop to fill a rectancle specified by window position and dimensions
-        for (int i = 1; i <= _window.dimensions.x; i++) {
-            for (int u = 1; u <= _window.dimensions.y; u++) {
-                //draw a pixel at position + i x u
-                Draw(int(_window.position.x) + i, int(_window.position.y) + u, _window.secondary);
-            }
-        }
+        int x = int(_window.position.x);
+        int y = int(_window.position.y);
+        int w = int(_window.dimensions.x);
+        int h = int(_window.dimensions.y);
+        FillRect(x,y,w,h,_window.primary);
     }
 };
 

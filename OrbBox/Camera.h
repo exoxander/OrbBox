@@ -42,18 +42,20 @@ public:void freeCamera() {
 public:void home() {
 	location = vector2d();
 }
-public:vector2d translate(vector2d parent, vector2d vertex) {//returns the coordinant of a vertex after converting between object and camera space
-	vector2d result = vector2d(
-		((vertex.x + parent.x) * zoom + location.x * zoom) + screen.x,
-		((vertex.y + parent.y) * zoom + location.y * zoom) + screen.y);
+public:vector2d translate(vector2d parent, vector2d vertex = vector2d()) {//returns the coordinant of a vertex after converting between object and camera space
+	vector2d result = parent;
+	result.add(vertex);
+	result.add(location);
+	result.multiply(zoom);
+	result.add(screen);
 	return result;
 }
-
-	  //NEEDS TO BE REDONE TO DEAL WITH ZOOM
+	  //can only return the world space, not object space coordinant
 public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	
-	vector2d result = vector2d(location.x, location.y);
-	result.multiply(-1);
-	result.add(screen);
+	vector2d result = input;
+	result.subtract(screen);
+	result.multiply(1 / zoom);
+	result.subtract(location);
 	return result;
 }
 };

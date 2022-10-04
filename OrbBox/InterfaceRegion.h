@@ -7,6 +7,11 @@ using std::cout;
 using std::endl;
 using olc::Pixel;
 
+struct interfaceItem {
+	vector2d position;
+	int id;
+};
+
 class InterfaceRegion {
 public:
 	shared_ptr<bodyList> physicsBodies;
@@ -44,9 +49,9 @@ public:InterfaceRegion(
 	readWriter = _readWriter;
 
 	position = _position;//position is given as a fraction of the screen, not a pixel distance, this was dumb
-	position.multiply(_position);
+	//position.multiply(_position);
 	dimensions = _dimensions;
-	dimensions.multiply(_position);
+	//dimensions.multiply(_position);
 	border = 5;
 	primary = Pixel(255, 150, 0);
 	secondary = Pixel(10, 48, 52);
@@ -83,7 +88,7 @@ public:void takeAction(int _action) {
 	case 5://force edit mode
 		util->game_state = 0;
 		physicsBodies->reset();
-		viewport->location = vector2d(0,0);//not working?
+		viewport->location = vector2d();//not working?
 		viewport->target = nullptr;
 		viewport->zoom = 1;
 		break;
@@ -92,6 +97,5 @@ public:void takeAction(int _action) {
 		physicsBodies->makeActual(virtualBodies);
 		break;
 	}
-
 }
 };

@@ -186,7 +186,7 @@ public:void step( shared_ptr<bodyList> _bodies, double stepFactor = 1) {
 				newVelocity.multiply(1 / newMass);
 
 				first->item->mass = newMass;
-				first->item->position = newPosition;
+				//first->item->position = newPosition;
 				first->item->velocity = newVelocity;
 				_bodies->removeBody(second->item->id);
 			}

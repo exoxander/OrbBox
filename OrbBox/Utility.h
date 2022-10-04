@@ -332,5 +332,7 @@ public:mesh generateCircle(double mass, int _vertecies) {
 
 	}
 }
-
+	  double getStableSpeed(double _mass, double _radius, double _gravity) {
+		  return sqrt((_gravity * _mass) / _radius);
+	  }
 };
