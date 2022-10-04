@@ -6,7 +6,15 @@
 using std::cout;
 using std::endl;
 using olc::Pixel;
-
+enum struct ACTION {
+	togglePlay,
+	forcePlay,
+	forcePause,
+	forceEdit,
+	forceReset,
+	saveSim,
+	startSim
+};
 struct interfaceItem {
 	vector2d position;
 	int id;
@@ -68,32 +76,32 @@ public:bool checkMouseInBounds(int _x, int _y) {
 
 	return temp;
 }
-public:void takeAction(int _action) {
+public:void takeAction(ACTION _action) {
 	switch (_action) {
-	case 0://toggle pause / play
-		util->game_state = (util->game_state == 1 ? 2 : 1);
+	case ACTION::togglePlay://toggle pause / play
+		util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause);
 		break;
-	case 1://force play
-		util->game_state = 2;
+	case ACTION::forcePlay://force play
+		util->game_state = GAME_STATE::play;
 		break;
-	case 2://force pause
-		util->game_state = 1;
+	case ACTION::forcePause ://force pause
+		util->game_state = GAME_STATE::pause;
 		break;
-	case 3://go into edit (NOT RESET) mode and add virtual body with handles
+	case ACTION::forceEdit://go into edit (NOT RESET) mode and add virtual body with handles
 		break;
-	case 4:
+	case ACTION::saveSim:
 		//save to existing filepath
 		readWriter->markupWriter();
 		break;
-	case 5://force edit mode
-		util->game_state = 0;
+	case ACTION::forceReset://force reset mode
+		util->game_state = GAME_STATE::edit;
 		physicsBodies->reset();
 		viewport->location = vector2d();//not working?
 		viewport->target = nullptr;
 		viewport->zoom = 1;
 		break;
-	case 6://edit mode -> sim paused
-		util->game_state = 2;
+	case ACTION::startSim://edit mode -> sim paused
+		util->game_state = GAME_STATE::pause;
 		physicsBodies->makeActual(virtualBodies);
 		break;
 	}

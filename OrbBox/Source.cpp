@@ -43,7 +43,7 @@ public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
-        util->game_state = 0;
+        //util->game_state = 0;
         util->virtual_list_changed = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
 
@@ -87,13 +87,13 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
 
         //utility settings
-        if (GetKey(olc::Key::R).bPressed) { UI.takeAction(5); }//any->edit
+        if (GetKey(olc::Key::R).bPressed) { UI.takeAction(ACTION::forceEdit); }//any->edit
         if (GetKey(olc::Key::SPACE).bPressed) {
-            if (util->game_state == 0) {
-                UI.takeAction(6);//edit->paused
+            if (util->game_state == GAME_STATE::edit) {
+                UI.takeAction(ACTION::saveSim);//edit->paused
             }
             else {
-                UI.takeAction(0);//toggle play/paused
+                UI.takeAction(ACTION::togglePlay);//toggle play/paused
             }
         }
 
@@ -109,13 +109,13 @@ public:
                 util->body_debug_draw = 0;
             }
         }
-        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld && (util->game_state == 1 || util->game_state == 2)) { UI.takeAction(4); }
+        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld && (util->game_state == GAME_STATE::pause || util->game_state == GAME_STATE::play)) { UI.takeAction(ACTION::saveSim); }
 
         //-------------------< DRAW BACKGROUND >------------------------
-        if (util->game_state == 0) {
+        if (util->game_state == GAME_STATE::edit) {
             BGC = Pixel(10,10,200);
         }
-        else if (util->game_state == 1) {
+        else if (util->game_state == GAME_STATE::pause) {
             BGC = Pixel(60,60,100);
         }
         else {
@@ -126,12 +126,12 @@ public:
                 Draw(x, y, BGC);
 
         //----------------------< DRAW VIRTUAL BODIES >------------------------------
-        if (util->game_state == 0) {//edit mode
+        if (util->game_state == GAME_STATE::edit) {//edit mode
             virtualPath = drawVirtuals(virtualBodies, virtualPath, viewport->zoom);
         }
 
         //----------------------< DRAW PHYSICS BODIES >------------------------------
-        if (util->game_state == 1 || util->game_state == 2) {//only show during paused or active physics modes
+        if (util->game_state == GAME_STATE::pause || util->game_state == GAME_STATE::play) {//only show during paused or active physics modes
             shared_ptr<body> currentBody = physicsBodies->head;
             while (currentBody != nullptr) {//do culling check later
                 drawMesh(currentBody);
@@ -153,7 +153,7 @@ public:
         }
 
         //-------------------------< DO PHYSICS STEP >---------------------
-        if (util->game_state == 2) {
+        if (util->game_state == GAME_STATE::play) {
             //solver.matrixStep(.01);
             solver.step(physicsBodies, GRAVITY_CONSTANT);
         }

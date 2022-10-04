@@ -7,6 +7,17 @@ using std::string;
 
 #define PI 3.14159265//used in trig functions
 
+//general list to replace the horrendous random implimentations
+//struct List<Type t> {
+//};
+
+//game states
+enum struct GAME_STATE {
+	edit=0,
+	pause,
+	play
+
+};
 //===================-< vector2d >-==================
 struct vector2d {
 
@@ -218,7 +229,7 @@ public:
 	int body_debug_draw;
 	bool show_user_interface;
 	bool virtual_list_changed;
-	int game_state;
+	GAME_STATE game_state;
 	/*game_state codes
 	0: edit mode
 	1: paused simulation
@@ -234,7 +245,7 @@ public:Utility() {
 	body_debug_draw = 0;
 	show_user_interface = true;
 	virtual_list_changed = false;
-	game_state = 0;
+	game_state = GAME_STATE::edit;
 	//default constructor
 }
 public:mesh generateBox(double _radius) {
