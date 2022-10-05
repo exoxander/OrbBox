@@ -24,8 +24,8 @@ bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id =
 
 //the list itself and its functions
 template <typename T> struct list {
-	shared_ptr<bin> head;
-	shared_ptr<bin> tail;
+	shared_ptr<bin<T>> head;
+	shared_ptr<bin<T>> tail;
 
 
 	list<T>() {
@@ -313,22 +313,35 @@ class Utility {
 	//default constructor
 }
 	
-	mesh generateCircle(double radius, int vertecies = 6) {
-		//generate vertecies and add to vertexList
+	mesh generateCircle(double radius = 6, int vertecies = 6) {
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
 		//create vertex by angle * i starting at vector2d (radius, 0)
-
-		//create an origin and first polygon
+		list<vertex> vertexList;
+		list<polygon> polygonList;
+		vector2d next;
 		double angle = (2 * PI) / double(vertecies);//angle of each new vertex in radians
+
+		//create an origin
+		int i = 0;
 		shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
-		int i = 1;
 
-		vector2d next = vector2d(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
 		//fill until at final vertex
+		for (int i = 0; i < vertecies; i++) {
+			next = vector2d(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
+			vertexList.add(make_shared<vertex>(next, i + 1));
 
-		//link front and back for final polygons
-		return mesh();
+			//creates first -> almost last polygons
+			if (i >= 1) {
+				polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail, i - 1));
+			}
+		}
+
+		//finally create last polygon to link front and back
+		polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.head->prev->item, vertexList.tail, i - 1));
+
+		//aaaaand return
+		return mesh(vertexList, polygonList);
 	}
 	double getStableSpeed(double _mass, double _radius, double _gravity) {
 	 return sqrt((_gravity * _mass) / _radius);
