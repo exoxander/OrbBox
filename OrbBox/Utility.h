@@ -8,13 +8,13 @@ using std::string;
 #define PI 3.14159265//used in trig functions
 
 //general list to replace the horrendous random implimentations
-//"bin" each link in the list
+//"bin" == each link in the list
 template <typename T> struct bin {
 	shared_ptr<T> item;
 	int item_id;
 	shared_ptr<bin> next;
 	shared_ptr<bin> prev;
-public:bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id = -1) {
+bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id = -1) {
 	item = _item;
 	next = nullptr;
 	prev = _prev;
@@ -27,14 +27,14 @@ template <typename T> struct list {
 	shared_ptr<bin> head;
 	shared_ptr<bin> tail;
 
-public:
+
 	list<T>() {
 	head = nullptr;
 	tail = nullptr;
 }
 
 	//adds shared pointer of the specified type to the list
-	add(shared_ptr<T> _item) {
+	void add(shared_ptr<T> _item) {
 		shared_ptr<bin> currentItem = head;
 		shared_ptr<bin> nextItem = make_shared<bin>(_item);
 
@@ -53,7 +53,7 @@ public:
 	}
 
 	//removes an item of the matching shared pointer from the list (if it exists)
-	remove(shared_ptr<T> _item) {
+	void remove(shared_ptr<T> _item) {
 		shared_ptr<bin> currentBin = head;
 		if (tail == nullptr) {
 			//list empty, warn user?
@@ -88,7 +88,7 @@ public:
 		}
 
 	}
-	removeByBinID(int _id) {
+	void removeByBinID(int _id) {
 		//loop through until bin->ID == _id and call remove() on bin->item
 		shared_ptr<bin> currentBin = head;
 		while (currentBin != nullptr) {
@@ -119,44 +119,60 @@ enum struct GAME_STATE {
 	play
 
 };
+struct vector2i {
+	int x;
+	int y;
+
+	vector2i(int _x = 0, int _y = 0) {
+		x = _x;
+		y = _y;
+	}
+	void add(int _x, int _y) {
+		x += _x;
+		y += _y;
+	}
+};
 //===================-< vector2d >-==================
 struct vector2d {
 
 	double x;
 	double y;
-
-public: vector2d(double _x = 0, double _y = 0) {
+public:
+ vector2d(double _x = 0, double _y = 0) {
 	set(_x, _y);
 }
-public: void set(double _x, double _y) {
+ vector2i convertTo2i() {
+	 return vector2i(int(x), int(y));
+ }
+ void set(double _x, double _y) {
 	x = _x;
 	y = _y;
 }
 	  //math on self
-public: void add(double _x, double _y) {
+ void add(double _x, double _y) {
 	x += _x;
 	y += _y;
 }
-public: void add(vector2d _value) {
+ void add(vector2d _value) {
 	x += _value.x;
 	y += _value.y;
 }
-public:void subtract(vector2d _value) {
+void subtract(vector2d _value) {
 	x -= _value.x;
 	y -= _value.y;
 }
-public:void multiply(vector2d _value) {
+void multiply(vector2d _value) {
 	x *= _value.x;
 	y *= _value.y;
 }
-public:void multiply(double _value) {
+void multiply(double _value) {
 	x *= _value;
 	y *= _value;
 }
-public:double getMagnitude() {
+double getMagnitude() {
 	return sqrt(x * x + y * y);
 }
-public:vector2d normalize() {
+vector2d normalize() {
 	double magnitude = getMagnitude();
 	if (magnitude != 0) {
 		return vector2d(x / magnitude, y / magnitude);
@@ -170,27 +186,27 @@ public:vector2d normalize() {
 
 //---------------< VERTEX > --------------
 struct vertex {
-public:
+
 	vector2d position;
 	int id;
 	shared_ptr<vertex> next;
 	shared_ptr<vertex> prev;
 
-public: vertex() {
+ vertex() {
 	position = vector2d();
 	id = -1;
 	next = nullptr;
 	prev = nullptr;
 }
 
-public: vertex(double _a, double _b, int _id = -1) {
+ vertex(double _a, double _b, int _id = -1) {
 	position.x = _a;
 	position.y = _b;
 	id = _id;
 	next = nullptr;
 	prev = nullptr;
 }
-public: vertex(vector2d _position, int _id = -1) {
+ vertex(vector2d _position, int _id = -1) {
 	position.x = _position.x;
 	position.y = _position.y;
 	id = _id;
@@ -201,7 +217,7 @@ public: vertex(vector2d _position, int _id = -1) {
 
 //---------------< POLYGON >--------------
 struct polygon {
-public:
+
 	int id;
 	shared_ptr<vertex> a;
 	shared_ptr<vertex> b;
@@ -209,7 +225,7 @@ public:
 	shared_ptr<polygon> next;
 	shared_ptr<polygon> prev;
 
-public:polygon() {
+polygon() {
 	a = nullptr;
 	b = nullptr;
 	c = nullptr;
@@ -217,7 +233,7 @@ public:polygon() {
 	next = nullptr;
 	prev = nullptr;
 }
-public: polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
+ polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
 	a = _a;
 	b = _b;
 	c = _c;
@@ -235,16 +251,16 @@ struct mesh {
 	shared_ptr<polygon> polygonList;
 	int pgonLength;
 
-public: mesh() {//create default triangle mesh
+ mesh(double size = 6) {//create default triangle mesh
 	//initialize vertex list
-	vertex a = vertex(0, 0, 0);
+	vertex a = vertex(0, size/2, 0);
 	vertexList = make_shared<vertex>(a);
 
-	vertex b = vertex(20, 0, 1);
+	vertex b = vertex(size/2, 0, 1);
 	vertexList->next = make_shared<vertex>(b);
 	b.prev = vertexList;
 
-	vertex c = vertex(0, 20, 2);
+	vertex c = vertex(-size/2, 0, 2);
 	c.prev = make_shared<vertex>(b);
 	vertexList->next->next = make_shared<vertex>(c);
 
@@ -256,7 +272,7 @@ public: mesh() {//create default triangle mesh
 
 	pgonLength = 1;
 }
-public: mesh(double mass, int _vertecies) {
+ mesh(double mass, int _vertecies) {
 	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
 	shared_ptr<vertex> currentVex = origin;
 	shared_ptr<polygon> currentPgon;
@@ -308,7 +324,7 @@ public: mesh(double mass, int _vertecies) {
 	}
 }
 
-public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
+ mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
 	vertexList = _vertexList;
 	polygonList = _polygonList;
 	vexLength = _vexLength;
@@ -322,7 +338,7 @@ public: mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, i
 //-------------------< UTILITY CLASS >---------------------------
 //dev console and debug utilities
 class Utility {
-public:
+
 
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
@@ -337,7 +353,8 @@ public:
 	2: active simulation
 	*/
 
-public:Utility() {
+
+	Utility() {
 	//game data
 
 	polygon_debug_draw = false;
@@ -349,7 +366,7 @@ public:Utility() {
 	game_state = GAME_STATE::edit;
 	//default constructor
 }
-public:mesh generateBox(double _radius) {
+	mesh generateBox(double _radius) {
 	mesh m;
 	shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
 	shared_ptr<vertex> currentVex = origin;
@@ -392,7 +409,7 @@ public:mesh generateBox(double _radius) {
 
 	return m;
 }
-public:mesh generateCircle(double mass, int _vertecies) {
+	mesh generateCircle(double mass, int _vertecies) {
 	mesh m;
 	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
 	shared_ptr<vertex> currentVex = origin;
@@ -446,5 +463,9 @@ public:mesh generateCircle(double mass, int _vertecies) {
 }
 	  double getStableSpeed(double _mass, double _radius, double _gravity) {
 		  return sqrt((_gravity * _mass) / _radius);
+	  }
+	  template <typename T> list<T> copyList(){
+		  //return deepcopy of a list
+		  //impliment later
 	  }
 };

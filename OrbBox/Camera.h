@@ -42,13 +42,13 @@ public:void freeCamera() {
 public:void home() {
 	location = vector2d();
 }
-public:vector2d translate(vector2d parent, vector2d vertex = vector2d()) {//returns the coordinant of a vertex after converting between object and camera space
+public:vector2i translate(vector2d parent, vector2d vertex = vector2d()) {//returns the coordinant of a vertex after converting between object and camera space
 	vector2d result = parent;
 	result.add(vertex);
 	result.add(location);
 	result.multiply(zoom);
 	result.add(screen);
-	return result;
+	return result.convertTo2i();
 }
 	  //can only return the world space, not object space coordinant
 public:vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	

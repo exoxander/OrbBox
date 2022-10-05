@@ -8,4 +8,4 @@ THE PLAN:
                                                                              |
                                                                --------------------------------------------------------------------
                                                                |         |          |            |             |         |        |
-                                                               ID     position   velocity   acceleration   rotation    scale     mass
+                                                               ID     position   velocity   acceleration   rotation              mass
