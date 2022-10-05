@@ -32,7 +32,10 @@ template <typename T> struct list {
 	head = nullptr;
 	tail = nullptr;
 }
-
+	void clear() {
+		head = nullptr;
+		tail = nullptr;
+	}
 	//adds shared pointer of the specified type to the list
 	void add(shared_ptr<T> _item) {
 		shared_ptr<bin> currentItem = head;
@@ -53,7 +56,7 @@ template <typename T> struct list {
 	}
 
 	//removes an item of the matching shared pointer from the list (if it exists)
-	void remove(shared_ptr<T> _item) {
+	void removeByItem(shared_ptr<T> _item) {
 		shared_ptr<bin> currentBin = head;
 		if (tail == nullptr) {
 			//list empty, warn user?
@@ -245,90 +248,33 @@ polygon() {
 
 //----------------< MESH >------------------
 struct mesh {
-	shared_ptr<vertex> vertexList;
-	int vexLength;
+	list<vertex> vertexList;
 
-	shared_ptr<polygon> polygonList;
-	int pgonLength;
+	list<polygon> polygonList;
 
- mesh(double size = 6) {//create default triangle mesh
-	//initialize vertex list
-	vertex a = vertex(0, size/2, 0);
-	vertexList = make_shared<vertex>(a);
+ mesh(double radius = 6) {//create default box mesh
+	//create all vertecies
+	 shared_ptr<vertex> va = make_shared<vertex>(-radius/2, -radius/2, 0);
+	 shared_ptr<vertex> vb = make_shared<vertex>(radius/2, -radius/2, 1);
+	 shared_ptr<vertex> vc = make_shared<vertex>(radius/2, radius/2, 2);
+	 shared_ptr<vertex> vd = make_shared<vertex>(-radius/2, radius/2, 3);
+	 //add to list
+	 vertexList.add(va);
+	 vertexList.add(vb);
+	 vertexList.add(vc);
+	 vertexList.add(vd);
 
-	vertex b = vertex(size/2, 0, 1);
-	vertexList->next = make_shared<vertex>(b);
-	b.prev = vertexList;
-
-	vertex c = vertex(-size/2, 0, 2);
-	c.prev = make_shared<vertex>(b);
-	vertexList->next->next = make_shared<vertex>(c);
-
-	vexLength = 3;
-
-	//create polygon
-	polygon p = polygon(vertexList, vertexList->next, vertexList->next->next, 0);
-	polygonList = make_shared<polygon>(p);
-
-	pgonLength = 1;
-}
- mesh(double mass, int _vertecies) {
-	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
-	shared_ptr<vertex> currentVex = origin;
-	shared_ptr<polygon> currentPgon;
-	vertexList = origin;
-	vexLength = 1;
-	int vertecies = _vertecies;
-
-	double angle = (2 * PI) / double(vertecies);//angle needs to be in radians
-
-	for (int i = 0; i < vertecies; i++) {
-		//generate vertecies and add to vertexList
-		//x1 = x0*cos() - y0*sin()
-		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at vector2d (radius, 0)
-		vector2d next = vector2d(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
-		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
-
-		//add to vertex chain and increase vexlength
-		currentVex->next = vert;
-		vert->prev = currentVex;
-		vert->id = i + 1;
-		vexLength++;
-		currentVex = vert;
-
-		//make polygons
-		if (vexLength == 3) {//first polygon
-			polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
-			pgonLength = 1;
-			currentPgon = polygonList;
-		}
-		else if (vexLength > 3 && i < vertecies) {//middle polygons
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			pgonLength++;
-			currentPgon = pgon;
-
-		}
-		//if near end, create final polygon
-		if (vexLength == vertecies + 1) {//final polygon
-		//origin, most recent vertex, first polygon.b
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, polygonList->b, pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			pgonLength++;
-			currentPgon = pgon;
-		}
-
-	}
+	//make polygons from vertecies	
+	 shared_ptr<polygon> pa = make_shared<polygon>(va, vb, vc);
+	 shared_ptr<polygon> pb = make_shared<polygon>(vb, vd, va);
+	 //add to list
+	 polygonList.add(pa);
+	 polygonList.add(pb);//hehe, lead
 }
 
- mesh(shared_ptr<vertex> _vertexList, shared_ptr<polygon> _polygonList, int _vexLength, int _pgonLength) {//create from existing lists
-	vertexList = _vertexList;
-	polygonList = _polygonList;
-	vexLength = _vexLength;
-	pgonLength = _pgonLength;
+ mesh(list<vertex> _vertList, list<polygon> _polyList) {//create from existing lists
+	 vertexList = _vertList;
+	 polygonList = _polyList;
 }
 	  
 };
@@ -366,106 +312,29 @@ class Utility {
 	game_state = GAME_STATE::edit;
 	//default constructor
 }
-	mesh generateBox(double _radius) {
-	mesh m;
-	shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
-	shared_ptr<vertex> currentVex = origin;
-	shared_ptr<vertex> nextVex;
-	shared_ptr<polygon> currentPgon;
-	shared_ptr<polygon> nextPgon;
-	m.vertexList = origin;
-	m.vexLength = 1;
-
-	//top left
-	nextVex = make_shared<vertex>(-_radius, -_radius, 1);
-	currentVex->next = nextVex;
-	currentVex = nextVex;
-	//top right
-	nextVex = make_shared<vertex>(_radius, -_radius, 2);
-	currentVex->next = nextVex;
-	currentVex = nextVex;
-	//bottom right
-	nextVex = make_shared<vertex>(_radius, _radius, 3);
-	currentVex->next = nextVex;
-	currentVex = nextVex;
-	//bottom left
-	nextVex = make_shared<vertex>(-_radius, _radius, 4);
-	currentVex->next = nextVex;
-	currentVex = nextVex;
-	m.vexLength = 5;
-
-	//polygons
-	currentPgon = make_shared<polygon>(m.vertexList, m.vertexList->next, m.vertexList->next->next, 0);
-	m.polygonList = currentPgon;
-	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next, m.vertexList->next->next->next, 1);
-	currentPgon->next = nextPgon;
-	currentPgon = nextPgon;
-	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next->next, m.vertexList->next->next->next->next, 2);
-	currentPgon->next = nextPgon;
-	currentPgon = nextPgon;
-	nextPgon = make_shared<polygon>(m.vertexList, m.vertexList->next->next->next->next, m.vertexList->next, 3);
-	currentPgon->next = nextPgon;
-	m.pgonLength = 4;
-
-	return m;
-}
-	mesh generateCircle(double mass, int _vertecies) {
-	mesh m;
-	shared_ptr<vertex> origin = make_shared<vertex>(vertex(0, 0, 0));
-	shared_ptr<vertex> currentVex = origin;
-	shared_ptr<polygon> currentPgon;
-	m.vertexList = origin;
-	m.vexLength = 1;
-	int vertecies = _vertecies;
-
-	double angle = (2 * PI) / double(vertecies);//angle needs to be in radians
-
-	for (int i = 0; i < vertecies; i++) {
+	
+	mesh generateCircle(double radius, int vertecies = 6) {
 		//generate vertecies and add to vertexList
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
 		//create vertex by angle * i starting at vector2d (radius, 0)
-		vector2d next = vector2d(mass * cos(angle * i), mass * sin(angle * i));//coordinant of next vertex
-		shared_ptr<vertex> vert = make_shared<vertex>(vertex(next, i + 1));
 
-		//add to vertex chain and increase vexlength
-		currentVex->next = vert;
-		vert->prev = currentVex;
-		vert->id = i + 1;
-		m.vexLength++;
-		currentVex = vert;
+		//create an origin and first polygon
+		double angle = (2 * PI) / double(vertecies);//angle of each new vertex in radians
+		shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
+		int i = 1;
 
-		//make polygons
-		if (m.vexLength == 3) {//first polygon
-			m.polygonList = make_shared<polygon>(origin, currentVex->prev, currentVex, 1);
-			m.pgonLength = 1;
-			currentPgon = m.polygonList;
-		}
-		else if (m.vexLength > 3 && i < vertecies) {//middle polygons
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentPgon->c, currentVex, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			m.pgonLength++;
-			currentPgon = pgon;
+		vector2d next = vector2d(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
+		//fill until at final vertex
 
-		}
-		//if near end, create final polygon
-		if (m.vexLength == vertecies + 1) {//final polygon
-		//origin, most recent vertex, first polygon.b
-			shared_ptr<polygon> pgon = make_shared<polygon>(origin, currentVex, m.polygonList->b, m.pgonLength + 1);//origin, last vertex of previous pgon, most recent vertex
-			currentPgon->next = pgon;
-			pgon->prev = currentPgon;
-			m.pgonLength++;
-			currentPgon = pgon;
-		}
-
+		//link front and back for final polygons
+		return mesh();
 	}
-}
-	  double getStableSpeed(double _mass, double _radius, double _gravity) {
-		  return sqrt((_gravity * _mass) / _radius);
-	  }
-	  template <typename T> list<T> copyList(){
-		  //return deepcopy of a list
-		  //impliment later
-	  }
+	double getStableSpeed(double _mass, double _radius, double _gravity) {
+	 return sqrt((_gravity * _mass) / _radius);
+	}
+	template <typename T> list<T> copyList(){
+	 //return deepcopy of a list
+	 //impliment later
+	}
 };

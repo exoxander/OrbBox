@@ -4,8 +4,8 @@ THE PLAN:
         |                                         |                                             |
         |                         --------------object------------------------                  |
         |                         |               |                |         |                  |
-        --------------------->visual mesh--->collision mesh        ID       body<----------------
-                                                                             |
-                                                               --------------------------------------------------------------------
-                                                               |         |          |            |             |         |        |
-                                                               ID     position   velocity   acceleration   rotation              mass
+        --------------------->visual mesh<-->collision mesh        ID       body<----------------
+                                  |                                          |
+        ----------------------------------------              ----------------------------------------------------------
+        |                |            |        |              |         |          |            |             |        |
+    vertex list		polygon list	scale	rotation          ID     position   velocity   acceleration   rotation    mass
