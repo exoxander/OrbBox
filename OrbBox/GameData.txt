@@ -9,3 +9,7 @@ THE PLAN:
         ----------------------------------------              ----------------------------------------------------------
         |                |            |        |              |         |          |            |             |        |
     vertex list		polygon list	scale	rotation          ID     position   velocity   acceleration   rotation    mass
+
+
+GENERATION
+https://www.youtube.com/watch?v=ZZY9YE7rZJw
