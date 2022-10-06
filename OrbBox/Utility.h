@@ -285,7 +285,7 @@ struct mesh {
 //dev console and debug utilities
 class Utility {
 
-
+public:
 	bool polygon_debug_draw;
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
@@ -293,16 +293,9 @@ class Utility {
 	bool show_user_interface;
 	bool virtual_list_changed;
 	GAME_STATE game_state;
-	/*game_state codes
-	0: edit mode
-	1: paused simulation
-	2: active simulation
-	*/
 
 
 	Utility() {
-	//game data
-
 	polygon_debug_draw = false;
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
@@ -310,7 +303,6 @@ class Utility {
 	show_user_interface = true;
 	virtual_list_changed = false;
 	game_state = GAME_STATE::edit;
-	//default constructor
 }
 	
 	mesh generateCircle(double radius = 6, int vertecies = 6) {
