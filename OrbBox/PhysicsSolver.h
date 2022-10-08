@@ -68,9 +68,9 @@ public:
 			while (linkBin != nullptr) {				
 				currentEvent = eventMatrix.head;
 				//check if link between currentBin and linkBin exists in eventMatrix
+				hasLink = false;
 				while(currentEvent != nullptr){
 
-					hasLink = false;
 					if (currentEvent->item->first == currentBin->item && currentEvent->item->second == linkBin->item
 						|| currentEvent->item->second == currentBin->item && currentEvent->item->first == linkBin->item) {
 						//only generate this part for gravity
@@ -78,20 +78,16 @@ public:
 							hasLink = true;
 						}
 					}
-					if (!hasLink && currentBin->item != linkBin->item) {
-						eventMatrix.add(make_shared<event>(eventType::gravity, currentBin->item, linkBin->item));
-						//set event->alpha to the distance between the two bodies
-					}
-
 					currentEvent = currentEvent->next;
-				}				
-
+				}
+				if (!hasLink && currentBin->item != linkBin->item) {
+					eventMatrix.add(make_shared<event>(eventType::gravity, currentBin->item, linkBin->item));
+					//set event->alpha to the distance between the two bodies
+				}
 				linkBin = linkBin->next;
 			}
-
 			currentBin = currentBin->next;
 		}
-
 		//check if two objects are close and mark for collision check
 	}
 };

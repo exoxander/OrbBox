@@ -34,7 +34,7 @@ public:
 		ID = -1;
 }
 	//with default args
-	body(vector2d _pos = vector2d(), vector2d _vel = vector2d(), vector2d _rot = vector2d(), int _id = -1, double _mass = 1) {
+	body(vector2d _pos, vector2d _vel = vector2d(), vector2d _rot = vector2d(), int _id = -1, double _mass = 1) {
 		position = _pos;
 		velocity = _vel;
 		acceleration = vector2d();

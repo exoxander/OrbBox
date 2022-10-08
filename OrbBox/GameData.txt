@@ -1,15 +1,28 @@
 THE PLAN:
-     mesh list                               object list                                    body list
-        |                                         |                                             |
-        |                                         |                                             |
-        |                         --------------object------------------------                  |
-        |                         |               |                |         |                  |
-        --------------------->visual mesh<-->collision mesh        ID       body<----------------
-                                  |                                          |
+RANDOM GENERATION
+https://www.youtube.com/watch?v=ZZY9YE7rZJw
+
+
+     mesh list                               object list                                                body list
+        |                                         |                                                         |
+        |                                         |                                                         |
+        |                         --------------object------------------------------------                  |
+        |                         |                      |            |       |          |                  |
+        --------------------->visual mesh ptr    collision mesh ptr   ID    state     body ptr<--------------
+                                  |                                                      |
         ----------------------------------------              ----------------------------------------------------------
         |                |            |        |              |         |          |            |             |        |
     vertex list		polygon list	scale	rotation          ID     position   velocity   acceleration   rotation    mass
 
 
-GENERATION
-https://www.youtube.com/watch?v=ZZY9YE7rZJw
+                                                    interface manager
+                                                            |           
+                                     -----------------------|           
+                                     |                      |           
+                             interface functions       button list      
+                                                            |
+                                                         button------------------------------------->body handle
+                                                            |                                            |
+                                       --------------------------------------------------------          |
+                                       |             |        |        |       |       |      |          |
+                                  function ptr    position   size    color1  color2  color3  type    object ptr

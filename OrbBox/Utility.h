@@ -6,6 +6,7 @@ using std::make_shared;
 using std::string;
 
 #define PI 3.14159265//used in trig functions
+//https://www.cprogramming.com/tutorial/function-pointers.html
 
 //general list to replace the horrendous random implimentations
 //"bin" == each link in the list
@@ -338,8 +339,26 @@ public:
 	double getStableSpeed(double _mass, double _radius, double _gravity) {
 	 return sqrt((_gravity * _mass) / _radius);
 	}
-	template <typename T> list<T> copyList(){
+	list<body> copyBodyList(list<body> _copyList){
 	 //return deepcopy of a list
 	 //impliment later
+		list<body> newList = list<body>();
+		shared_ptr<bin<body>> currentBin = _copyList.head;
+		body nextBody;
+
+		while (currentBin != nullptr) {
+			nextBody.position = currentBin->item->position;
+			nextBody.velocity = currentBin->item->velocity;
+			nextBody.acceleration = currentBin->item->acceleration;
+			nextBody.rotation = currentBin->item->rotation;
+			nextBody.mass = currentBin->item->mass;
+			nextBody.ID = currentBin->item->ID;
+
+			//may cause shallow copy fuckery, check in later
+			newList.add(make_shared<body>(nextBody));
+			currentBin = currentBin->next;
+		}
+
+		return newList;
 	}
 };

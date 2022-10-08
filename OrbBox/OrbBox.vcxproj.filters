@@ -27,9 +27,6 @@
     <ClInclude Include="PhysicsSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InterfaceRegion.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MarkupCore.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -37,6 +34,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScreenObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InterfaceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
