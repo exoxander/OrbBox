@@ -1,6 +1,6 @@
 #pragma once
 #include "Body.h"
-#include"Utility.h";
+#include"Utility.h"
 
 class ScreenObject {
 public:
@@ -13,6 +13,7 @@ public:
 	int ID;
 	bool hasPhysics;
 	bool hasCollision;
+	bool show;
 
 public:
 	//default
@@ -25,6 +26,7 @@ public:
 		ID = -1;
 		hasPhysics = false;
 		hasCollision = false;
+		show = true;
 	}
 	
 	//visual only object
@@ -33,6 +35,7 @@ public:
 		collisionMesh = nullptr;//make getRect(visualMesh) later?
 		hasPhysics = false;
 		hasCollision = false;
+		show = true;
 
 		screenPosition = _pos;
 		visualMesh = _visualMesh;
@@ -46,6 +49,7 @@ public:
 		visualMesh = _visMesh;
 		collisionMesh = _colMesh;
 		hasPhysics = true;
+		show = true;
 		hasCollision = (_colMesh == nullptr ? false : true);
 		ID = _ID;
 
@@ -59,6 +63,7 @@ public:
 		visualMesh = _visMesh;
 		collisionMesh = _colMesh;
 		hasPhysics = true;
+		show = true;
 		hasCollision = (_colMesh == nullptr ? false : true);
 		ID = _ID;
 

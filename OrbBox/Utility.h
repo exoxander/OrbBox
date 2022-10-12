@@ -19,7 +19,7 @@ bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id =
 	item = _item;
 	next = nullptr;
 	prev = _prev;
-	id = _id;
+	item_id = _id;
 }
 };
 
@@ -122,6 +122,12 @@ enum struct GAME_STATE {
 	pause,
 	play
 
+};
+enum MESH_DRAW_MODE {
+	wireframe,
+	triangle,
+	solid,
+	texture
 };
 struct vector2i {
 	int x;
@@ -287,7 +293,7 @@ struct mesh {
 class Utility {
 
 public:
-	bool polygon_debug_draw;
+	MESH_DRAW_MODE draw_mode;
 	bool velocity_debug_draw;
 	bool accelleration_debug_draw;
 	int body_debug_draw;
@@ -295,9 +301,9 @@ public:
 	bool virtual_list_changed;
 	GAME_STATE game_state;
 
-
+public:
 	Utility() {
-	polygon_debug_draw = false;
+	draw_mode = MESH_DRAW_MODE::solid;
 	velocity_debug_draw = false;
 	accelleration_debug_draw = false;
 	body_debug_draw = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Utility.h"
-#include "PhysicsBody.h"
+//#include "PhysicsBody.h"
 #include <fstream>
 using std::fstream;
 using std::shared_ptr;
@@ -11,8 +11,8 @@ using std::string;
 
 class MarkupCore {
 public:
-	shared_ptr<bodyList> startingBodies;
-	shared_ptr<bodyList> existingBodies;
+	//shared_ptr<bodyList> startingBodies;
+	//shared_ptr<bodyList> existingBodies;
 	string filepath;
 
 public:MarkupCore() {

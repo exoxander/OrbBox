@@ -1,14 +1,14 @@
 #pragma once
 #include "Utility.h"
 #include "olcPixelGameEngine.h"
-#include "MarkupCore.h"
+//#include "MarkupCore.h"
 #include "ScreenObject.h"
 
 using std::cout;
 using std::endl;
 using olc::Pixel;
 enum struct ACTION {
-	none,
+	nonAction,
 	togglePlay,
 	forcePlay,
 	forcePause,
@@ -23,14 +23,14 @@ enum struct ACTION {
 };
 
 enum PAGE_TYPE {
-	none,
+	nonPage,
 	menu,
 	simulation,
 	meshEdit
 };
 
 enum BUTTON_TYPE {
-	none,
+	nonButton,
 	button,
 	handle
 };
@@ -43,7 +43,7 @@ public:
 
 public:
 	Button() {
-		type = BUTTON_TYPE::none;
+		type = BUTTON_TYPE::nonButton;
 		position = vector2i(-5,-5);
 		size = vector2i(10, 10);
 		text = "none";
@@ -91,7 +91,7 @@ public:
 	Page() {
 		pageObjects = list<ScreenObject>();
 		pageButtons = list<Button>();
-		type = PAGE_TYPE::none;
+		type = PAGE_TYPE::nonPage;
 	}
 
 	//by full definition, as in loading from file
