@@ -1,11 +1,12 @@
 #define OLC_PGE_APPLICATION //lol, dont forget this one, lots of awful linker build errors
 #include <iostream>
 #include "olcPixelGameEngine.h"
-#include "PhysicsBody.h"
+#include "Body.h"
+#include "ScreenObject.h"
 #include "Utility.h"
 #include "Camera.h"
 #include "PhysicsSolver.h"
-#include "InterfaceRegion.h"
+#include "InterfaceManager.h"
 #include "MarkupCore.h"
 using std::to_string;
 
@@ -23,20 +24,12 @@ private:
     olc::Pixel colorList[7] = { olc::WHITE, olc::BLUE, olc::GREEN, olc::RED, olc::YELLOW, olc::GREY, olc::Pixel(255,145,0) };
     int colorListLength = 7;
     int colorOffset = 3;
+    double GRAVITY_CONSTANT = 0.001;
     shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
-    shared_ptr<bodyList> physicsBodies = make_shared<bodyList>();
-    shared_ptr<bodyList> virtualBodies = make_shared<bodyList>();
-    shared_ptr<MarkupCore> readWriter = make_shared<MarkupCore>(virtualBodies, physicsBodies);
-
-    shared_ptr<vertex> virtualPath = nullptr;
-    string frameTime = "Frame Time:";
-    string bodyCount = "Scene Bodies:";
-    Pixel BGC = Pixel(10, 10, 10);//background color
-    Pixel textColor = Pixel(140, 140, 140);
-    double GRAVITY_CONSTANT = 0.001;
-    PhysicsSolver solver = PhysicsSolver(physicsBodies);
-    InterfaceRegion UI = InterfaceRegion(vector2d(0, 0), vector2d(80, 12), physicsBodies, virtualBodies, util, viewport, readWriter);
+    
+    PhysicsSolver solver = PhysicsSolver();
+    InterfaceManager UI = InterfaceManager();
 
 
 public:
@@ -46,13 +39,6 @@ public:
         //util->game_state = 0;
         util->virtual_list_changed = true;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-
-        //default system
-        virtualBodies->createDefaultSystem();
-        virtualBodies->getBody(3)->item->bodyMesh = util->generateBox(6);
-        //virtualBodies->createBody(vector2d(), vector2d(), 100000);
-        //virtualBodies->createBody(vector2d(-80,0), vector2d(0,2), 1000);//mercury :D
-        //virtualBodies->createBody(vector2d(190, 0), vector2d(0, -util->getStableSpeed(100000, 190, GRAVITY_CONSTANT)), 67000);
         
         return true;
     }
@@ -61,41 +47,12 @@ public:
     bool OnUserUpdate(float fElapsedTime) override {
         // called once per frame
         //camera control
-        if (viewport->target != nullptr && viewport->target->item->id != -1) {
-            vector2d temp = viewport->target->item->position;
-            temp.multiply(-1);
-            viewport->location = temp;//force camera to follow a body
-            //may act unusually if body removed from list but not deleted
-        }
-        else {
-            if (GetKey(olc::Key::LEFT).bHeld) viewport->location.x += (1 / viewport->zoom) * viewport->panSpeed;
-            if (GetKey(olc::Key::RIGHT).bHeld) viewport->location.x -= (1 / viewport->zoom) * viewport->panSpeed;
-            if (GetKey(olc::Key::UP).bHeld) viewport->location.y += (1 / viewport->zoom) * viewport->panSpeed;
-            if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= (1 / viewport->zoom) * viewport->panSpeed;
-        }
-
-        if (GetKey(olc::Key::J).bPressed) {//(J)ump to next body as camera target
-            if (viewport->target == nullptr || viewport->target->next == nullptr) {
-                viewport->target = physicsBodies->head;
-            }
-            else {
-                viewport->target = viewport->target->next;
-            }
-        }
-        if (GetKey(olc::Key::H).bPressed) viewport->target = nullptr;
+        if (GetKey(olc::Key::LEFT).bHeld) viewport->location.x += (1 / viewport->zoom) * viewport->panSpeed;
+        if (GetKey(olc::Key::RIGHT).bHeld) viewport->location.x -= (1 / viewport->zoom) * viewport->panSpeed;
+        if (GetKey(olc::Key::UP).bHeld) viewport->location.y += (1 / viewport->zoom) * viewport->panSpeed;
+        if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= (1 / viewport->zoom) * viewport->panSpeed;
         if (GetKey(olc::Key::NP_ADD).bHeld) viewport->zoomIn();
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
-
-        //utility settings
-        if (GetKey(olc::Key::R).bPressed) { UI.takeAction(ACTION::forceEdit); }//any->edit
-        if (GetKey(olc::Key::SPACE).bPressed) {
-            if (util->game_state == GAME_STATE::edit) {
-                UI.takeAction(ACTION::saveSim);//edit->paused
-            }
-            else {
-                UI.takeAction(ACTION::togglePlay);//toggle play/paused
-            }
-        }
 
         //----------------< DEBUG >--------------------
         if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
@@ -109,115 +66,36 @@ public:
                 util->body_debug_draw = 0;
             }
         }
-        if (GetKey(olc::Key::S).bPressed && GetKey(olc::Key::CTRL).bHeld && (util->game_state == GAME_STATE::pause || util->game_state == GAME_STATE::play)) { UI.takeAction(ACTION::saveSim); }
-
         //-------------------< DRAW BACKGROUND >------------------------
-        if (util->game_state == GAME_STATE::edit) {
-            BGC = Pixel(10,10,200);
-        }
-        else if (util->game_state == GAME_STATE::pause) {
-            BGC = Pixel(60,60,100);
-        }
-        else {
-            BGC = Pixel(10, 10, 20);
-        }
+        
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
-                Draw(x, y, BGC);
+                Draw(x, y, olc::Pixel(20,20,40));
 
         //----------------------< DRAW VIRTUAL BODIES >------------------------------
         if (util->game_state == GAME_STATE::edit) {//edit mode
-            virtualPath = drawVirtuals(virtualBodies, virtualPath, viewport->zoom);
+            
         }
 
         //----------------------< DRAW PHYSICS BODIES >------------------------------
         if (util->game_state == GAME_STATE::pause || util->game_state == GAME_STATE::play) {//only show during paused or active physics modes
-            shared_ptr<body> currentBody = physicsBodies->head;
-            while (currentBody != nullptr) {//do culling check later
-                drawMesh(currentBody);
-                currentBody = currentBody->next;
-            }
+            
         }
         //finished
 
         //---------------------< DRAW INTERFACE >------------------------
         if (util->show_user_interface) {
-            drawInterface(UI);
-            string temp = frameTime;
-            temp.append(to_string(fElapsedTime));
-            DrawString(0, 5, temp, olc::RED, 1);
-
-            temp = bodyCount;
-            temp.append(to_string(physicsBodies->length));
-            DrawString(0, 15, temp, olc::RED, 1);
         }
 
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
-            //solver.matrixStep(.01);
-            solver.step(physicsBodies, GRAVITY_CONSTANT);
         }
 
         return true;
     }
 
     //---------------------< DRAW VIRTUALS >------------------------------
-    shared_ptr<vertex> drawVirtuals(shared_ptr<bodyList> _bodies, shared_ptr<vertex> _vPath, double _scale = 1){
-        shared_ptr<body> currentBody = _bodies->head;
-        shared_ptr<vertex> nextHead = nullptr;
-        shared_ptr<vertex> currentVertex;
-        shared_ptr<vertex> nextVertex;
-        shared_ptr<bodyList> pathList = make_shared<bodyList>();
-        pathList->makeActual(virtualBodies);
-
-        while (currentBody != nullptr) {//virtuals
-            vector2d tPos = viewport->translate(currentBody->item->position );
-            FillCircle(int(tPos.x), int(tPos.y), int(currentBody->item->radius * _scale));
-            currentBody = currentBody->next;
-        }
-        currentBody = pathList->head;
-        if (util->virtual_list_changed) {//use chain of vertecies for positions, vertex ID = body ID
-            for (int n = 0; n < 15; n++) {
-                for (int i = 0; i < 10; i++) {
-                    solver.step(pathList, .001);
-                }
-                while (currentBody != nullptr) {//virtuals path
-                    vector2d tPos = currentBody->item->position;
-                    if (nextHead != nullptr) {
-                        nextVertex = make_shared<vertex>(tPos, currentBody->item->id);
-                        currentVertex->next = nextVertex;
-                        currentVertex = nextVertex;
-                        //DrawString(0, 60, "drawing to vPath");
-                    }
-                    else {
-                        nextHead = make_shared<vertex>(tPos, currentBody->item->id);
-                        currentVertex = nextHead;
-                    }
-                    currentBody = currentBody->next;
-                }
-                currentBody = pathList->head;
-            }
-            
-        }
-        else {
-            currentVertex = _vPath;
-            while (currentVertex != nullptr) {
-                vector2d vertPos = viewport->translate(currentVertex->position,vector2d());
-                DrawCircle(int(vertPos.x), int(vertPos.y), 4, olc::RED);
-                currentVertex = currentVertex->next;
-            }
-        }
-        util->virtual_list_changed = false;       
-        if (nextHead != nullptr) {
-            return nextHead;
-        }
-        else {
-            return _vPath;
-        }
-    }
-    void drawPath(shared_ptr<body> _body ,int _iterations = 5) {
-
-    }
+    
     //-----------------------------< DRAWMESH >-----------------------------
     void drawMesh(shared_ptr<body> _entity) {
         shared_ptr<body> currentBody = _entity;
@@ -295,12 +173,8 @@ public:
     }
 
     //----------------------< DRAW USER INTERFACE >-----------------------
-    void drawInterface(InterfaceRegion _window) {
-        int x = int(_window.position.x);
-        int y = int(_window.position.y);
-        int w = int(_window.dimensions.x);
-        int h = int(_window.dimensions.y);
-        FillRect(x,y,w,h,_window.primary);
+    void drawInterface() {
+      
     }
 };
 

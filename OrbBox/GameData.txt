@@ -3,26 +3,37 @@ RANDOM GENERATION
 https://www.youtube.com/watch?v=ZZY9YE7rZJw
 
 
-     mesh list                               object list                                                body list
-        |                                         |                                                         |
-        |                                         |                                                         |
-        |                         --------------object------------------------------------                  |
-        |                         |                      |            |       |          |                  |
-        --------------------->visual mesh ptr    collision mesh ptr   ID    state     body ptr<--------------
-                                  |                                                      |
-        ----------------------------------------              ----------------------------------------------------------
-        |                |            |        |              |         |          |            |             |        |
-    vertex list		polygon list	scale	rotation          ID     position   velocity   acceleration   rotation    mass
+     mesh list                               object list                             			                   body list
+        |                                         |                                  			                       |
+        |                                         |                                  			                       |
+        |                         --------------object-----------------------------------------------                  |
+        |                         |                      |            |       |      	|		    |                  |
+        --------------------->visual mesh ptr    collision mesh ptr   ID    state    visible	 body ptr<--------------
+                                  |                          			                            |
+        ----------------------------------------             			 ----------------------------------------------------------
+        |                |            |        |             			 |         |          |            |             |        |
+    vertex list		polygon list	scale	rotation         			 ID     position   velocity   acceleration   rotation    mass
 
 
                                                     interface manager
                                                             |           
-                                     -----------------------|           
-                                     |                      |           
-                             interface functions       button list      
-                                                            |
-                                                         button------------------------------------->body handle
-                                                            |                                            |
-                                       --------------------------------------------------------          |
-                                       |             |        |        |       |       |      |          |
-                                  function ptr    position   size    color1  color2  color3  type    object ptr
+                                     -----------------------|--------------------------------  
+                                     |                      |           					|
+                             interface functions      global button list      			page list
+																							|
+																						  page
+																							|
+																---------------------------------------------------------------------
+																|				|	         |          |
+															object list		page type	page buttons    ID
+									
+									
+                                                            
+                             button------------------------------------->body handle
+                                |                                            |
+           --------------------------------------------------------          |
+           |             |        |        |       |       |      |          |
+      function ptr    position   size    color1  color2  color3  type    object ptr
+
+possible issue when deleting an object
+(create only on edit mode) -> create handles for edit mode and delete all handles on sim start ???

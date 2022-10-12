@@ -9,6 +9,7 @@ double collision_factor = 1.2;
 enum struct eventType {
 	none,
 	gravity,
+	collisionCheck,
 	meshCollision,
 	bubbleCollision,
 };
@@ -42,20 +43,17 @@ struct event {
 //--------------------< PHYSICS SOLVER >------------------------
 class PhysicsSolver {
 	list<event> eventMatrix;
-	list<body> physicsBodies;
+	list<body> pageBodies;
 
 public:
 	PhysicsSolver() {
-	}
-
-	//run through the event matrix and compute everything
-	void step(double _speed = 1) {
-
+		eventMatrix = list<event>();
+		pageBodies = list<body>();
 	}
 
 	void buildEventMatrix() {
 		eventMatrix.clear();
-		shared_ptr<bin<body>> currentBin = physicsBodies.head;
+		shared_ptr<bin<body>> currentBin = pageBodies.head;
 		shared_ptr<bin<body>> linkBin;
 		shared_ptr<bin<event>> currentEvent;
 		bool hasLink;
@@ -74,8 +72,9 @@ public:
 					if (currentEvent->item->first == currentBin->item && currentEvent->item->second == linkBin->item
 						|| currentEvent->item->second == currentBin->item && currentEvent->item->first == linkBin->item) {
 						//only generate this part for gravity
-						if (currentEvent->item->type != eventType::gravity) {
+						if (currentEvent->item->type == eventType::gravity) {
 							hasLink = true;
+							break;
 						}
 					}
 					currentEvent = currentEvent->next;
@@ -89,6 +88,16 @@ public:
 			currentBin = currentBin->next;
 		}
 		//check if two objects are close and mark for collision check
+	}
+
+	//run through the event matrix and compute everything
+	void step(list<body> _pageBodies, double _speed = 1) {
+		pageBodies = _pageBodies;
+		buildEventMatrix();
+		shared_ptr<bin<event>> currentEvent = eventMatrix.head;
+		while (currentEvent != nullptr) {
+			//do all the physics stuff here
+		}
 	}
 };
 

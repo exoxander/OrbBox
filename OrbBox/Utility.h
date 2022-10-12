@@ -267,7 +267,7 @@ struct mesh {
 
 	//make polygons from vertecies	
 	 shared_ptr<polygon> pa = make_shared<polygon>(va, vb, vc);
-	 shared_ptr<polygon> pb = make_shared<polygon>(vb, vd, va);
+	 shared_ptr<polygon> pb = make_shared<polygon>(vc, vd, va);
 	 //add to list
 	 polygonList.add(pa);
 	 polygonList.add(pb);//hehe, lead
