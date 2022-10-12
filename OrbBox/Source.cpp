@@ -40,9 +40,10 @@ public:
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
 
         //render and whatnot test
-        mesh m = util->generateCircle(10, 12);
+        //mesh m = util->generateCircle(10, 12);
+        mesh m = mesh();
         UI.pages.add(shared_ptr<Page>());
-        shared_ptr<ScreenObject> s = make_shared<ScreenObject>(vector2i(0, 0), m, 1, 1);
+        shared_ptr<ScreenObject> s = make_shared<ScreenObject>(vector2i(0, 0), make_shared<mesh>(m), 1, 1);
         UI.pages.head->item->pageObjects.add(s);
         UI.currentPage = UI.pages.head;
         

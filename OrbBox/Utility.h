@@ -38,14 +38,15 @@ template <typename T> struct list {
 		tail = nullptr;
 	}
 	//adds shared pointer of the specified type to the list
-	void add(shared_ptr<T> _item) {
-		shared_ptr<bin> currentItem = head;
-		shared_ptr<bin> nextItem = make_shared<bin>(_item);
+
+	template <typename T> void add(shared_ptr<T> _item) {
+		shared_ptr<bin<T>> currentItem = head;//================================================================crash occurs here
+		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item);
 
 		if (tail == nullptr) {
 			//if the list is empty
-			head = _item;
-			tail = _item;
+			head = nextItem;
+			tail = nextItem;
 		}
 		else {
 			//if list has > 1 entries
@@ -57,8 +58,8 @@ template <typename T> struct list {
 	}
 
 	//removes an item of the matching shared pointer from the list (if it exists)
-	void removeByItem(shared_ptr<T> _item) {
-		shared_ptr<bin> currentBin = head;
+	template <typename T> void removeByItem(shared_ptr<T> _item) {
+		shared_ptr<bin<T>> currentBin = head;
 		if (tail == nullptr) {
 			//list empty, warn user?
 		}
@@ -75,7 +76,7 @@ template <typename T> struct list {
 						//if the head of the list
 						head = currentBin->next;
 					}
-					else if (currentbin == tail) {
+					else if (currentBin == tail) {
 						//if the tail of the list
 						tail = currentBin->prev;
 					}
@@ -92,9 +93,9 @@ template <typename T> struct list {
 		}
 
 	}
-	void removeByBinID(int _id) {
+	template <typename T> void removeByBinID(int _id) {
 		//loop through until bin->ID == _id and call remove() on bin->item
-		shared_ptr<bin> currentBin = head;
+		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
 			if (currentBin->id == _id) {
 				remove(currentBin->item);
@@ -104,9 +105,9 @@ template <typename T> struct list {
 		}
 
 	}
-	shared_ptr<T> getByBinID(int _id) {
+	template <typename T> shared_ptr<T> getByBinID(int _id) {
 		//return pointer to bin->item if bin->id == _id
-		shared_ptr<bin> currentBin = head;
+		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
 			if (currentBin->id == _id) {
 				return currentBin->item;
@@ -332,12 +333,13 @@ public:
 
 			//creates first -> almost last polygons
 			if (i >= 1) {
-				polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail, i - 1));
+				shared_ptr<polygon> p = make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail->item, i - 1);
+				polygonList.add(p);
 			}
 		}
 
 		//finally create last polygon to link front and back
-		polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.head->prev->item, vertexList.tail, i - 1));
+		polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.head->prev->item, vertexList.tail->item, i - 1));
 
 		//aaaaand return
 		return mesh(vertexList, polygonList);
@@ -345,6 +347,7 @@ public:
 	double getStableSpeed(double _mass, double _radius, double _gravity) {
 	 return sqrt((_gravity * _mass) / _radius);
 	}
+	/*
 	list<body> copyBodyList(list<body> _copyList){
 	 //return deepcopy of a list
 	 //impliment later
@@ -367,4 +370,5 @@ public:
 
 		return newList;
 	}
+	*/
 };
