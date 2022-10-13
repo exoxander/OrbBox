@@ -15,10 +15,10 @@ template <typename T> struct bin {
 	int item_id;
 	shared_ptr<bin> next;
 	shared_ptr<bin> prev;
-bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id = -1) {
+bin<T>(shared_ptr<T> _item = nullptr, int _id = -1) {
 	item = _item;
 	next = nullptr;
-	prev = _prev;
+	prev = nullptr;
 	item_id = _id;
 }
 };
@@ -27,21 +27,24 @@ bin<T>(shared_ptr<T> _item = nullptr, shared_ptr<bin> _prev = nullptr, int _id =
 template <typename T> struct list {
 	shared_ptr<bin<T>> head;
 	shared_ptr<bin<T>> tail;
-
+	int uniqueCount;
 
 	list<T>() {
 	head = nullptr;
 	tail = nullptr;
+	uniqueCount = 1;
 }
 	void clear() {
 		head = nullptr;
 		tail = nullptr;
+		uniqueCount = 1;
 	}
 	//adds shared pointer of the specified type to the list
 
 	template <typename T> void add(shared_ptr<T> _item) {
 		shared_ptr<bin<T>> currentItem = head;
-		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item);
+		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item, uniqueCount);
+		uniqueCount++;
 
 		if (tail == nullptr) {
 			//if the list is empty

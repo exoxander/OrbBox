@@ -36,7 +36,7 @@ public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
-        util->draw_mode = MESH_DRAW_MODE::wireframe;
+        util->draw_mode = MESH_DRAW_MODE::triangle;
         util->game_state = GAME_STATE::pause;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
@@ -50,7 +50,7 @@ public:
         //test bodies
         shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 50000);
         shared_ptr<body> b2 = make_shared<body>(vector2d(100,10), vector2d(0,-1.5), vector2d(), 2, 1000);
-        shared_ptr<body> b3 = make_shared<body>(vector2d(-200,0), vector2d(0,1), vector2d(), 2, 1000);
+        shared_ptr<body> b3 = make_shared<body>(vector2d(-200,0), vector2d(0,1), vector2d(), 2, 100);
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
@@ -163,7 +163,7 @@ public:
                     if (util->draw_mode == MESH_DRAW_MODE::triangle) {
 
                         shared_ptr<bin<polygon>> currentPolygon = m->polygonList.head;
-                        Pixel color;
+                        Pixel color = olc::WHITE;
 
                         while (currentPolygon != nullptr) {
                             color = colorList[(currentPolygon->item_id) % colorListLength];

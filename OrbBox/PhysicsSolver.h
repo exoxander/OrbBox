@@ -15,6 +15,8 @@ enum struct EVENT_TYPE {
 	collisionCheck,
 	meshCollision,
 	bubbleCollision,
+	destroy,
+	create
 };
 
 struct event {
