@@ -138,6 +138,7 @@ public:
 		while (currentBody != nullptr) {
 			currentBody->item->velocity.add(currentBody->item->acceleration);
 			currentBody->item->acceleration = vector2d();
+			currentBody->item->position.add(currentBody->item->velocity);
 			currentBody = currentBody->next;
 		}
 	}

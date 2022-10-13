@@ -79,14 +79,14 @@ public:
         //----------------< DEBUG >--------------------
         //if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
         if (GetKey(olc::Key::SPACE).bPressed) { util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); }
-        if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
-        if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F2).bPressed) { util->draw_velocity = (util->draw_velocity ? false : true); }
+        if (GetKey(olc::Key::F3).bPressed) { util->draw_acceleration = (util->draw_acceleration ? false : true); }
         if (GetKey(olc::Key::F4).bPressed) { 
-            if (util->body_debug_draw < 3) {
-                util->body_debug_draw++;
+            if (util->draw_body_info < 3) {
+                util->draw_body_info++;
             }
             else {
-                util->body_debug_draw = 0;
+                util->draw_body_info = 0;
             }
         }
         //-------------------< DRAW BACKGROUND >------------------------
@@ -95,22 +95,7 @@ public:
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(20,20,40));
         drawScreenObjects(UI.currentPage->item->pageObjects);
-        /*
-        //----------------------< DRAW VIRTUAL BODIES >------------------------------
-        if (util->game_state == GAME_STATE::edit) {//edit mode
-            
-        }
-
-        //----------------------< DRAW PHYSICS BODIES >------------------------------
-        if (util->game_state == GAME_STATE::pause || util->game_state == GAME_STATE::play) {//only show during paused or active physics modes
-            
-        }
-        //finished
-
-        //---------------------< DRAW INTERFACE >------------------------
-        if (util->show_user_interface) {
-        }
-        */
+      
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
             solver.step(UI.currentPage->item->pageBodies);
@@ -124,18 +109,6 @@ public:
     //-----------------------------< DRAWMESH >-----------------------------
     void drawScreenObjects(list<ScreenObject> _objects) {
         shared_ptr<bin<ScreenObject>> currentObject = _objects.head;
-        /*
-        vector2d parent = p->position;
-            vector2i a = viewport->translate(parent, currentPgon->a->position);
-            vector2i b = viewport->translate(parent, currentPgon->b->position);
-            vector2i c = viewport->translate(parent, currentPgon->c->position);
-
-            FillTriangle(
-                int(a.x), int(a.y),//A
-                int(b.x), int(b.y),//B
-                int(c.x), int(c.y),//C
-                polygonColor);
-        */
         //loop through objects
         while (currentObject != nullptr) {
             if (currentObject->item->show) {
@@ -247,10 +220,39 @@ public:
                     }
                 }
             }
+            if (currentObject->item->physicsBody != nullptr) {
+                drawDebugInfo(currentObject->item->physicsBody);
+            }
             currentObject = currentObject->next;
         }
     }
 
+    void drawDebugInfo(shared_ptr<body> _body) {
+        vector2i start = viewport->translate(_body->position, vector2d());
+        vector2d b;
+
+        if (util->draw_acceleration) {
+            b = _body->acceleration;
+            b.multiply(10);
+            vector2i end = viewport->translate(_body->position, b);
+            DrawLine(start.x, start.y, end.x, end.y, Pixel(255, 255, 0));
+        }
+        if (util->draw_velocity) {
+            b = _body->velocity;
+            b.multiply(10);
+            vector2i end = viewport->translate(_body->position, b);
+            DrawLine(start.x, start.y, end.x, end.y, Pixel(0, 255, 255));
+        }
+        if (util->draw_body_info > 0) {
+            //stuff
+            if (util->draw_body_info > 1) {
+                //more stuff
+                if (util->draw_body_info > 2) {
+                    //final level of stuff
+                }
+            }
+        }
+    }
     //----------------------< DRAW USER INTERFACE >-----------------------
     void drawInterface() {
       

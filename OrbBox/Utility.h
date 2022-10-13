@@ -310,9 +310,9 @@ class Utility {
 
 public:
 	MESH_DRAW_MODE draw_mode;
-	bool velocity_debug_draw;
-	bool accelleration_debug_draw;
-	int body_debug_draw;
+	bool draw_velocity;
+	bool draw_acceleration;
+	int draw_body_info;
 	bool show_user_interface;
 	bool virtual_list_changed;
 	GAME_STATE game_state;
@@ -320,9 +320,9 @@ public:
 public:
 	Utility() {
 	draw_mode = MESH_DRAW_MODE::solid;
-	velocity_debug_draw = false;
-	accelleration_debug_draw = false;
-	body_debug_draw = 0;
+	draw_velocity = false;
+	draw_acceleration = false;
+	draw_body_info = 0;
 	show_user_interface = true;
 	virtual_list_changed = false;
 	game_state = GAME_STATE::edit;
@@ -364,28 +364,4 @@ public:
 	double getStableSpeed(double _mass, double _radius, double _gravity) {
 	 return sqrt((_gravity * _mass) / _radius);
 	}
-	/*
-	list<body> copyBodyList(list<body> _copyList){
-	 //return deepcopy of a list
-	 //impliment later
-		list<body> newList = list<body>();
-		shared_ptr<bin<body>> currentBin = _copyList.head;
-		body nextBody;
-
-		while (currentBin != nullptr) {
-			nextBody.position = currentBin->item->position;
-			nextBody.velocity = currentBin->item->velocity;
-			nextBody.acceleration = currentBin->item->acceleration;
-			nextBody.rotation = currentBin->item->rotation;
-			nextBody.mass = currentBin->item->mass;
-			nextBody.ID = currentBin->item->ID;
-
-			//may cause shallow copy fuckery, check in later
-			newList.add(make_shared<body>(nextBody));
-			currentBin = currentBin->next;
-		}
-
-		return newList;
-	}
-	*/
 };
