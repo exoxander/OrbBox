@@ -23,9 +23,9 @@ https://www.youtube.com/watch?v=ZZY9YE7rZJw
 																							|
 																						  page
 																							|
-																---------------------------------------------------------------------
-																|				|	         |          |
-															object list		page type	page buttons    ID
+																---------------------------------------------
+																|				|	         |              |
+															object list		page type	page buttons    page bodies
 									
 									
                                                             

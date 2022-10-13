@@ -84,13 +84,14 @@ public:
 class Page {
 public:
 	list<ScreenObject> pageObjects;
+	list<body> pageBodies;
 	list<Button> pageButtons;
 	PAGE_TYPE type;
 
 public:
 	Page() {
 		pageObjects = list<ScreenObject>();
-		pageObjects.head = nullptr;
+		pageBodies = list<body>();
 		pageButtons = list<Button>();
 		type = PAGE_TYPE::nonPage;
 	}
@@ -98,8 +99,41 @@ public:
 	//by full definition, as in loading from file
 	Page(list<ScreenObject> _screenObjects, list<Button> _buttons, PAGE_TYPE _type) {
 		pageObjects = _screenObjects;
+		pageBodies = getAllBodies(_screenObjects);
 		pageButtons = _buttons;
 		type = _type;
+	}
+
+	//return all physics bodies inside the screenobjects list
+	list<body> getAllBodies(list<ScreenObject> _objects) {
+		list<body> newList = list<body>();
+		shared_ptr<bin<ScreenObject>> currentObject = _objects.head;
+		while (currentObject != nullptr) {
+
+			//if listed as having physics and a physics body exists
+			if (currentObject->item->hasPhysics && currentObject->item->physicsBody != nullptr) {
+				newList.add(currentObject->item->physicsBody);
+			}
+			currentObject = currentObject->next;
+		}
+
+		return newList;
+	}
+
+	//add a screen object
+	void addObject(shared_ptr<ScreenObject> _object) {
+		pageObjects.add(_object);
+		if (_object->hasPhysics && _object->physicsBody != nullptr) {
+			pageBodies.add(_object->physicsBody);
+		}
+	}
+
+	//add object and associated body
+	void addObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+		pageObjects.add(_object);
+		_object->hasPhysics = true;
+		_object->physicsBody = _body;
+		pageBodies.add(_body);
 	}
 };
 
@@ -109,8 +143,15 @@ public:
 	list<Page> pages;
 	shared_ptr<bin<Page>> currentPage;
 
-public:InterfaceManager() {
-}
+public:
+	InterfaceManager() {
+	}
+	void addToCurrentPage(shared_ptr<ScreenObject> _object) {
+		currentPage->item->addObject(_object);
+	  }
+	void addToCurrentPage(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+		currentPage->item->addObject(_object, _body);
+	}
 	  /*
 public:void takeAction(ACTION _action) {
 	switch (_action) {

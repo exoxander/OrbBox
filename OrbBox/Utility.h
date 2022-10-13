@@ -40,7 +40,7 @@ template <typename T> struct list {
 	//adds shared pointer of the specified type to the list
 
 	template <typename T> void add(shared_ptr<T> _item) {
-		shared_ptr<bin<T>> currentItem = head;//================================================================crash occurs here
+		shared_ptr<bin<T>> currentItem = head;
 		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item);
 
 		if (tail == nullptr) {
@@ -124,7 +124,7 @@ enum struct GAME_STATE {
 	play
 
 };
-enum MESH_DRAW_MODE {
+enum struct MESH_DRAW_MODE {
 	wireframe,
 	triangle,
 	solid,
@@ -191,7 +191,14 @@ void multiply(double _value) {
 double getMagnitude() {
 	return sqrt(x * x + y * y);
 }
-vector2d normalize() {
+void normalize() {
+	double magnitude = getMagnitude();
+	if (magnitude != 0) {
+		x /= magnitude;
+		y /= magnitude;
+	}
+}
+vector2d returnNormalized() {
 	double magnitude = getMagnitude();
 	if (magnitude != 0) {
 		return vector2d(x / magnitude, y / magnitude);

@@ -28,7 +28,7 @@ private:
     double GRAVITY_CONSTANT = 0.001;
     shared_ptr<Utility> util = make_shared<Utility>();
     shared_ptr<Camera> viewport = make_shared<Camera>();
-    
+    list<body> activeBodies = list<body>();
     PhysicsSolver solver = PhysicsSolver();
     InterfaceManager UI = InterfaceManager();
 
@@ -37,19 +37,19 @@ public:
         //initialize camera
         util->show_user_interface = true;
         util->draw_mode = MESH_DRAW_MODE::wireframe;
+        util->game_state = GAME_STATE::pause;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         viewport->panSpeed *= .25;
 
         //render and whatnot test
-        mesh m = util->generateCircle(10, 12);//no longer causes crash but ends 1 polygon early
-        //mesh m = mesh();
+        mesh m = util->generateCircle(10, 12);
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(0, 0), make_shared<mesh>(m), 10, 1);
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(30, 0), make_shared<mesh>(), 10, 1);
-        UI.pages.head->item->pageObjects.add(s1);
-        UI.pages.head->item->pageObjects.add(s2);
         UI.currentPage = UI.pages.head;
+        UI.addToCurrentPage(s1);
+        UI.addToCurrentPage(s2);
         
         return true;
     }
@@ -67,6 +67,7 @@ public:
 
         //----------------< DEBUG >--------------------
         //if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
+        if (GetKey(olc::Key::SPACE).bPressed) { util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); }
         if (GetKey(olc::Key::F2).bPressed) { util->velocity_debug_draw = (util->velocity_debug_draw ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->accelleration_debug_draw = (util->accelleration_debug_draw ? false : true); }
         if (GetKey(olc::Key::F4).bPressed) { 
@@ -98,11 +99,11 @@ public:
         //---------------------< DRAW INTERFACE >------------------------
         if (util->show_user_interface) {
         }
-
+        */
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
         }
-        */
+        
         return true;
     }
 

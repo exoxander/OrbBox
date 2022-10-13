@@ -14,6 +14,7 @@ public:
 	bool hasPhysics;
 	bool hasCollision;
 	bool show;
+	bool dead;
 
 public:
 	//default
@@ -27,6 +28,7 @@ public:
 		hasPhysics = false;
 		hasCollision = false;
 		show = true;
+		dead = false;
 	}
 	
 	//visual only object
@@ -36,6 +38,7 @@ public:
 		hasPhysics = false;
 		hasCollision = false;
 		show = true;
+		dead = false;
 
 		screenPosition = _pos;
 		visualMesh = _visualMesh;
@@ -50,6 +53,7 @@ public:
 		collisionMesh = _colMesh;
 		hasPhysics = true;
 		show = true;
+		dead = false;
 		hasCollision = (_colMesh == nullptr ? false : true);
 		ID = _ID;
 
@@ -64,6 +68,7 @@ public:
 		collisionMesh = _colMesh;
 		hasPhysics = true;
 		show = true;
+		dead = false;
 		hasCollision = (_colMesh == nullptr ? false : true);
 		ID = _ID;
 
