@@ -25,7 +25,8 @@ enum struct ACTION {
 enum struct PAGE_TYPE {
 	nonPage,
 	menu,
-	simulation,
+	editSim,
+	runSim,
 	meshEdit
 };
 

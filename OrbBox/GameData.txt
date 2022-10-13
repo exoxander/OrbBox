@@ -35,5 +35,7 @@ https://www.youtube.com/watch?v=ZZY9YE7rZJw
            |             |        |        |       |       |      |          |
       function ptr    position   size    color1  color2  color3  type    object ptr
 
+      edit page ----> copy lists ----> sim page
+
 possible issue when deleting an object
 (create only on edit mode) -> create handles for edit mode and delete all handles on sim start ???

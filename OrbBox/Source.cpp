@@ -36,13 +36,15 @@ public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
-        util->draw_mode = MESH_DRAW_MODE::triangle;
+        util->draw_mode = MESH_DRAW_MODE::wireframe;
         util->game_state = GAME_STATE::pause;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
 
         //render and whatnot test
-        mesh m = util->generateCircle(10, 12);
+        mesh m1 = util->generateCircle(50, 12);
+        mesh m2 = util->generateCircle(10, 12);
+        mesh m3 = util->generateCircle(3, 12);
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
         UI.currentPage = UI.pages.head;
@@ -54,9 +56,9 @@ public:
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
-        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m));
-        shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m));
-        shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m));
+        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1));
+        shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
+        shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 6, 4);
 
         UI.addToCurrentPage(s1);
@@ -106,8 +108,6 @@ public:
         
         return true;
     }
-
-    //---------------------< DRAW VIRTUALS >------------------------------
     
     //-----------------------------< DRAWMESH >-----------------------------
     void drawScreenObjects(list<ScreenObject> _objects) {
