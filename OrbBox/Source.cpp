@@ -38,13 +38,17 @@ public:
         util->show_user_interface = true;
         util->draw_mode = MESH_DRAW_MODE::wireframe;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
+        viewport->panSpeed *= .25;
 
         //render and whatnot test
-        //mesh m = util->generateCircle(10, 12);
-        mesh m = mesh();
-        UI.pages.add(shared_ptr<Page>());
-        shared_ptr<ScreenObject> s = make_shared<ScreenObject>(vector2i(0, 0), make_shared<mesh>(m), 1, 1);
-        UI.pages.head->item->pageObjects.add(s);
+        mesh m = util->generateCircle(10, 12);//no longer causes crash but ends 1 polygon early
+        //mesh m = mesh();
+        shared_ptr<Page> p = make_shared<Page>();
+        UI.pages.add(p);
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(0, 0), make_shared<mesh>(m), 10, 1);
+        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(30, 0), make_shared<mesh>(), 10, 1);
+        UI.pages.head->item->pageObjects.add(s1);
+        UI.pages.head->item->pageObjects.add(s2);
         UI.currentPage = UI.pages.head;
         
         return true;
@@ -124,19 +128,33 @@ public:
             if (currentObject->item->show) {
                 if (true) {//do viewport culling later
                     shared_ptr<mesh> m = currentObject->item->visualMesh;
-                    vector2d p = currentObject->item->physicsBody->position;
+                    vector2d p;
                     vector2i a;
                     vector2i b;
                     vector2i c;
+                    double scale = currentObject->item->scale;
+                    bool hasBody = (currentObject->item->physicsBody == nullptr ? false: true);
+
+                    if (hasBody) {
+                        p = currentObject->item->physicsBody->position;
+                    }
+
                     int vertexScale = 3;
                     //wireframe
                     if (util->draw_mode == MESH_DRAW_MODE::wireframe) {
                         shared_ptr<bin<polygon>> currentPolygon = m->polygonList.head;
 
                         while (currentPolygon != nullptr) {
-                            a = viewport->translate(p, currentPolygon->item->a->position);
-                            b = viewport->translate(p, currentPolygon->item->b->position);
-                            c = viewport->translate(p, currentPolygon->item->c->position);
+                            if(hasBody){
+                                a = viewport->translate(p, currentPolygon->item->a->position);
+                                b = viewport->translate(p, currentPolygon->item->b->position);
+                                c = viewport->translate(p, currentPolygon->item->c->position);
+                            }
+                            else {
+                                a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                            }
 
                             //draw circles on vertecies
                             DrawCircle(a.x, a.y, vertexScale);
@@ -160,15 +178,23 @@ public:
 
                         while (currentPolygon != nullptr) {
                             color = colorList[(currentPolygon->item_id) % colorListLength];
-                            a = viewport->translate(p, currentPolygon->item->a->position);
-                            b = viewport->translate(p, currentPolygon->item->b->position);
-                            c = viewport->translate(p, currentPolygon->item->c->position);
+
+                            if (hasBody) {
+                                a = viewport->translate(p, currentPolygon->item->a->position);
+                                b = viewport->translate(p, currentPolygon->item->b->position);
+                                c = viewport->translate(p, currentPolygon->item->c->position);
+                            }
+                            else {
+                                a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                            }
 
                             //draw each polygon with a color from the list
                             FillTriangle(
-                                int(a.x), int(a.y),//A
-                                int(b.x), int(b.y),//B
-                                int(c.x), int(c.y),//C
+                                a.x, a.y,//A
+                                b.x, b.y,//B
+                                c.x, c.y,//C
                                 color);
                             currentPolygon = currentPolygon->next;
                         }
@@ -180,15 +206,23 @@ public:
                         Pixel color = colorList[(currentObject->item_id) % colorListLength];
 
                         while (currentPolygon != nullptr) {
-                            a = viewport->translate(p, currentPolygon->item->a->position);
-                            b = viewport->translate(p, currentPolygon->item->b->position);
-                            c = viewport->translate(p, currentPolygon->item->c->position);
+
+                            if (hasBody) {
+                                a = viewport->translate(p, currentPolygon->item->a->position);
+                                b = viewport->translate(p, currentPolygon->item->b->position);
+                                c = viewport->translate(p, currentPolygon->item->c->position);
+                            }
+                            else {
+                                a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                            }
 
                             //draw each polygon with a color from the list
                             FillTriangle(
-                                int(a.x), int(a.y),//A
-                                int(b.x), int(b.y),//B
-                                int(c.x), int(c.y),//C
+                                a.x, a.y,//A
+                                b.x, b.y,//B
+                                c.x, c.y,//C
                                 color);
                             currentPolygon = currentPolygon->next;
                         }

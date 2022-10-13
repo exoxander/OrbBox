@@ -142,6 +142,14 @@ struct vector2i {
 		x += _x;
 		y += _y;
 	}
+	void add(vector2i _value) {
+		x += _value.x;
+		y += _value.y;
+	}
+	void multiply(int _value) {
+		x *= _value;
+		y *= _value;
+	}
 };
 //===================-< vector2d >-==================
 struct vector2d {
@@ -325,6 +333,7 @@ public:
 		//create an origin
 		int i = 0;
 		shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
+		vertexList.add(origin);
 
 		//fill until at final vertex
 		for (int i = 0; i < vertecies; i++) {
@@ -333,13 +342,14 @@ public:
 
 			//creates first -> almost last polygons
 			if (i >= 1) {
-				shared_ptr<polygon> p = make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail->item, i - 1);
+				shared_ptr<polygon> p = make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail->item, i - 1);//something here is causing a crash
 				polygonList.add(p);
 			}
 		}
 
 		//finally create last polygon to link front and back
-		polygonList.add(make_shared<polygon>(vertexList.head->item, vertexList.head->prev->item, vertexList.tail->item, i - 1));
+		shared_ptr<polygon> newPolygon = make_shared<polygon>(vertexList.head->next->item, vertexList.head->item, vertexList.tail->item, i - 1);
+		polygonList.add(newPolygon);
 
 		//aaaaand return
 		return mesh(vertexList, polygonList);

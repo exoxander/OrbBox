@@ -22,14 +22,14 @@ enum struct ACTION {
 	switchPage
 };
 
-enum PAGE_TYPE {
+enum struct PAGE_TYPE {
 	nonPage,
 	menu,
 	simulation,
 	meshEdit
 };
 
-enum BUTTON_TYPE {
+enum struct BUTTON_TYPE {
 	nonButton,
 	button,
 	handle
@@ -76,7 +76,7 @@ public:
 		item = nullptr;
 	}
 	ObjectHandle(shared_ptr<ScreenObject> _object, vector2i _pos = vector2i(-2,-2), vector2i _size = vector2i(4,4), string _text = "none")
-		:Button(handle, _pos, _size, _text) {
+		:Button(BUTTON_TYPE::handle, _pos, _size, _text) {
 		item = _object;
 	}
 };
@@ -90,6 +90,7 @@ public:
 public:
 	Page() {
 		pageObjects = list<ScreenObject>();
+		pageObjects.head = nullptr;
 		pageButtons = list<Button>();
 		type = PAGE_TYPE::nonPage;
 	}
