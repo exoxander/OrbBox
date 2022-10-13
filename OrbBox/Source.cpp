@@ -48,19 +48,22 @@ public:
         UI.currentPage = UI.pages.head;
 
         //test bodies
-        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 500);
-        shared_ptr<body> b2 = make_shared<body>(vector2d(100,100), vector2d(0,-1), vector2d(), 2, 100);
+        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 50000);
+        shared_ptr<body> b2 = make_shared<body>(vector2d(100,10), vector2d(0,-1.5), vector2d(), 2, 1000);
+        shared_ptr<body> b3 = make_shared<body>(vector2d(-200,0), vector2d(0,1), vector2d(), 2, 1000);
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
         shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m));
         shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m));
+        shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m));
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 6, 4);
 
         UI.addToCurrentPage(s1);
         UI.addToCurrentPage(s2);
         UI.addToCurrentPage(p1);
         UI.addToCurrentPage(p2);
+        UI.addToCurrentPage(p3);
         
         return true;
     }
@@ -233,13 +236,15 @@ public:
 
         if (util->draw_acceleration) {
             b = _body->acceleration;
-            b.multiply(10);
+            b.normalize();
+            b.multiply(50 / viewport->zoom);
             vector2i end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(255, 255, 0));
         }
         if (util->draw_velocity) {
             b = _body->velocity;
-            b.multiply(10);
+            b.normalize();
+            b.multiply(50 / viewport->zoom);
             vector2i end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(0, 255, 255));
         }

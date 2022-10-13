@@ -6,7 +6,7 @@ double collision_factor = 1.2;
 //Ethan approved integration method
 //https://lpsa.swarthmore.edu/NumInt/NumIntFourth.html
 
-const double GRAVITY = 0.001;
+const double GRAVITY = 1;
 const double TIMESTEP = 0.01;
 
 enum struct EVENT_TYPE {
@@ -91,6 +91,7 @@ public:
 		//check if a link exists between the two items, if not add link to eventMatrix
 		//loop through all bodies in the body list
 		while (currentBin != nullptr) {
+			currentBin->item->acceleration = vector2d();
 			linkBin = currentBin->next;
 			while (linkBin != nullptr) {				
 				currentEvent = eventMatrix.head;
@@ -125,20 +126,22 @@ public:
 		shared_ptr<bin<body>> currentBody = _pageBodies.head;
 		buildEventMatrix();
 		shared_ptr<bin<event>> currentEvent = eventMatrix.head;
+
 		while (currentEvent != nullptr) {
 			if (currentEvent->item->type == EVENT_TYPE::gravity) {
 				//apply for both bodies in the event link
 				currentEvent->item->first->acceleration.add(applyGravity(currentEvent->item->first, currentEvent->item->second));
-				currentEvent->item->second->acceleration.add(applyGravity(currentEvent->item->second, currentEvent->item->first, true));
+				currentEvent->item->second->acceleration.add(applyGravity(currentEvent->item->first, currentEvent->item->second, true));
 			}
 			currentEvent = currentEvent->next;
 		}
 
-		//loop through all bodies and apply + clear acceleration
+		//loop through all bodies and apply
 		while (currentBody != nullptr) {
 			currentBody->item->velocity.add(currentBody->item->acceleration);
-			currentBody->item->acceleration = vector2d();
 			currentBody->item->position.add(currentBody->item->velocity);
+
+			//currentBody->item->acceleration = vector2d();
 			currentBody = currentBody->next;
 		}
 	}
