@@ -52,15 +52,11 @@ public:
 	return result.convertTo2i();
 }
 	vector2i translate(vector2i parent, vector2d vertex, double scale = 1) {
-		vector2d result;
-		result.x = double(parent.x);
-		result.y = double(parent.y);
-
-		result.add(vertex);
-		result.add(location);
-		result.multiply(zoom * scale);
-		result.add(screen);
-		return result.convertTo2i();
+		vector2i result = parent;
+		vector2d newVertex = vertex;
+		newVertex.multiply(scale);
+		result.add(newVertex.convertTo2i());		
+		return result;
 	}
 	  //can only return the world space, not object space coordinant
 	vector2d reverseTranslate(vector2d input) {//translates a position on the viewport to a position in game space	

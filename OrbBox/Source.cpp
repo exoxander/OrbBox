@@ -39,17 +39,28 @@ public:
         util->draw_mode = MESH_DRAW_MODE::wireframe;
         util->game_state = GAME_STATE::pause;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
-        viewport->panSpeed *= .25;
+        //viewport->panSpeed *= .25;
 
         //render and whatnot test
         mesh m = util->generateCircle(10, 12);
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
-        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(0, 0), make_shared<mesh>(m), 10, 1);
-        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(30, 0), make_shared<mesh>(), 10, 1);
         UI.currentPage = UI.pages.head;
+
+        //test bodies
+        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 500);
+        shared_ptr<body> b2 = make_shared<body>(vector2d(100,100), vector2d(0,-1), vector2d(), 2, 100);
+
+        //test objects
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
+        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m));
+        shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m));
+        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 6, 4);
+
         UI.addToCurrentPage(s1);
         UI.addToCurrentPage(s2);
+        UI.addToCurrentPage(p1);
+        UI.addToCurrentPage(p2);
         
         return true;
     }
@@ -102,6 +113,7 @@ public:
         */
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
+            solver.step(UI.currentPage->item->pageBodies);
         }
         
         return true;

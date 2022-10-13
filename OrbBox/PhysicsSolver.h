@@ -131,6 +131,7 @@ public:
 				currentEvent->item->first->acceleration.add(applyGravity(currentEvent->item->first, currentEvent->item->second));
 				currentEvent->item->second->acceleration.add(applyGravity(currentEvent->item->second, currentEvent->item->first, true));
 			}
+			currentEvent = currentEvent->next;
 		}
 
 		//loop through all bodies and apply + clear acceleration
