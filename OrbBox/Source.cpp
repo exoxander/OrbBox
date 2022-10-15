@@ -10,7 +10,6 @@
 //#include "MarkupCore.h"
 using std::to_string;
 
-//const float TickRate = 16;
 //https://github.com/OneLoneCoder/olcPixelGameEngine/wiki
 
 class Engine : public olc::PixelGameEngine {
@@ -42,17 +41,17 @@ public:
         //viewport->panSpeed *= .25;
 
         //render and whatnot test
-        mesh m1 = util->generateCircle(50, 12);
-        mesh m2 = util->generateCircle(10, 12);
-        mesh m3 = util->generateCircle(3, 12);
+        mesh m1 = util->generateCircle(50, 16);
+        mesh m2 = util->generateCircle(10, 8);
+        mesh m3 = util->generateCircle(3, 6);
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
         UI.currentPage = UI.pages.head;
 
         //test bodies
         shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 50000);
-        shared_ptr<body> b2 = make_shared<body>(vector2d(100,10), vector2d(0,-1.5), vector2d(), 2, 1000);
-        shared_ptr<body> b3 = make_shared<body>(vector2d(-200,0), vector2d(0,1), vector2d(), 2, 100);
+        shared_ptr<body> b2 = make_shared<body>(vector2d(-200,0), vector2d(0,1.8), vector2d(), 2, 1000);
+        shared_ptr<body> b3 = make_shared<body>(vector2d(-180,-10), vector2d(.3,2.4), vector2d(), 2, 100);
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
@@ -128,7 +127,7 @@ public:
                         p = currentObject->item->physicsBody->position;
                     }
 
-                    int vertexScale = 3;
+                    int vertexScale = 2;
                     //wireframe
                     if (util->draw_mode == MESH_DRAW_MODE::wireframe) {
                         shared_ptr<bin<polygon>> currentPolygon = m->polygonList.head;
@@ -233,6 +232,7 @@ public:
     void drawDebugInfo(shared_ptr<body> _body) {
         vector2i start = viewport->translate(_body->position, vector2d());
         vector2d b;
+        int rad = 2;
 
         if (util->draw_acceleration) {
             b = _body->acceleration;
@@ -240,6 +240,7 @@ public:
             b.multiply(50 / viewport->zoom);
             vector2i end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(255, 255, 0));
+            FillCircle(end.x, end.y, rad, Pixel(255, 255, 0));
         }
         if (util->draw_velocity) {
             b = _body->velocity;
@@ -247,6 +248,7 @@ public:
             b.multiply(50 / viewport->zoom);
             vector2i end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(0, 255, 255));
+            FillCircle(end.x, end.y, rad, Pixel(0, 255, 255));
         }
         if (util->draw_body_info > 0) {
             //stuff

@@ -15,12 +15,13 @@ template <typename T> struct bin {
 	int item_id;
 	shared_ptr<bin> next;
 	shared_ptr<bin> prev;
-bin<T>(shared_ptr<T> _item = nullptr, int _id = -1) {
-	item = _item;
-	next = nullptr;
-	prev = nullptr;
-	item_id = _id;
-}
+
+	bin<T>(shared_ptr<T> _item = nullptr, int _id = -1) {
+		item = _item;
+		next = nullptr;
+		prev = nullptr;
+		item_id = _id;
+	}
 };
 
 //the list itself and its functions
@@ -30,10 +31,10 @@ template <typename T> struct list {
 	int uniqueCount;
 
 	list<T>() {
-	head = nullptr;
-	tail = nullptr;
-	uniqueCount = 1;
-}
+		head = nullptr;
+		tail = nullptr;
+		uniqueCount = 1;
+	}
 	void clear() {
 		head = nullptr;
 		tail = nullptr;
@@ -100,7 +101,7 @@ template <typename T> struct list {
 		//loop through until bin->ID == _id and call remove() on bin->item
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
-			if (currentBin->id == _id) {
+			if (currentBin->item_id == _id) {
 				remove(currentBin->item);
 				break;
 			}
@@ -112,17 +113,28 @@ template <typename T> struct list {
 		//return pointer to bin->item if bin->id == _id
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
-			if (currentBin->id == _id) {
+			if (currentBin->item_id == _id) {
 				return currentBin->item;
 			}
 		}
 		return nullptr;
 	}
+
+	template <typename T> int getBinID(shared_ptr<T> _item) {
+		shared_ptr<bin<T>> currentBin = head;
+		while (currentBin != nullptr) {
+			if (currentBin->item == _item) {
+				return currentBin->item_id;
+			}
+			currentBin = currentBin->next;
+		}
+		return -1;
+	}
 };
 
 //game states
 enum struct GAME_STATE {
-	edit=0,
+	edit = 0,
 	pause,
 	play
 
@@ -160,56 +172,56 @@ struct vector2d {
 	double x;
 	double y;
 public:
- vector2d(double _x = 0, double _y = 0) {
-	set(_x, _y);
-}
- vector2i convertTo2i() {
-	 return vector2i(int(x), int(y));
- }
- void set(double _x, double _y) {
-	x = _x;
-	y = _y;
-}
-	  //math on self
- void add(double _x, double _y) {
-	x += _x;
-	y += _y;
-}
- void add(vector2d _value) {
-	x += _value.x;
-	y += _value.y;
-}
-void subtract(vector2d _value) {
-	x -= _value.x;
-	y -= _value.y;
-}
-void multiply(vector2d _value) {
-	x *= _value.x;
-	y *= _value.y;
-}
-void multiply(double _value) {
-	x *= _value;
-	y *= _value;
-}
-double getMagnitude() {
-	return sqrt(x * x + y * y);
-}
-void normalize() {
-	double magnitude = getMagnitude();
-	if (magnitude != 0) {
-		x /= magnitude;
-		y /= magnitude;
+	vector2d(double _x = 0, double _y = 0) {
+		set(_x, _y);
 	}
-}
-vector2d returnNormalized() {
-	double magnitude = getMagnitude();
-	if (magnitude != 0) {
-		return vector2d(x / magnitude, y / magnitude);
+	vector2i convertTo2i() {
+		return vector2i(int(x), int(y));
 	}
-	else {
-		return vector2d();
+	void set(double _x, double _y) {
+		x = _x;
+		y = _y;
 	}
-}
+	//math on self
+	void add(double _x, double _y) {
+		x += _x;
+		y += _y;
+	}
+	void add(vector2d _value) {
+		x += _value.x;
+		y += _value.y;
+	}
+	void subtract(vector2d _value) {
+		x -= _value.x;
+		y -= _value.y;
+	}
+	void multiply(vector2d _value) {
+		x *= _value.x;
+		y *= _value.y;
+	}
+	void multiply(double _value) {
+		x *= _value;
+		y *= _value;
+	}
+	double getMagnitude() {
+		return sqrt(x * x + y * y);
+	}
+	void normalize() {
+		double magnitude = getMagnitude();
+		if (magnitude != 0) {
+			x /= magnitude;
+			y /= magnitude;
+		}
+	}
+	vector2d returnNormalized() {
+		double magnitude = getMagnitude();
+		if (magnitude != 0) {
+			return vector2d(x / magnitude, y / magnitude);
+		}
+		else {
+			return vector2d();
+		}
+	}
 };
 
 
@@ -221,27 +233,20 @@ struct vertex {
 	shared_ptr<vertex> next;
 	shared_ptr<vertex> prev;
 
- vertex() {
-	position = vector2d();
-	id = -1;
-	next = nullptr;
-	prev = nullptr;
-}
+	vertex() {
+		position = vector2d();
+		id = -1;
+	}
 
- vertex(double _a, double _b, int _id = -1) {
-	position.x = _a;
-	position.y = _b;
-	id = _id;
-	next = nullptr;
-	prev = nullptr;
-}
- vertex(vector2d _position, int _id = -1) {
-	position.x = _position.x;
-	position.y = _position.y;
-	id = _id;
-	next = nullptr;
-	prev = nullptr;
-}
+	vertex(double _a, double _b, int _id = -1) {
+		position.x = _a;
+		position.y = _b;
+		id = _id;
+	}
+	vertex(vector2d _position, int _id = -1) {
+		position = _position;
+		id = _id;
+	}
 };
 
 //---------------< POLYGON >--------------
@@ -251,58 +256,51 @@ struct polygon {
 	shared_ptr<vertex> a;
 	shared_ptr<vertex> b;
 	shared_ptr<vertex> c;
-	shared_ptr<polygon> next;
-	shared_ptr<polygon> prev;
 
-polygon() {
-	a = nullptr;
-	b = nullptr;
-	c = nullptr;
-	id = -1;
-	next = nullptr;
-	prev = nullptr;
-}
- polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
-	a = _a;
-	b = _b;
-	c = _c;
-	id = _id;
-	next = nullptr;
-	prev = nullptr;
-}
+	polygon() {
+		a = nullptr;
+		b = nullptr;
+		c = nullptr;
+		id = -1;
+	}
+	polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
+		a = _a;
+		b = _b;
+		c = _c;
+		id = _id;
+	}
 };
 
 //----------------< MESH >------------------
 struct mesh {
 	list<vertex> vertexList;
-
 	list<polygon> polygonList;
 
- mesh(double radius = 6) {//create default box mesh
-	//create all vertecies
-	 shared_ptr<vertex> va = make_shared<vertex>(-radius/2, -radius/2, 0);
-	 shared_ptr<vertex> vb = make_shared<vertex>(radius/2, -radius/2, 1);
-	 shared_ptr<vertex> vc = make_shared<vertex>(radius/2, radius/2, 2);
-	 shared_ptr<vertex> vd = make_shared<vertex>(-radius/2, radius/2, 3);
-	 //add to list
-	 vertexList.add(va);
-	 vertexList.add(vb);
-	 vertexList.add(vc);
-	 vertexList.add(vd);
+	mesh(double radius = 6) {//create default box mesh
+	   //create all vertecies
+		shared_ptr<vertex> va = make_shared<vertex>(-radius / 2, -radius / 2, 0);
+		shared_ptr<vertex> vb = make_shared<vertex>(radius / 2, -radius / 2, 1);
+		shared_ptr<vertex> vc = make_shared<vertex>(radius / 2, radius / 2, 2);
+		shared_ptr<vertex> vd = make_shared<vertex>(-radius / 2, radius / 2, 3);
+		//add to list
+		vertexList.add(va);
+		vertexList.add(vb);
+		vertexList.add(vc);
+		vertexList.add(vd);
 
-	//make polygons from vertecies	
-	 shared_ptr<polygon> pa = make_shared<polygon>(va, vb, vc);
-	 shared_ptr<polygon> pb = make_shared<polygon>(vc, vd, va);
-	 //add to list
-	 polygonList.add(pa);
-	 polygonList.add(pb);//hehe, lead
-}
+		//make polygons from vertecies
+		shared_ptr<polygon> pa = make_shared<polygon>(va, vb, vc);
+		shared_ptr<polygon> pb = make_shared<polygon>(vc, vd, va);
+		//add to list
+		polygonList.add(pa);
+		polygonList.add(pb);//hehe, lead
+	}
 
- mesh(list<vertex> _vertList, list<polygon> _polyList) {//create from existing lists
-	 vertexList = _vertList;
-	 polygonList = _polyList;
-}
-	  
+	mesh(list<vertex> _vertList, list<polygon> _polyList) {//create from existing lists
+		vertexList = _vertList;
+		polygonList = _polyList;
+	}
+
 };
 
 
@@ -322,15 +320,15 @@ public:
 
 public:
 	Utility() {
-	draw_mode = MESH_DRAW_MODE::solid;
-	draw_velocity = false;
-	draw_acceleration = false;
-	draw_body_info = 0;
-	show_user_interface = true;
-	virtual_list_changed = false;
-	game_state = GAME_STATE::edit;
-}
-	
+		draw_mode = MESH_DRAW_MODE::solid;
+		draw_velocity = false;
+		draw_acceleration = false;
+		draw_body_info = 0;
+		show_user_interface = true;
+		virtual_list_changed = false;
+		game_state = GAME_STATE::edit;
+	}
+
 	mesh generateCircle(double radius = 6, int vertecies = 6) {
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
@@ -365,6 +363,6 @@ public:
 		return mesh(vertexList, polygonList);
 	}
 	double getStableSpeed(double _mass, double _radius, double _gravity) {
-	 return sqrt((_gravity * _mass) / _radius);
+		return sqrt((_gravity * _mass) / _radius);
 	}
 };
