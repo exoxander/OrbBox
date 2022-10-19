@@ -132,6 +132,45 @@ template <typename T> struct list {
 	}
 };
 
+//queue
+template <typename T> struct queue {
+	int currentlength;
+	int maxLength;
+	list<T> itemList;
+
+	template <typename T> queue(int _len = 5) {
+		currentlength = 0;
+		maxLength = _len;
+		itemList = list<T>();
+	}
+
+	//add to queue, if length too large remove tail
+	template <typename T> add(shared_ptr<T> _item) {
+		currentLength++;
+		if (currentLength > maxlength) {
+			currentLength--;
+			itemList.removeByItem(itemList.tail->item);
+		}
+		itemList.add(_item);
+	}
+
+	//return tail item
+	template <typename T> shared_ptr<T> remove() {
+		length--;
+		shared_ptr<T> returnItem = itemList.tail->item;
+		itemList.removeByItem(returnItem);
+		return returnitem;
+	}
+
+	//add to queue and always return tail
+	template <typename T> shared_pr<T> swap(shared_ptr<T> _item) {
+		shared_ptr<T> returnItem = itemList.tail->item;
+		itemList.removeByItem(returnItem);
+		itemList.add(_item);
+		return returnitem;
+	}
+};
+
 //game states
 enum struct GAME_STATE {
 	edit = 0,
@@ -271,10 +310,32 @@ struct polygon {
 	}
 };
 
+struct polygonLink {
+	int polygonID;
+	int aID;
+	int bID;
+	int cID;
+
+	polygonLink(int _p, int _a, int _b, int _c) {
+		polygonID = _p;
+		aID = _a;
+		bID = _b;
+		cID = _c;
+	}
+
+	polygonLink(shared_ptr<bin<polygon>> _polygonBin, list<vertex> _vertexList) {
+		polygonID = _polygonBin->item_id;
+		aID = _vertexList.getBinID(_polygonBin->item->a);
+		bID = _vertexList.getBinID(_polygonBin->item->b);
+		cID = _vertexList.getBinID(_polygonBin->item->c);
+	}
+};
+
 //----------------< MESH >------------------
 struct mesh {
 	list<vertex> vertexList;
 	list<polygon> polygonList;
+	list<polygonLink> polygonLinks;
 
 	mesh(double radius = 6) {//create default box mesh
 	   //create all vertecies
@@ -299,6 +360,10 @@ struct mesh {
 	mesh(list<vertex> _vertList, list<polygon> _polyList) {//create from existing lists
 		vertexList = _vertList;
 		polygonList = _polyList;
+	}
+
+	void rebuildMesh(list<polygonLink> _links) {
+
 	}
 
 };
