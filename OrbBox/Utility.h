@@ -12,7 +12,7 @@ using std::string;
 //"bin" == each link in the list
 template <typename T> struct bin {
 	shared_ptr<T> item;
-	int item_id;
+	int itemID;
 	shared_ptr<bin> next;
 	shared_ptr<bin> prev;
 
@@ -20,7 +20,7 @@ template <typename T> struct bin {
 		item = _item;
 		next = nullptr;
 		prev = nullptr;
-		item_id = _id;
+		itemID = _id;
 	}
 };
 
@@ -97,12 +97,17 @@ template <typename T> struct list {
 		}
 
 	}
+	template <typename T> void copyBin(shared_ptr<bin<T>> _bin) {
+		T newItem = *_bin->item;
+		add(make_shared<T>(newItem));
+	}
+
 	template <typename T> void removeByBinID(int _id) {
 		//loop through until bin->ID == _id and call remove() on bin->item
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
-			if (currentBin->item_id == _id) {
-				remove(currentBin->item);
+			if (currentBin->itemID == _id) {
+				removeByItem(currentBin->item);
 				break;
 			}
 			currentBin = currentBin->next;
@@ -113,7 +118,7 @@ template <typename T> struct list {
 		//return pointer to bin->item if bin->id == _id
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
-			if (currentBin->item_id == _id) {
+			if (currentBin->itemID == _id) {
 				return currentBin->item;
 			}
 		}
@@ -124,7 +129,7 @@ template <typename T> struct list {
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
 			if (currentBin->item == _item) {
-				return currentBin->item_id;
+				return currentBin->itemID;
 			}
 			currentBin = currentBin->next;
 		}
@@ -134,20 +139,22 @@ template <typename T> struct list {
 
 //queue
 template <typename T> struct queue {
-	int currentlength;
+public:
+	int currentLength;
 	int maxLength;
 	list<T> itemList;
 
+public:
 	template <typename T> queue(int _len = 5) {
-		currentlength = 0;
+		currentLength = 0;
 		maxLength = _len;
 		itemList = list<T>();
 	}
 
 	//add to queue, if length too large remove tail
-	template <typename T> add(shared_ptr<T> _item) {
+	template <typename T> void add(shared_ptr<T> _item) {
 		currentLength++;
-		if (currentLength > maxlength) {
+		if (currentLength > maxLength) {
 			currentLength--;
 			itemList.removeByItem(itemList.tail->item);
 		}
@@ -156,18 +163,18 @@ template <typename T> struct queue {
 
 	//return tail item
 	template <typename T> shared_ptr<T> remove() {
-		length--;
+		currentLength--;
 		shared_ptr<T> returnItem = itemList.tail->item;
 		itemList.removeByItem(returnItem);
-		return returnitem;
+		return returnItem;
 	}
 
 	//add to queue and always return tail
-	template <typename T> shared_pr<T> swap(shared_ptr<T> _item) {
+	template <typename T> shared_ptr<T> swap(shared_ptr<T> _item) {
 		shared_ptr<T> returnItem = itemList.tail->item;
 		itemList.removeByItem(returnItem);
 		itemList.add(_item);
-		return returnitem;
+		return returnItem;
 	}
 };
 
@@ -268,30 +275,22 @@ public:
 struct vertex {
 
 	vector2d position;
-	int id;
-	shared_ptr<vertex> next;
-	shared_ptr<vertex> prev;
 
 	vertex() {
 		position = vector2d();
-		id = -1;
 	}
 
-	vertex(double _a, double _b, int _id = -1) {
+	vertex(double _a, double _b) {
 		position.x = _a;
 		position.y = _b;
-		id = _id;
 	}
-	vertex(vector2d _position, int _id = -1) {
+	vertex(vector2d _position) {
 		position = _position;
-		id = _id;
 	}
 };
 
 //---------------< POLYGON >--------------
 struct polygon {
-
-	int id;
 	shared_ptr<vertex> a;
 	shared_ptr<vertex> b;
 	shared_ptr<vertex> c;
@@ -300,13 +299,11 @@ struct polygon {
 		a = nullptr;
 		b = nullptr;
 		c = nullptr;
-		id = -1;
 	}
-	polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c, int _id = -1) {
+	polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c) {
 		a = _a;
 		b = _b;
 		c = _c;
-		id = _id;
 	}
 };
 
@@ -324,7 +321,7 @@ struct polygonLink {
 	}
 
 	polygonLink(shared_ptr<bin<polygon>> _polygonBin, list<vertex> _vertexList) {
-		polygonID = _polygonBin->item_id;
+		polygonID = _polygonBin->itemID;
 		aID = _vertexList.getBinID(_polygonBin->item->a);
 		bID = _vertexList.getBinID(_polygonBin->item->b);
 		cID = _vertexList.getBinID(_polygonBin->item->c);
@@ -339,10 +336,10 @@ struct mesh {
 
 	mesh(double radius = 6) {//create default box mesh
 	   //create all vertecies
-		shared_ptr<vertex> va = make_shared<vertex>(-radius / 2, -radius / 2, 0);
-		shared_ptr<vertex> vb = make_shared<vertex>(radius / 2, -radius / 2, 1);
-		shared_ptr<vertex> vc = make_shared<vertex>(radius / 2, radius / 2, 2);
-		shared_ptr<vertex> vd = make_shared<vertex>(-radius / 2, radius / 2, 3);
+		shared_ptr<vertex> va = make_shared<vertex>(-radius / 2, -radius / 2);
+		shared_ptr<vertex> vb = make_shared<vertex>(radius / 2, -radius / 2);
+		shared_ptr<vertex> vc = make_shared<vertex>(radius / 2, radius / 2);
+		shared_ptr<vertex> vd = make_shared<vertex>(-radius / 2, radius / 2);
 		//add to list
 		vertexList.add(va);
 		vertexList.add(vb);
@@ -405,23 +402,23 @@ public:
 
 		//create an origin
 		int i = 0;
-		shared_ptr<vertex> origin = make_shared<vertex>(0, 0, 0);
+		shared_ptr<vertex> origin = make_shared<vertex>(0, 0);
 		vertexList.add(origin);
 
 		//fill until at final vertex
 		for (int i = 0; i < vertecies; i++) {
 			next = vector2d(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
-			vertexList.add(make_shared<vertex>(next, i + 1));
+			vertexList.add(make_shared<vertex>(next));
 
 			//creates first -> almost last polygons
 			if (i >= 1) {
-				shared_ptr<polygon> p = make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail->item, i - 1);//something here is causing a crash
+				shared_ptr<polygon> p = make_shared<polygon>(vertexList.head->item, vertexList.tail->prev->item, vertexList.tail->item);//something here is causing a crash
 				polygonList.add(p);
 			}
 		}
 
 		//finally create last polygon to link front and back
-		shared_ptr<polygon> newPolygon = make_shared<polygon>(vertexList.head->next->item, vertexList.head->item, vertexList.tail->item, i - 1);
+		shared_ptr<polygon> newPolygon = make_shared<polygon>(vertexList.head->next->item, vertexList.head->item, vertexList.tail->item);
 		polygonList.add(newPolygon);
 
 		//aaaaand return

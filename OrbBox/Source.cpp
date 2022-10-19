@@ -49,16 +49,16 @@ public:
         UI.currentPage = UI.pages.head;
 
         //test bodies
-        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 1, 50000);
-        shared_ptr<body> b2 = make_shared<body>(vector2d(-200,0), vector2d(0,1.8), vector2d(), 2, 1000);
-        shared_ptr<body> b3 = make_shared<body>(vector2d(-180,-10), vector2d(.3,2.4), vector2d(), 2, 100);
+        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 50000);
+        shared_ptr<body> b2 = make_shared<body>(vector2d(-200,0), vector2d(0,1.8), vector2d(), 1000);
+        shared_ptr<body> b3 = make_shared<body>(vector2d(-180,-10), vector2d(.3,2.4), vector2d(), 100);
 
         //test objects
-        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 3, 1);
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 1);
         shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1));
         shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
-        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 6, 4);
+        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 4);
 
         UI.addToCurrentPage(s1);
         UI.addToCurrentPage(s2);
@@ -165,7 +165,7 @@ public:
                         Pixel color = olc::WHITE;
 
                         while (currentPolygon != nullptr) {
-                            color = colorList[(currentPolygon->item_id) % colorListLength];
+                            color = colorList[(currentPolygon->itemID) % colorListLength];
 
                             if (hasBody) {
                                 a = viewport->translate(p, currentPolygon->item->a->position);
@@ -191,7 +191,7 @@ public:
                     //solid
                     if (util->draw_mode == MESH_DRAW_MODE::solid) {
                         shared_ptr<bin<polygon>> currentPolygon = m->polygonList.head;
-                        Pixel color = colorList[(currentObject->item_id) % colorListLength];
+                        Pixel color = colorList[(currentObject->itemID) % colorListLength];
 
                         while (currentPolygon != nullptr) {
 

@@ -2,6 +2,12 @@
 #include "Body.h"
 #include"Utility.h"
 
+enum struct SO_TYPE {
+	none,
+	physicsObject,
+	visualObject,
+	buttonObject
+};
 class ScreenObject {
 public:
 	shared_ptr<body> physicsBody;
@@ -10,11 +16,9 @@ public:
 
 	vector2i screenPosition;
 	double scale;
-	int ID;
 	bool hasPhysics;
 	bool hasCollision;
 	bool show;
-	bool dead;
 
 public:
 	//default
@@ -24,53 +28,45 @@ public:
 		visualMesh = make_shared<mesh>(10);
 		screenPosition = vector2i();
 		scale = 1;
-		ID = -1;
 		hasPhysics = false;
 		hasCollision = false;
 		show = true;
-		dead = false;
 	}
 	
 	//visual only object
-	ScreenObject(vector2i _pos, shared_ptr<mesh> _visualMesh, double _scale = 1, int _ID = -1) {
+	ScreenObject(vector2i _pos, shared_ptr<mesh> _visualMesh, double _scale = 1) {
 		physicsBody = nullptr;
 		collisionMesh = nullptr;//make getRect(visualMesh) later?
 		hasPhysics = false;
 		hasCollision = false;
 		show = true;
-		dead = false;
 
 		screenPosition = _pos;
 		visualMesh = _visualMesh;
 		scale = _scale;
-		ID = _ID;
 	}
 
 	//physics object by partial defnition
-	ScreenObject(shared_ptr<body> _physBody, shared_ptr<mesh> _visMesh, shared_ptr<mesh> _colMesh = nullptr, int _ID = -1) {
+	ScreenObject(shared_ptr<body> _physBody, shared_ptr<mesh> _visMesh, shared_ptr<mesh> _colMesh = nullptr) {
 		physicsBody = _physBody;
 		visualMesh = _visMesh;
 		collisionMesh = _colMesh;
 		hasPhysics = true;
 		show = true;
-		dead = false;
 		hasCollision = (_colMesh == nullptr ? false : true);
-		ID = _ID;
 
 		screenPosition = vector2i();
 		scale = 1;
 	}
 	//physics object by complete defnition
 	ScreenObject(vector2d _pos, vector2d _vel, vector2d _rot,
-		shared_ptr<mesh> _visMesh, shared_ptr<mesh> _colMesh = nullptr, double _mass = 1, int _ID = -1) {
-		physicsBody = make_shared<body>(_pos, _vel, _rot, _ID, _mass);
+		shared_ptr<mesh> _visMesh, shared_ptr<mesh> _colMesh = nullptr, double _mass = 1) {
+		physicsBody = make_shared<body>(_pos, _vel, _rot, _mass);
 		visualMesh = _visMesh;
 		collisionMesh = _colMesh;
 		hasPhysics = true;
 		show = true;
-		dead = false;
 		hasCollision = (_colMesh == nullptr ? false : true);
-		ID = _ID;
 
 		screenPosition = vector2i();
 		scale = 1;

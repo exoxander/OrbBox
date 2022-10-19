@@ -20,9 +20,8 @@ public:
 	vector2d velocity;
 	vector2d acceleration;
 	vector2d rotation;
-
 	double mass;
-	int ID;
+
 public:
 	//default
 	body() {
@@ -31,15 +30,13 @@ public:
 		acceleration = vector2d();
 		rotation = vector2d();
 		mass = 1;
-		ID = -1;
 }
 	//with default args
-	body(vector2d _pos, vector2d _vel = vector2d(), vector2d _rot = vector2d(), int _id = -1, double _mass = 1) {
+	body(vector2d _pos, vector2d _vel = vector2d(), vector2d _rot = vector2d(), double _mass = 1) {
 		position = _pos;
 		velocity = _vel;
 		acceleration = vector2d();
 		rotation = _rot;
-		ID = _id;
 		mass = _mass;
 	}
 }
