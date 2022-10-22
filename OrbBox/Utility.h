@@ -390,6 +390,14 @@ public:
 		virtual_list_changed = false;
 		game_state = GAME_STATE::edit;
 	}
+	void iterateDrawMode() {
+		if (draw_mode != MESH_DRAW_MODE::texture) {
+			draw_mode = (MESH_DRAW_MODE)(((int)draw_mode) + 1);
+		}
+		else {
+			draw_mode = MESH_DRAW_MODE::wireframe;
+		}
+	}
 
 	mesh generateCircle(double radius = 6, int vertecies = 6) {
 		//x1 = x0*cos() - y0*sin()

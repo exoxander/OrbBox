@@ -35,7 +35,7 @@ public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
-        util->draw_mode = MESH_DRAW_MODE::wireframe;
+        util->draw_mode = MESH_DRAW_MODE::solid;
         util->game_state = GAME_STATE::pause;
         viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
@@ -52,12 +52,18 @@ public:
         shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 50000);
         shared_ptr<body> b2 = make_shared<body>(vector2d(-200,0), vector2d(0,1.8), vector2d(), 1000);
         shared_ptr<body> b3 = make_shared<body>(vector2d(-180,-10), vector2d(.3,2.4), vector2d(), 100);
+        shared_ptr<body> b4 = make_shared<body>(vector2d(-70, -30), vector2d(-.5, 3.2), vector2d(), 300);
+        shared_ptr<body> b5 = make_shared<body>(vector2d(180, -30), vector2d(-1.2, -1.2), vector2d(), 100);
+        shared_ptr<body> b6 = make_shared<body>(vector2d(-20, -90), vector2d(-2.4, .1), vector2d(), 200);
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 1);
-        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1));
+        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1)); 
         shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
+        shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3));
+        shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m3));
+        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 4);
 
         UI.addToCurrentPage(s1);
@@ -65,6 +71,9 @@ public:
         UI.addToCurrentPage(p1);
         UI.addToCurrentPage(p2);
         UI.addToCurrentPage(p3);
+        UI.addToCurrentPage(p4);
+        UI.addToCurrentPage(p5);
+        UI.addToCurrentPage(p6);
         
         return true;
     }
@@ -81,7 +90,7 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
 
         //----------------< DEBUG >--------------------
-        //if (GetKey(olc::Key::F1).bPressed) { util->polygon_debug_draw = (util->polygon_debug_draw ? false : true); }
+        if (GetKey(olc::Key::F1).bPressed) { util->iterateDrawMode(); }
         if (GetKey(olc::Key::SPACE).bPressed) { util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); }
         if (GetKey(olc::Key::F2).bPressed) { util->draw_velocity = (util->draw_velocity ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->draw_acceleration = (util->draw_acceleration ? false : true); }
