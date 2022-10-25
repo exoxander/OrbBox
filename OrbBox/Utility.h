@@ -97,9 +97,23 @@ template <typename T> struct list {
 		}
 
 	}
+
 	template <typename T> void copyBin(shared_ptr<bin<T>> _bin) {
+		T newBin = *_bin->item;
+		add(make_shared<T>(newBin));
+	}
+
+	template <typename T> void deepCopyBin(shared_ptr<bin<T>> _bin) {
+		int temp = _bin->itemID;
 		T newItem = *_bin->item;
+
 		add(make_shared<T>(newItem));
+		tail->itemID = temp;
+		
+		//ensures each ID is always unique in the list if adding more after copying
+		if (uniqueCount < temp) {
+			uniqueCount = temp + 1;
+		}
 	}
 
 	template <typename T> void removeByBinID(int _id) {
@@ -294,45 +308,50 @@ struct polygon {
 	shared_ptr<vertex> a;
 	shared_ptr<vertex> b;
 	shared_ptr<vertex> c;
+	int aID;
+	int bID;
+	int cID;
 
 	polygon() {
 		a = nullptr;
 		b = nullptr;
 		c = nullptr;
+		aID = -1;
+		bID = -2;
+		cID = -3;
 	}
 	polygon(shared_ptr<vertex> _a, shared_ptr<vertex> _b, shared_ptr<vertex> _c) {
 		a = _a;
 		b = _b;
 		c = _c;
+		aID = -1;
+		bID = -2;
+		cID = -3;
 	}
-};
-
-struct polygonLink {
-	int polygonID;
-	int aID;
-	int bID;
-	int cID;
-
-	polygonLink(int _p, int _a, int _b, int _c) {
-		polygonID = _p;
+	polygon(shared_ptr<bin<vertex>> _a, shared_ptr<bin<vertex>> _b, shared_ptr<bin<vertex>> _c) {
+		a = _a->item;
+		b = _b->item;
+		c = _c->item;
+		aID = _a->itemID;
+		bID = _b->itemID;
+		cID = _c->itemID;
+	}
+	polygon(int _a, int _b, int _c) {//only for use in reading from file
+		a = nullptr;
+		b = nullptr;
+		c = nullptr;
 		aID = _a;
 		bID = _b;
 		cID = _c;
 	}
-
-	polygonLink(shared_ptr<bin<polygon>> _polygonBin, list<vertex> _vertexList) {
-		polygonID = _polygonBin->itemID;
-		aID = _vertexList.getBinID(_polygonBin->item->a);
-		bID = _vertexList.getBinID(_polygonBin->item->b);
-		cID = _vertexList.getBinID(_polygonBin->item->c);
-	}
 };
+
+
 
 //----------------< MESH >------------------
 struct mesh {
 	list<vertex> vertexList;
 	list<polygon> polygonList;
-	list<polygonLink> polygonLinks;
 
 	mesh(double radius = 6) {//create default box mesh
 	   //create all vertecies
@@ -352,17 +371,49 @@ struct mesh {
 		//add to list
 		polygonList.add(pa);
 		polygonList.add(pb);//hehe, lead
+
+		setPolygonIDs();
 	}
 
 	mesh(list<vertex> _vertList, list<polygon> _polyList) {//create from existing lists
 		vertexList = _vertList;
 		polygonList = _polyList;
+		setPolygonIDs();
+	}
+	void setPolygonIDs() {
+		shared_ptr<bin<vertex>> currentVertex = vertexList.head;
+
+		while (currentVertex != nullptr) {
+			//for every vertex in the mesh find all polygons that have it and set the corrisponding ID
+			shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
+			while (currentPolygon != nullptr) {
+				if (currentVertex->item == currentPolygon->item->a) {//a
+					currentPolygon->item->aID = currentVertex->itemID;
+				}
+				else if (currentVertex->item == currentPolygon->item->b) {//b
+					currentPolygon->item->bID = currentVertex->itemID;
+				}
+				else if (currentVertex->item == currentPolygon->item->c) {//c
+					currentPolygon->item->cID = currentVertex->itemID;
+				}
+				shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
+				currentPolygon = currentPolygon->next;
+			}
+			currentVertex = currentVertex->next;
+		}
 	}
 
-	void rebuildMesh(list<polygonLink> _links) {
+	//build mesh from vertex bins and polygon bins using their IDs
+	void buildMesh(list<vertex> _vertexList, list<polygon> _polygonList) {
+		vertexList = _vertexList;
+		polygonList = _polygonList;
+		//run through polygons and use getByBinID to set all the pointers
+	}
+	/*
+	void rebuildMesh() {
 
 	}
-
+	*/
 };
 
 
