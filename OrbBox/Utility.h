@@ -117,7 +117,7 @@ template <typename T> struct list {
 	}
 
 	template <typename T> void removeByBinID(int _id) {
-		//loop through until bin->ID == _id and call remove() on bin->item
+		//loop through until bin->itemID == _id and call remove() on bin->item
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
 			if (currentBin->itemID == _id) {
@@ -128,13 +128,15 @@ template <typename T> struct list {
 		}
 
 	}
-	template <typename T> shared_ptr<T> getByBinID(int _id) {
-		//return pointer to bin->item if bin->id == _id
+	template <typename T> shared_ptr<T> getByBinID(T type, int _id) {
+		//return bin->item if bin->itemID == _id
+		//need a way of determining type without passing as arg
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {
 			if (currentBin->itemID == _id) {
 				return currentBin->item;
 			}
+			currentBin = currentBin->next;
 		}
 		return nullptr;
 	}
@@ -396,10 +398,10 @@ struct mesh {
 				else if (currentVertex->item == currentPolygon->item->c) {//c
 					currentPolygon->item->cID = currentVertex->itemID;
 				}
-				shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
+				//shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
 				currentPolygon = currentPolygon->next;
 			}
-			currentVertex = currentVertex->next;
+			currentVertex = currentVertex->next;			
 		}
 	}
 
@@ -408,6 +410,17 @@ struct mesh {
 		vertexList = _vertexList;
 		polygonList = _polygonList;
 		//run through polygons and use getByBinID to set all the pointers
+		shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
+		while (currentPolygon != nullptr) {
+			currentPolygon->item->a = vertexList.getByBinID(vertex(), currentPolygon->item->aID);
+			currentPolygon->item->b = vertexList.getByBinID(vertex(), currentPolygon->item->bID);
+			currentPolygon->item->c = vertexList.getByBinID(vertex(), currentPolygon->item->cID);
+
+			if (currentPolygon->item->a == nullptr || currentPolygon->item->b == nullptr || currentPolygon->item->c == nullptr) {
+				currentPolygon->itemID = -1;
+			}
+			currentPolygon = currentPolygon->next;
+		}
 	}
 	/*
 	void rebuildMesh() {

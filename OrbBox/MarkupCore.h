@@ -34,6 +34,14 @@ public:void meshWriter(mesh _item) {
 public:void markupReader() {
 
 }
+
+	  string fDepth(int _value) {
+		  string temp = "";
+		  for (int i = 0; i < _value; i++) {
+			  temp.append("\t");
+		  }
+		  return temp;
+}
 public: void markupWriter() {
 	if (filepath != "NO_PATH") {
 		fstream writer(filepath);
