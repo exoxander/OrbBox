@@ -436,8 +436,10 @@ struct mesh {
 	void copyMesh(shared_ptr<mesh> _mesh) {
 		buildMesh(_mesh->vertexList, _mesh->polygonList);
 	}
-	void copyMesh(mesh _mesh) {
-		buildMesh(_mesh.vertexList, _mesh.polygonList);
+	mesh copyMesh() {
+		mesh newMesh = mesh();
+		newMesh.buildMesh(vertexList, polygonList);
+		return newMesh;
 	}
 	/*
 	void rebuildMesh() {
