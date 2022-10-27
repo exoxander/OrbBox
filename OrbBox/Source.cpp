@@ -44,6 +44,7 @@ public:
         mesh m3 = util->generateCircle(3, 6);
         mesh m1 = util->generateCircle(50, 16);
         mesh m2 = util->generateCircle(10, 8);
+        mesh m4 = mesh();
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
         UI.currentPage = UI.pages.head;
@@ -57,7 +58,7 @@ public:
         shared_ptr<body> b6 = make_shared<body>(vector2d(-20, -90), vector2d(-2.4, .1), vector2d(), 200);
 
         //test objects
-        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(), 1);
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), shared_ptr<mesh>(m4), 1);
         shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1)); 
         shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));

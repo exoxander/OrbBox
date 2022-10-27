@@ -116,6 +116,16 @@ template <typename T> struct list {
 		}
 	}
 
+	template <typename T> list<T> deepCopy(T type) {
+		list<T> newList;
+		shared_ptr<bin<T>> currentBin = head;
+		while (currentBin != nullptr) {
+			newList.deepCopyBin(currentBin);
+			currentBin = currentBin->next;
+		}
+		return newList;
+	}
+
 	template <typename T> void removeByBinID(int _id) {
 		//loop through until bin->itemID == _id and call remove() on bin->item
 		shared_ptr<bin<T>> currentBin = head;
@@ -407,8 +417,8 @@ struct mesh {
 
 	//build mesh from vertex bins and polygon bins using their IDs
 	void buildMesh(list<vertex> _vertexList, list<polygon> _polygonList) {
-		vertexList = _vertexList;
-		polygonList = _polygonList;
+		vertexList = _vertexList.deepCopy(vertex());
+		polygonList = _polygonList.deepCopy(polygon());
 		//run through polygons and use getByBinID to set all the pointers
 		shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
 		while (currentPolygon != nullptr) {
@@ -418,9 +428,16 @@ struct mesh {
 
 			if (currentPolygon->item->a == nullptr || currentPolygon->item->b == nullptr || currentPolygon->item->c == nullptr) {
 				currentPolygon->itemID = -1;
+				//if something went wrong mark polygon as problem
 			}
 			currentPolygon = currentPolygon->next;
 		}
+	}
+	void copyMesh(shared_ptr<mesh> _mesh) {
+		buildMesh(_mesh->vertexList, _mesh->polygonList);
+	}
+	void copyMesh(mesh _mesh) {
+		buildMesh(_mesh.vertexList, _mesh.polygonList);
 	}
 	/*
 	void rebuildMesh() {
