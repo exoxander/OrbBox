@@ -37,7 +37,7 @@ public:
         util->show_user_interface = true;
         util->draw_mode = MESH_DRAW_MODE::solid;
         util->game_state = GAME_STATE::pause;
-        viewport = make_shared<Camera>(vector2d(), vector2d(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
+        viewport = make_shared<Camera>(dVector(), dVector(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
 
         //render and whatnot test
@@ -51,23 +51,24 @@ public:
         UI.currentPage = UI.pages.head;
 
         //test bodies
-        shared_ptr<body> b1 = make_shared<body>(vector2d(), vector2d(), vector2d(), 50000);
-        shared_ptr<body> b2 = make_shared<body>(vector2d(-200,0), vector2d(0,1.8), vector2d(), 1000);
-        shared_ptr<body> b3 = make_shared<body>(vector2d(-180,-10), vector2d(.3,2.4), vector2d(), 100);
-        shared_ptr<body> b4 = make_shared<body>(vector2d(-70, -30), vector2d(-.5, 3.2), vector2d(), 300);
-        shared_ptr<body> b5 = make_shared<body>(vector2d(180, -30), vector2d(-1.2, -1.2), vector2d(), 100);
-        shared_ptr<body> b6 = make_shared<body>(vector2d(-20, -90), vector2d(-2.4, .1), vector2d(), 200);
+        shared_ptr<body> b1 = make_shared<body>(dVector(), dVector(), dVector(), 50000);
+        shared_ptr<body> b2 = make_shared<body>(dVector(-200,0), dVector(0,1.8), dVector(), 1000);
+        shared_ptr<body> b3 = make_shared<body>(dVector(-180,-10), dVector(.3,2.4), dVector(), 100);
+        shared_ptr<body> b4 = make_shared<body>(dVector(-70, -30), dVector(-.5, 3.2), dVector(), 300);
+        shared_ptr<body> b5 = make_shared<body>(dVector(180, -30), dVector(-1.2, -1.2), dVector(), 100);
+        shared_ptr<body> b6 = make_shared<body>(dVector(-20, -90), dVector(-2.4, .1), dVector(), 200);
 
         //test objects
-        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(vector2i(15, 15), make_shared<mesh>(m4), 1);
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(iVector(15, 15), make_shared<mesh>(m4), 1);
         shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1)); 
         shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m5));
         shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m5));
-        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(vector2i(50, 24), make_shared<mesh>(), 4);
+        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(iVector(50, 24), make_shared<mesh>(), 4);
 
+        //adding
         UI.addToCurrentPage(s1);
         UI.addToCurrentPage(s2);
         UI.addToCurrentPage(p1);
@@ -127,10 +128,10 @@ public:
             if (currentObject->item->show) {
                 if (true) {//do viewport culling later
                     shared_ptr<mesh> m = currentObject->item->visualMesh;
-                    vector2d p;
-                    vector2i a;
-                    vector2i b;
-                    vector2i c;
+                    dVector p;
+                    iVector a;
+                    iVector b;
+                    iVector c;
                     double scale = currentObject->item->scale;
                     bool hasBody = (currentObject->item->physicsBody == nullptr ? false: true);
 
@@ -250,15 +251,15 @@ public:
     }
 
     void drawDebugInfo(shared_ptr<body> _body) {
-        vector2i start = viewport->translate(_body->position, vector2d());
-        vector2d b;
+        iVector start = viewport->translate(_body->position, dVector());
+        dVector b;
         int rad = 2;
 
         if (util->draw_acceleration) {
             b = _body->acceleration;
             b.normalize();
             b.multiply(50 / viewport->zoom);
-            vector2i end = viewport->translate(_body->position, b);
+            iVector end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(255, 255, 0));
             FillCircle(end.x, end.y, rad, Pixel(255, 255, 0));
         }
@@ -266,7 +267,7 @@ public:
             b = _body->velocity;
             b.normalize();
             b.multiply(50 / viewport->zoom);
-            vector2i end = viewport->translate(_body->position, b);
+            iVector end = viewport->translate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(0, 255, 255));
             FillCircle(end.x, end.y, rad, Pixel(0, 255, 255));
         }

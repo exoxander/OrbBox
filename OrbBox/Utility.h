@@ -217,11 +217,11 @@ enum struct MESH_DRAW_MODE {
 	solid,
 	texture
 };
-struct vector2i {
+struct iVector {
 	int x;
 	int y;
 
-	vector2i(int _x = 0, int _y = 0) {
+	iVector(int _x = 0, int _y = 0) {
 		x = _x;
 		y = _y;
 	}
@@ -229,7 +229,7 @@ struct vector2i {
 		x += _x;
 		y += _y;
 	}
-	void add(vector2i _value) {
+	void add(iVector _value) {
 		x += _value.x;
 		y += _value.y;
 	}
@@ -238,17 +238,17 @@ struct vector2i {
 		y *= _value;
 	}
 };
-//===================-< vector2d >-==================
-struct vector2d {
+//===================-< dVector >-==================
+struct dVector {
 
 	double x;
 	double y;
 public:
-	vector2d(double _x = 0, double _y = 0) {
+	dVector(double _x = 0, double _y = 0) {
 		set(_x, _y);
 	}
-	vector2i convertTo2i() {
-		return vector2i(int(x), int(y));
+	iVector toiVector() {
+		return iVector(int(x), int(y));
 	}
 	void set(double _x, double _y) {
 		x = _x;
@@ -259,15 +259,15 @@ public:
 		x += _x;
 		y += _y;
 	}
-	void add(vector2d _value) {
+	void add(dVector _value) {
 		x += _value.x;
 		y += _value.y;
 	}
-	void subtract(vector2d _value) {
+	void subtract(dVector _value) {
 		x -= _value.x;
 		y -= _value.y;
 	}
-	void multiply(vector2d _value) {
+	void multiply(dVector _value) {
 		x *= _value.x;
 		y *= _value.y;
 	}
@@ -285,13 +285,13 @@ public:
 			y /= magnitude;
 		}
 	}
-	vector2d returnNormalized() {
+	dVector returnNormalized() {
 		double magnitude = getMagnitude();
 		if (magnitude != 0) {
-			return vector2d(x / magnitude, y / magnitude);
+			return dVector(x / magnitude, y / magnitude);
 		}
 		else {
-			return vector2d();
+			return dVector();
 		}
 	}
 };
@@ -300,17 +300,17 @@ public:
 //---------------< VERTEX > --------------
 struct vertex {
 
-	vector2d position;
+	dVector position;
 
 	vertex() {
-		position = vector2d();
+		position = dVector();
 	}
 
 	vertex(double _a, double _b) {
 		position.x = _a;
 		position.y = _b;
 	}
-	vertex(vector2d _position) {
+	vertex(dVector _position) {
 		position = _position;
 	}
 };
@@ -433,10 +433,10 @@ struct mesh {
 			currentPolygon = currentPolygon->next;
 		}
 	}
-	void copyMesh(shared_ptr<mesh> _mesh) {
+	void copy(shared_ptr<mesh> _mesh) {
 		buildMesh(_mesh->vertexList, _mesh->polygonList);
 	}
-	mesh copyMesh() {
+	mesh copy() {
 		mesh newMesh = mesh();
 		newMesh.buildMesh(vertexList, polygonList);
 		return newMesh;
@@ -485,10 +485,10 @@ public:
 	mesh generateCircle(double radius = 6, int vertecies = 6) {
 		//x1 = x0*cos() - y0*sin()
 		//y1 = x0*sin() + y0*cos()
-		//create vertex by angle * i starting at vector2d (radius, 0)
+		//create vertex by angle * i starting at dVector (radius, 0)
 		list<vertex> vertexList;
 		list<polygon> polygonList;
-		vector2d next;
+		dVector next;
 		double angle = (2 * PI) / double(vertecies);//angle of each new vertex in radians
 
 		//create an origin
@@ -498,7 +498,7 @@ public:
 
 		//fill until at final vertex
 		for (int i = 0; i < vertecies; i++) {
-			next = vector2d(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
+			next = dVector(radius * cos(angle * i), radius * sin(angle * i));//coordinant of next vertex
 			vertexList.add(make_shared<vertex>(next));
 
 			//creates first -> almost last polygons

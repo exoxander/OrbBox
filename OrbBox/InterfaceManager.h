@@ -38,26 +38,26 @@ enum struct BUTTON_TYPE {
 class Button{
 public:
 	BUTTON_TYPE type;
-	vector2i position;
-	vector2i size;
+	iVector position;
+	iVector size;
 	string text;
 
 public:
 	Button() {
 		type = BUTTON_TYPE::nonButton;
-		position = vector2i(-5,-5);
-		size = vector2i(10, 10);
+		position = iVector(-5,-5);
+		size = iVector(10, 10);
 		text = "none";
 	}
 
-	Button(BUTTON_TYPE _type, vector2i _pos = vector2i(-5,-5), vector2i _size = vector2i(10,10), string _text = "none") {
+	Button(BUTTON_TYPE _type, iVector _pos = iVector(-5,-5), iVector _size = iVector(10,10), string _text = "none") {
 		type = _type;
 		position = _pos;
 		size = _size;
 		text = _text;
 	}
 
-	bool mouseIsOn(vector2i _mousePos) {
+	bool mouseIsOn(iVector _mousePos) {
 		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
 			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
 			//return true if the mouse is inside the bounds of the button
@@ -76,7 +76,7 @@ public:
 		:Button() {
 		item = nullptr;
 	}
-	ObjectHandle(shared_ptr<ScreenObject> _object, vector2i _pos = vector2i(-2,-2), vector2i _size = vector2i(4,4), string _text = "none")
+	ObjectHandle(shared_ptr<ScreenObject> _object, iVector _pos = iVector(-2,-2), iVector _size = iVector(4,4), string _text = "none")
 		:Button(BUTTON_TYPE::handle, _pos, _size, _text) {
 		item = _object;
 	}
@@ -174,7 +174,7 @@ public:void takeAction(ACTION _action) {
 	case ACTION::forceReset://force reset mode
 		util->game_state = GAME_STATE::edit;
 		physicsBodies->reset();
-		viewport->location = vector2d();//not working?
+		viewport->location = dVector();//not working?
 		viewport->target = nullptr;
 		viewport->zoom = 1;
 		break;

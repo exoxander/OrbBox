@@ -14,7 +14,7 @@ public:
 	shared_ptr<mesh> collisionMesh;
 	shared_ptr<mesh> visualMesh;
 
-	vector2i screenPosition;
+	iVector screenPosition;
 	double scale;
 	bool hasPhysics;
 	bool hasCollision;
@@ -26,7 +26,7 @@ public:
 		physicsBody = nullptr;
 		collisionMesh = nullptr;
 		visualMesh = make_shared<mesh>(10);
-		screenPosition = vector2i();
+		screenPosition = iVector();
 		scale = 1;
 		hasPhysics = false;
 		hasCollision = false;
@@ -34,7 +34,7 @@ public:
 	}
 	
 	//visual only object
-	ScreenObject(vector2i _pos, shared_ptr<mesh> _visualMesh, double _scale = 1) {
+	ScreenObject(iVector _pos, shared_ptr<mesh> _visualMesh, double _scale = 1) {
 		physicsBody = nullptr;
 		collisionMesh = nullptr;//make getRect(visualMesh) later?
 		hasPhysics = false;
@@ -55,11 +55,11 @@ public:
 		show = true;
 		hasCollision = (_colMesh == nullptr ? false : true);
 
-		screenPosition = vector2i();
+		screenPosition = iVector();
 		scale = 1;
 	}
 	//physics object by complete defnition
-	ScreenObject(vector2d _pos, vector2d _vel, vector2d _rot,
+	ScreenObject(dVector _pos, dVector _vel, dVector _rot,
 		shared_ptr<mesh> _visMesh, shared_ptr<mesh> _colMesh = nullptr, double _mass = 1) {
 		physicsBody = make_shared<body>(_pos, _vel, _rot, _mass);
 		visualMesh = _visMesh;
@@ -68,8 +68,24 @@ public:
 		show = true;
 		hasCollision = (_colMesh == nullptr ? false : true);
 
-		screenPosition = vector2i();
+		screenPosition = iVector();
 		scale = 1;
+	}
+
+	ScreenObject copy() {
+		ScreenObject newObject = ScreenObject();
+		if (physicsBody) { newObject.physicsBody = make_shared<body>(physicsBody->copy()); }//repeat for pointers
+		if (visualMesh) { newObject.visualMesh = make_shared<mesh>(visualMesh->copy()); }
+		if (collisionMesh) { newObject.collisionMesh = make_shared<mesh>(collisionMesh->copy()); }
+
+		newObject.hasPhysics = hasPhysics;
+		newObject.show = show;
+		newObject.hasCollision = hasCollision;
+
+		return newObject;
+	}
+	void copy(ScreenObject _object) {
+
 	}
 
 

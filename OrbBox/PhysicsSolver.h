@@ -56,11 +56,11 @@ public:
 		pageBodies = list<body>();
 	}
 
-	vector2d applyGravity(shared_ptr<body> _first, shared_ptr<body> _second, bool flipped = false) {//euclidian integration for now
+	dVector applyGravity(shared_ptr<body> _first, shared_ptr<body> _second, bool flipped = false) {//euclidian integration for now
 		//(a) = g = GM / d^2
 
 		//the acceleration of first as a result of second
-		vector2d result = _first->position;
+		dVector result = _first->position;
 		result.subtract(_second->position);
 		double mass;
 		double distance = result.getMagnitude();
@@ -93,7 +93,7 @@ public:
 		//check if a link exists between the two items, if not add link to eventMatrix
 		//loop through all bodies in the body list
 		while (currentBin != nullptr) {
-			currentBin->item->acceleration = vector2d();
+			currentBin->item->acceleration = dVector();
 			linkBin = currentBin->next;
 			while (linkBin != nullptr) {				
 				currentEvent = eventMatrix.head;
@@ -143,7 +143,7 @@ public:
 			currentBody->item->velocity.add(currentBody->item->acceleration);
 			currentBody->item->position.add(currentBody->item->velocity);
 
-			//currentBody->item->acceleration = vector2d();
+			//currentBody->item->acceleration = dVector();
 			currentBody = currentBody->next;
 		}
 	}
