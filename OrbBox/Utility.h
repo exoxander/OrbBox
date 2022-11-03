@@ -61,6 +61,10 @@ template <typename T> struct list {
 
 	}
 
+	template <typename T> void add(T _item) {
+		add(make_shared<T>(_item));
+	}
+
 	//removes an item of the matching shared pointer from the list (if it exists)
 	template <typename T> void removeByItem(shared_ptr<T> _item) {
 		shared_ptr<bin<T>> currentBin = head;
@@ -163,47 +167,6 @@ template <typename T> struct list {
 	}
 };
 
-//queue
-template <typename T> struct queue {
-public:
-	int currentLength;
-	int maxLength;
-	list<T> itemList;
-
-public:
-	template <typename T> queue(int _len = 5) {
-		currentLength = 0;
-		maxLength = _len;
-		itemList = list<T>();
-	}
-
-	//add to queue, if length too large remove tail
-	template <typename T> void add(shared_ptr<T> _item) {
-		currentLength++;
-		if (currentLength > maxLength) {
-			currentLength--;
-			itemList.removeByItem(itemList.tail->item);
-		}
-		itemList.add(_item);
-	}
-
-	//return tail item
-	template <typename T> shared_ptr<T> remove() {
-		currentLength--;
-		shared_ptr<T> returnItem = itemList.tail->item;
-		itemList.removeByItem(returnItem);
-		return returnItem;
-	}
-
-	//add to queue and always return tail
-	template <typename T> shared_ptr<T> swap(shared_ptr<T> _item) {
-		shared_ptr<T> returnItem = itemList.tail->item;
-		itemList.removeByItem(returnItem);
-		itemList.add(_item);
-		return returnItem;
-	}
-};
-
 //game states
 enum struct GAME_STATE {
 	edit = 0,
@@ -217,6 +180,7 @@ enum struct MESH_DRAW_MODE {
 	solid,
 	texture
 };
+//===================< iVector >====================
 struct iVector {
 	int x;
 	int y;

@@ -21,6 +21,7 @@ public:
 	dVector acceleration;
 	dVector rotation;
 	double mass;
+	int linkedObject;
 
 public:
 	//default
@@ -30,18 +31,20 @@ public:
 		acceleration = dVector();
 		rotation = dVector();
 		mass = 1;
+		linkedObject = -1;
 }
 	//with default args
-	body(dVector _pos, dVector _vel = dVector(), dVector _rot = dVector(), double _mass = 1) {
+	body(dVector _pos, dVector _vel = dVector(), dVector _rot = dVector(), double _mass = 1, int _linkedObject = -1) {
 		position = _pos;
 		velocity = _vel;
 		acceleration = dVector();
 		rotation = _rot;
 		mass = _mass;
+		linkedObject = _linkedObject;
 	}
 
 	body copy() {
-		body newBody = body(position, velocity, rotation, mass);
+		body newBody = body(position, velocity, rotation, mass, linkedObject);
 		return newBody;
 	}
 

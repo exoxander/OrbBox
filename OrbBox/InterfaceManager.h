@@ -56,15 +56,11 @@ public:
 		size = _size;
 		text = _text;
 	}
+	virtual ~Button() {
 
-	bool mouseIsOn(iVector _mousePos) {
-		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
-			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
-			//return true if the mouse is inside the bounds of the button
-			return true;
-		}
-		return false;
 	}
+
+	
 };
 
 class ObjectHandle : public Button {
@@ -79,6 +75,13 @@ public:
 	ObjectHandle(shared_ptr<ScreenObject> _object, iVector _pos = iVector(-2,-2), iVector _size = iVector(4,4), string _text = "none")
 		:Button(BUTTON_TYPE::handle, _pos, _size, _text) {
 		item = _object;
+	}
+	ObjectHandle(shared_ptr<ScreenObject> _object, string _text)
+		:Button(BUTTON_TYPE::handle, iVector(-2,2), iVector(4,4), _text) {
+		item = _object;
+	}
+	~ObjectHandle() {
+		item = nullptr;
 	}
 };
 
@@ -117,10 +120,9 @@ public:
 			}
 			currentObject = currentObject->next;
 		}
-
 		return newList;
 	}
-
+	 
 	//add a screen object
 	void addObject(shared_ptr<ScreenObject> _object) {
 		pageObjects.add(_object);
@@ -143,6 +145,7 @@ public:
 	list<Button> buttons;
 	list<Page> pages;
 	shared_ptr<bin<Page>> currentPage;
+	
 
 public:
 	InterfaceManager() {
@@ -156,36 +159,16 @@ public:
 	void switchToPage(){
 
 	}
-	  /*
-public:void takeAction(ACTION _action) {
-	switch (_action) {
-	case ACTION::togglePlay://toggle pause / play
-		util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause);
-		break;
-	case ACTION::forcePlay://force play
-		util->game_state = GAME_STATE::play;
-		break;
-	case ACTION::forcePause ://force pause
-		util->game_state = GAME_STATE::pause;
-		break;
-	case ACTION::forceEdit://go into edit (NOT RESET) mode and add virtual body with handles
-		break;
-	case ACTION::saveSim:
-		//save to existing filepath
-		readWriter->markupWriter();
-		break;
-	case ACTION::forceReset://force reset mode
-		util->game_state = GAME_STATE::edit;
-		physicsBodies->reset();
-		viewport->location = dVector();//not working?
-		viewport->target = nullptr;
-		viewport->zoom = 1;
-		break;
-	case ACTION::startSim://edit mode -> sim paused
-		util->game_state = GAME_STATE::pause;
-		physicsBodies->makeActual(virtualBodies);
-		break;
+	void setAllBodyLinks() {
 	}
-}
-*/
+	/*
+	bool mouseIsOn(iVector _mousePos) {
+		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
+			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
+			//return true if the mouse is inside the bounds of the button
+			return true;
+		}
+		return false;
+	}
+	*/
 };

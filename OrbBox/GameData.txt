@@ -29,12 +29,11 @@ https://www.youtube.com/watch?v=ZZY9YE7rZJw
 									
 									
                                                             
-                             button------------------------------------->body handle
-                                |                                            |
-           --------------------------------------------------------          |
-           |             |        |        |       |       |      |          |
-      function ptr    position   size    color1  color2  color3  type    object ptr
-
+     all non-culled objects
+            |
+place button on existing velocity vector
+            |
+    when button released: button.position --> reverse translate = new object velocity
       edit page ----> copy lists ----> sim page
 
 possible issue when deleting an object

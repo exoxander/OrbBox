@@ -4,6 +4,7 @@
 
 enum struct SO_TYPE {
 	none,
+	special,
 	physicsObject,
 	visualObject,
 	buttonObject
@@ -70,6 +71,12 @@ public:
 
 		screenPosition = iVector();
 		scale = 1;
+	}
+
+	~ScreenObject() {
+		physicsBody = nullptr;
+		visualMesh = nullptr;
+		collisionMesh = nullptr;
 	}
 
 	ScreenObject copy() {

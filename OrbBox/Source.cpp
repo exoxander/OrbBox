@@ -31,12 +31,15 @@ private:
     PhysicsSolver solver = PhysicsSolver();
     InterfaceManager UI = InterfaceManager();
 
+    //UI testing
+    //list<Button> buttonList = list<Button>();
+
 public:
     bool OnUserCreate() override {  
         //initialize camera
         util->show_user_interface = true;
         util->draw_mode = MESH_DRAW_MODE::solid;
-        util->game_state = GAME_STATE::pause;
+        util->game_state = GAME_STATE::edit;
         viewport = make_shared<Camera>(dVector(), dVector(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
 
@@ -56,10 +59,11 @@ public:
         shared_ptr<body> b3 = make_shared<body>(dVector(-180,-10), dVector(.3,2.4), dVector(), 100);
         shared_ptr<body> b4 = make_shared<body>(dVector(-70, -30), dVector(-.5, 3.2), dVector(), 300);
         shared_ptr<body> b5 = make_shared<body>(dVector(180, -30), dVector(-1.2, -1.2), dVector(), 100);
-        //shared_ptr<body> b6 = make_shared<body>(dVector(-20, -90), dVector(-2.4, .1), dVector(), 200);
-        shared_ptr<body> b6 = make_shared<body>(b5->copy());
-        b6->position = dVector(-30, -110);
-        b6->velocity = dVector(-2.4, .1);
+        shared_ptr<body> b6 = make_shared<body>(dVector(-20, -90), dVector(-2.4, .1), dVector(), 200);
+        //shared_ptr<body> b6 = make_shared<body>(b5->copy());
+        //b6->position = dVector(-30, -110);
+        //b6->velocity = dVector(-2.4, .1);
+        //b6->mass = 5000;
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(iVector(15, 15), make_shared<mesh>(m4), 1);
@@ -68,7 +72,7 @@ public:
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m5));
-        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m2));
+        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m5));
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(iVector(50, 24), make_shared<mesh>(), 4);
 
         //adding
@@ -81,6 +85,14 @@ public:
         UI.addToCurrentPage(p5);
         UI.addToCurrentPage(p6);
         
+        //creating all object handles
+        shared_ptr<bin<ScreenObject>> currentObject = UI.currentPage->item->pageObjects.head;
+        while (currentObject != nullptr) {
+            if (currentObject->item->hasPhysics) {
+                UI.currentPage->item->pageButtons.add(Button(ObjectHandle(currentObject->item, "Handle")));
+            }
+            currentObject = currentObject->next;
+        }
         return true;
     }
 
@@ -94,6 +106,11 @@ public:
         if (GetKey(olc::Key::DOWN).bHeld) viewport->location.y -= (1 / viewport->zoom) * viewport->panSpeed;
         if (GetKey(olc::Key::NP_ADD).bHeld) viewport->zoomIn();
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
+
+        //buttonz
+        if (util->game_state == GAME_STATE::edit) {
+            //check button clicks
+        }
 
         //----------------< DEBUG >--------------------
         if (GetKey(olc::Key::F1).bPressed) { util->iterateDrawMode(); }
@@ -114,6 +131,7 @@ public:
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(20,20,40));
         drawScreenObjects(UI.currentPage->item->pageObjects);
+        drawInterface();
       
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
@@ -286,7 +304,26 @@ public:
     }
     //----------------------< DRAW USER INTERFACE >-----------------------
     void drawInterface() {
-      
+      //draw buttons
+        shared_ptr<bin<Button>> currentButton = UI.currentPage->item->pageButtons.head;
+        while (currentButton != nullptr) {
+
+            if (util->game_state == GAME_STATE::edit && currentButton->item->type == BUTTON_TYPE::handle) {//draw handles
+                //draw handle on pointed objects velocity (x10?)
+                //cast to object handle
+                iVector pos;
+                iVector wid;
+                shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton->item)->item;//pointer access violation
+                if (temp != nullptr) {
+                    pos = viewport->translate(temp->physicsBody->position);
+                    pos.add(currentButton->item->position);
+                    wid = pos;
+                    wid.add(currentButton->item->size);
+                    DrawRect(pos.x, pos.y, wid.x, wid.y);
+                }
+            }
+            currentButton = currentButton->next;
+        }
     }
 };
 
