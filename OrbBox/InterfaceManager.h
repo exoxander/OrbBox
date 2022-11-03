@@ -60,6 +60,15 @@ public:
 
 	}
 
+	bool mouseIsOn(iVector _mousePos) {
+		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
+			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
+			//return true if the mouse is inside the bounds of the button
+			return true;
+		}
+		return false;
+	}
+
 	
 };
 
@@ -145,10 +154,11 @@ public:
 	list<Button> buttons;
 	list<Page> pages;
 	shared_ptr<bin<Page>> currentPage;
-	
+	int activeButton;	
 
 public:
 	InterfaceManager() {
+		activeButton = -1;
 	}
 	void addToCurrentPage(shared_ptr<ScreenObject> _object) {
 		currentPage->item->addObject(_object);
@@ -162,13 +172,5 @@ public:
 	void setAllBodyLinks() {
 	}
 	/*
-	bool mouseIsOn(iVector _mousePos) {
-		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
-			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
-			//return true if the mouse is inside the bounds of the button
-			return true;
-		}
-		return false;
-	}
 	*/
 };

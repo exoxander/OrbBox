@@ -111,6 +111,27 @@ public:
         //buttonz
         if (util->game_state == GAME_STATE::edit) {
             //check button clicks
+            //run through list
+            //if one returns is clicked, do something with its position and mouse while held
+            //once released, set linked body position to a reverse-translated value / 10 (handle is 10x farther out)
+            if (GetMouse(0).bReleased); {
+                UI.activeButton = -1;
+            }
+            if (UI.activeButton == -1 && (GetMouse(0).bHeld)) {//if mouse down and no active button, search buttons
+                shared_ptr<bin<Button>> currentButton = UI.currentPage->item->pageButtons.head;
+                while (currentButton != nullptr) {
+                    if (currentButton->item->mouseIsOn(iVector(GetMouseX(), GetMouseY()))) {//this button is pressed
+                        UI.activeButton = currentButton->itemID;
+                        break;
+                    }
+                    currentButton = currentButton->next;
+                }
+            }
+            //follow on incase its set in previous statement
+            if (GetMouse(0).bHeld && UI.activeButton >= 0) {//button is active
+                shared_ptr<Button> pressedButton = UI.currentPage->item->pageButtons.getByBinID(Button(), UI.activeButton);
+                //check if button is a handle, type cast if so, then bind to mouse position and change object velocity
+            }
         }
 
         //----------------< DEBUG >--------------------
@@ -317,12 +338,15 @@ public:
                 shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton->item)->item;//pointer access violation
                 if (temp != nullptr) {
                     dVector alteredPosition = temp->physicsBody->velocity;
+                    iVector start = viewport->translate(temp->physicsBody->position);
                     alteredPosition.normalize();
                     alteredPosition.multiply(20 / viewport->zoom);
                     pos = viewport->translate(temp->physicsBody->position, alteredPosition);
+                    DrawLine(start.x, start.y, pos.x, pos.y, Pixel(0, 255, 255));
                     pos.add(currentButton->item->position);
                     wid = currentButton->item->size;
                     DrawRect(pos.x, pos.y, wid.x, wid.y);
+
                 }
             }
             currentButton = currentButton->next;
