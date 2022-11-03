@@ -45,7 +45,7 @@ public:
         mesh m1 = util->generateCircle(50, 16);
         mesh m2 = util->generateCircle(10, 8);
         mesh m4 = mesh();
-        mesh m5 = m4.copyMesh();
+        mesh m5 = m4.copy();
         shared_ptr<Page> p = make_shared<Page>();
         UI.pages.add(p);
         UI.currentPage = UI.pages.head;
@@ -56,7 +56,10 @@ public:
         shared_ptr<body> b3 = make_shared<body>(dVector(-180,-10), dVector(.3,2.4), dVector(), 100);
         shared_ptr<body> b4 = make_shared<body>(dVector(-70, -30), dVector(-.5, 3.2), dVector(), 300);
         shared_ptr<body> b5 = make_shared<body>(dVector(180, -30), dVector(-1.2, -1.2), dVector(), 100);
-        shared_ptr<body> b6 = make_shared<body>(dVector(-20, -90), dVector(-2.4, .1), dVector(), 200);
+        //shared_ptr<body> b6 = make_shared<body>(dVector(-20, -90), dVector(-2.4, .1), dVector(), 200);
+        shared_ptr<body> b6 = make_shared<body>(b5->copy());
+        b6->position = dVector(-30, -110);
+        b6->velocity = dVector(-2.4, .1);
 
         //test objects
         shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(iVector(15, 15), make_shared<mesh>(m4), 1);
@@ -65,7 +68,7 @@ public:
         shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3));
         shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m5));
-        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m5));
+        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m2));
         shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(iVector(50, 24), make_shared<mesh>(), 4);
 
         //adding

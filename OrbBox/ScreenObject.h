@@ -85,8 +85,13 @@ public:
 		return newObject;
 	}
 	void copy(ScreenObject _object) {
+		physicsBody = (_object.physicsBody ? make_shared<body>(_object.physicsBody->copy()) : nullptr);
+		visualMesh = (_object.visualMesh ? make_shared<mesh>(_object.visualMesh->copy()) : nullptr);
+		collisionMesh = (_object.collisionMesh ? make_shared<mesh>(_object.collisionMesh->copy()) : nullptr);
+
+		hasPhysics = _object.hasPhysics;
+		show = _object.show;
+		hasCollision = _object.hasCollision;
 
 	}
-
-
 };

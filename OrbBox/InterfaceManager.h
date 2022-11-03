@@ -153,6 +153,9 @@ public:
 	void addToCurrentPage(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
 		currentPage->item->addObject(_object, _body);
 	}
+	void switchToPage(){
+
+	}
 	  /*
 public:void takeAction(ACTION _action) {
 	switch (_action) {
