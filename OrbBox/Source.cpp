@@ -89,7 +89,8 @@ public:
         shared_ptr<bin<ScreenObject>> currentObject = UI.currentPage->item->pageObjects.head;
         while (currentObject != nullptr) {
             if (currentObject->item->hasPhysics) {
-                UI.currentPage->item->pageButtons.add(Button(ObjectHandle(currentObject->item, "Handle")));
+                UI.currentPage->item->pageButtons.add(
+                    std::dynamic_pointer_cast<Button>(make_shared<ObjectHandle>(currentObject->item,iVector(-6,-6), iVector(12,12), "Handle")));
             }
             currentObject = currentObject->next;
         }
@@ -315,10 +316,12 @@ public:
                 iVector wid;
                 shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton->item)->item;//pointer access violation
                 if (temp != nullptr) {
-                    pos = viewport->translate(temp->physicsBody->position);
+                    dVector alteredPosition = temp->physicsBody->velocity;
+                    alteredPosition.normalize();
+                    alteredPosition.multiply(20 / viewport->zoom);
+                    pos = viewport->translate(temp->physicsBody->position, alteredPosition);
                     pos.add(currentButton->item->position);
-                    wid = pos;
-                    wid.add(currentButton->item->size);
+                    wid = currentButton->item->size;
                     DrawRect(pos.x, pos.y, wid.x, wid.y);
                 }
             }
