@@ -48,12 +48,12 @@ struct event {
 //--------------------< PHYSICS SOLVER >------------------------
 class PhysicsSolver {
 	list<event> eventMatrix;
-	list<body> pageBodies;
+	list<body> staticBodies;
 
 public:
 	PhysicsSolver() {
 		eventMatrix = list<event>();
-		pageBodies = list<body>();
+		staticBodies = list<body>();
 	}
 
 	dVector applyGravity(shared_ptr<body> _first, shared_ptr<body> _second, bool flipped = false) {//euclidian integration for now
@@ -84,7 +84,7 @@ public:
 
 	void buildEventMatrix() {
 		eventMatrix.clear();
-		shared_ptr<bin<body>> currentBin = pageBodies.head;
+		shared_ptr<bin<body>> currentBin = staticBodies.head;
 		shared_ptr<bin<body>> linkBin;
 		shared_ptr<bin<event>> currentEvent;
 		bool hasLink;
@@ -123,9 +123,9 @@ public:
 	}
 
 	//run through the event matrix and compute everything
-	void step(list<body> _pageBodies, double _speed = 1) {
-		pageBodies = _pageBodies;
-		shared_ptr<bin<body>> currentBody = _pageBodies.head;
+	void step(list<body> _staticBodies, double _speed = 1) {
+		staticBodies = _staticBodies;
+		shared_ptr<bin<body>> currentBody = _staticBodies.head;
 		buildEventMatrix();
 		shared_ptr<bin<event>> currentEvent = eventMatrix.head;
 

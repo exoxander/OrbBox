@@ -43,19 +43,19 @@ public:
 	void home() {
 	location = dVector();
 }
-	iVector translate(dVector parent, dVector vertex = dVector(), double scale = 1) {//returns the coordinant of a vertex after converting between object and camera space
-	dVector result = parent;
-	result.add(vertex);
+	iVector translate(dVector base, dVector offset = dVector(), double scale = 1) {//returns the coordinant of a offset after converting between object and camera space
+	dVector result = base;
+	result.add(offset);
 	result.add(location);
 	result.multiply(zoom * scale);
 	result.add(screen);
 	return result.toiVector();
 }
-	iVector translate(iVector parent, dVector vertex, double scale = 1) {
-		iVector result = parent;
-		dVector newVertex = vertex;
-		newVertex.multiply(scale);
-		result.add(newVertex.toiVector());		
+	iVector translate(iVector base, dVector offset, double scale = 1) {
+		iVector result = base;
+		dVector newoffset = offset;
+		newoffset.multiply(scale);
+		result.add(newoffset.toiVector());		
 		return result;
 	}
 	  //can only return the world space, not object space coordinant

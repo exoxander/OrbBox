@@ -101,4 +101,14 @@ public:
 		hasCollision = _object.hasCollision;
 
 	}
+
+	void computeRect() {
+
+	}
+
+	void returnRect(shared_ptr<iVector> a, shared_ptr<iVector> b, bool useVisual = false) {
+		//return the position and length / width
+		//if using a mesh loop through mesh (visual or collision?) find highest, leftest, lowest and rightest points
+		//and form a rectangle from that
+	}
 };

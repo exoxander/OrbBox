@@ -39,7 +39,7 @@ public:
         //initialize camera
         util->show_user_interface = true;
         util->draw_mode = MESH_DRAW_MODE::solid;
-        util->game_state = GAME_STATE::edit;
+        //util->game_state = GAME_STATE::edit;
         viewport = make_shared<Camera>(dVector(), dVector(double(ScreenWidth() / 2), double(ScreenHeight() / 2)));
         //viewport->panSpeed *= .25;
 
@@ -50,6 +50,7 @@ public:
         mesh m4 = mesh();
         mesh m5 = m4.copy();
         shared_ptr<Page> p = make_shared<Page>();
+        p->type = PAGE_TYPE::editSim;
         UI.pages.add(p);
         UI.currentPage = UI.pages.head;
 
@@ -85,15 +86,7 @@ public:
         UI.addToCurrentPage(p5);
         UI.addToCurrentPage(p6);
         
-        //creating all object handles
-        shared_ptr<bin<ScreenObject>> currentObject = UI.currentPage->item->pageObjects.head;
-        while (currentObject != nullptr) {
-            if (currentObject->item->hasPhysics) {
-                UI.currentPage->item->pageButtons.add(
-                    std::dynamic_pointer_cast<Button>(make_shared<ObjectHandle>(currentObject->item,iVector(-6,-6), iVector(12,12), "Handle")));
-            }
-            currentObject = currentObject->next;
-        }
+        UI.buildObjectHandles();
         return true;
     }
 
@@ -109,12 +102,12 @@ public:
         if (GetKey(olc::Key::NP_SUB).bHeld) viewport->zoomOut();
 
         //buttonz
-        if (util->game_state == GAME_STATE::edit) {
+        if (UI.currentPage->item->type == PAGE_TYPE::editSim) {
             //check button clicks
             //run through list
             //if one returns is clicked, do something with its position and mouse while held
             //once released, set linked body position to a reverse-translated value / 10 (handle is 10x farther out)
-            if (GetMouse(0).bReleased); {
+            if (GetMouse(0).bReleased) {
                 UI.activeButton = -1;
             }
             if (UI.activeButton == -1 && (GetMouse(0).bHeld)) {//if mouse down and no active button, search buttons
@@ -136,7 +129,11 @@ public:
 
         //----------------< DEBUG >--------------------
         if (GetKey(olc::Key::F1).bPressed) { util->iterateDrawMode(); }
-        if (GetKey(olc::Key::SPACE).bPressed) { util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); }
+        if (GetKey(olc::Key::SPACE).bPressed) { 
+            if(UI.currentPage->item->type == PAGE_TYPE::runSim) {
+                util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); 
+            } 
+        }
         if (GetKey(olc::Key::F2).bPressed) { util->draw_velocity = (util->draw_velocity ? false : true); }
         if (GetKey(olc::Key::F3).bPressed) { util->draw_acceleration = (util->draw_acceleration ? false : true); }
         if (GetKey(olc::Key::F4).bPressed) { 
@@ -152,12 +149,13 @@ public:
         for (int x = 0; x < ScreenWidth(); x++)
             for (int y = 0; y < ScreenHeight(); y++)
                 Draw(x, y, olc::Pixel(20,20,40));
-        drawScreenObjects(UI.currentPage->item->pageObjects);
+        drawScreenObjects(UI.currentPage->item->staticObjects);
+        drawScreenObjects(UI.currentPage->item->dynamicObjects);
         drawInterface();
       
         //-------------------------< DO PHYSICS STEP >---------------------
         if (util->game_state == GAME_STATE::play) {
-            solver.step(UI.currentPage->item->pageBodies);
+            solver.step(UI.currentPage->item->dynamicBodies);
         }
         
         return true;
@@ -327,10 +325,10 @@ public:
     //----------------------< DRAW USER INTERFACE >-----------------------
     void drawInterface() {
       //draw buttons
-        shared_ptr<bin<Button>> currentButton = UI.currentPage->item->pageButtons.head;
+        shared_ptr<bin<Button>> currentButton = UI.currentPage->item->pageButtons.head;//this is getting set as nullptr
         while (currentButton != nullptr) {
 
-            if (util->game_state == GAME_STATE::edit && currentButton->item->type == BUTTON_TYPE::handle) {//draw handles
+            if (UI.currentPage->item->type == PAGE_TYPE::editSim && currentButton->item->type == BUTTON_TYPE::handle) {//draw handles
                 //draw handle on pointed objects velocity (x10?)
                 //cast to object handle
                 iVector pos;
@@ -351,6 +349,14 @@ public:
             }
             currentButton = currentButton->next;
         }
+        //draw rendered path, relatve to anything?
+        shared_ptr<bin<vertex>> currentVertex = UI.renderedPaths.head;
+        while (currentVertex != nullptr) {
+            Pixel color = colorList[(currentVertex->itemID) % colorListLength];//itemIDs are overwritten to match the object its the path of
+
+            currentVertex = currentVertex->next;
+        }   
+
     }
 };
 

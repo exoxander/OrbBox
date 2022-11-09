@@ -96,23 +96,29 @@ public:
 
 class Page {
 public:
-	list<ScreenObject> pageObjects;
-	list<body> pageBodies;
+	list<ScreenObject> staticObjects;
+	list<ScreenObject> dynamicObjects;
+	list<body> staticBodies;
+	list<body> dynamicBodies;
 	list<Button> pageButtons;
 	PAGE_TYPE type;
 
 public:
 	Page() {
-		pageObjects = list<ScreenObject>();
-		pageBodies = list<body>();
+		staticObjects = list<ScreenObject>();
+		dynamicObjects = list<ScreenObject>();
+		staticBodies = list<body>();
+		dynamicBodies = list<body>();
 		pageButtons = list<Button>();
 		type = PAGE_TYPE::nonPage;
 	}
 
 	//by full definition, as in loading from file
 	Page(list<ScreenObject> _screenObjects, list<Button> _buttons, PAGE_TYPE _type) {
-		pageObjects = _screenObjects;
-		pageBodies = getAllBodies(_screenObjects);
+		staticObjects = _screenObjects;
+		dynamicObjects = list<ScreenObject>();//copy from physics bodies
+		staticBodies = getAllBodies(_screenObjects);
+		dynamicBodies = list<body>();//copy from physics bodies
 		pageButtons = _buttons;
 		type = _type;
 	}
@@ -133,19 +139,35 @@ public:
 	}
 	 
 	//add a screen object
-	void addObject(shared_ptr<ScreenObject> _object) {
-		pageObjects.add(_object);
+	void addStaticObject(shared_ptr<ScreenObject> _object) {
+		staticObjects.add(_object);
 		if (_object->hasPhysics && _object->physicsBody != nullptr) {
-			pageBodies.add(_object->physicsBody);
+			staticBodies.add(_object->physicsBody);
+		}
+	}
+	void addDynamicObject(shared_ptr<ScreenObject> _object) {
+		dynamicObjects.add(_object);
+		if (_object->hasPhysics && _object->physicsBody != nullptr) {
+			dynamicBodies.add(_object->physicsBody);
 		}
 	}
 
 	//add object and associated body
-	void addObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
-		pageObjects.add(_object);
+	void addStaticObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+		staticObjects.add(_object);
 		_object->hasPhysics = true;
 		_object->physicsBody = _body;
-		pageBodies.add(_body);
+		staticBodies.add(_body);
+	}
+	void addDynamicObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+		dynamicObjects.add(_object);
+		_object->hasPhysics = true;
+		_object->physicsBody = _body;
+		dynamicBodies.add(_body);
+	}
+
+	void copyDynamicObjects() {
+
 	}
 };
 
@@ -154,22 +176,59 @@ public:
 	list<Button> buttons;
 	list<Page> pages;
 	shared_ptr<bin<Page>> currentPage;
-	int activeButton;	
+	list<vertex> renderedPaths;
+	int activeButton;
 
 public:
 	InterfaceManager() {
 		activeButton = -1;
 	}
-	void addToCurrentPage(shared_ptr<ScreenObject> _object) {
-		currentPage->item->addObject(_object);
+	void addToCurrentPage(shared_ptr<ScreenObject> _object, bool dynamic = false) {
+		if (dynamic) {
+			currentPage->item->addDynamicObject(_object);
+		}
+		else {
+			currentPage->item->addStaticObject(_object);
+		}
 	  }
-	void addToCurrentPage(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
-		currentPage->item->addObject(_object, _body);
+	void addToCurrentPage(shared_ptr<ScreenObject> _object, shared_ptr<body> _body, bool dynamic = false) {
+		if (dynamic) {
+			currentPage->item->addDynamicObject(_object, _body);
+		}
+		else {
+			currentPage->item->addStaticObject(_object, _body);
+		}
 	}
 	void switchToPage(){
 
 	}
 	void setAllBodyLinks() {
+	}
+	//creating all object handles
+	void clearObjectHandles() {
+		shared_ptr<bin<Button>> currentButton = currentPage->item->pageButtons.head;
+
+		//clear all existing handles
+		while (currentButton != nullptr) {
+			if (currentButton->item->type == BUTTON_TYPE::handle) {
+				currentPage->item->pageButtons.removeByItem(currentButton->item);
+			}
+			currentButton = currentButton->next;
+		}
+	}
+	void buildObjectHandles() {
+		if (currentPage != nullptr ) {//&& currentPage->item->type == PAGE_TYPE::editSim
+			shared_ptr<bin<ScreenObject>> currentObject = currentPage->item->staticObjects.head;
+			clearObjectHandles();
+			//make all new handles
+			while (currentObject != nullptr) {
+				if (currentObject->item->hasPhysics) {
+					currentPage->item->pageButtons.add(
+						std::dynamic_pointer_cast<Button>(make_shared<ObjectHandle>(currentObject->item, iVector(-6, -6), iVector(12, 12), "Handle")));
+				}
+				currentObject = currentObject->next;
+			}
+		}
 	}
 	/*
 	*/
