@@ -155,6 +155,23 @@ template <typename T> struct list {
 		return nullptr;
 	}
 
+	//same as above but works if multiple bins have same value and counts them as the index
+	//if index > number in list, returns last one found
+	template <typename T> shared_ptr<T> getByBinID(T type, int _id, int index) {
+		//return bin->item if bin->itemID == _id
+		shared_ptr<bin<T>> currentBin = head;
+		shared_ptr<bin<T>> last = nullptr;
+		int count = 0;
+		while (currentBin != nullptr && count < index) {
+			if (currentBin->itemID == _id) {
+				last = currentBin;
+				count++;
+			}
+			currentBin = currentBin->next;
+		}
+		return last;
+	}
+
 	template <typename T> int getBinID(shared_ptr<T> _item) {
 		shared_ptr<bin<T>> currentBin = head;
 		while (currentBin != nullptr) {

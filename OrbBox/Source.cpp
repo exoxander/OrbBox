@@ -88,7 +88,7 @@ public:
         
         UI.buildObjectHandles();
         UI.currentPage->item->copyDynamicObjects(UI.currentPage->item->staticObjects, UI.currentPage->item->staticBodies);
-        UI.renderedPaths = renderPaths();
+        UI.renderedPaths = renderPaths(60, 5, 2);
         UI.currentPage->item->dynamicObjectsVisible(false);
         return true;
     }
@@ -363,17 +363,29 @@ public:
 
     }
 
-    list<dVector> renderPaths(int depth = 15, int step = 5) {
+    list<dVector> renderPaths(int depth = 15, int step = 5, int relativeID = -1) {
         list<dVector> paths = list<dVector>();
+        dVector origin = dVector();
+        if (relativeID >= 0) {
+            origin = UI.currentPage->item->dynamicBodies.getByBinID(body(), relativeID)->position;
+        }
         for (int i = 0; i < depth; i++) {
             shared_ptr<bin<body>> currentBody = UI.currentPage->item->dynamicBodies.head;
+            dVector offset = dVector();
+           
             //do physics step times
             for (int p = 0; p < step; p++) {
                 solver.step(UI.currentPage->item->dynamicBodies);
             }
+            if (relativeID >= 0) {
+                offset = UI.currentPage->item->dynamicBodies.getByBinID(body(), relativeID)->position;
+
+            }
             //run through visible physics objects and pop vertex on that spot
             while (currentBody != nullptr) {
                 paths.add(currentBody->item->position);
+                paths.tail->item->subtract(offset);
+                paths.tail->item->add(origin);
                 paths.tail->itemID = currentBody->item->linkedObject;//override for color coding on draw
                 currentBody = currentBody->next;
             }
