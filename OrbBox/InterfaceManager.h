@@ -137,18 +137,36 @@ public:
 		}
 		return newList;
 	}
+
+	void dynamicObjectsVisible(bool _value) {
+		shared_ptr<bin<ScreenObject>> currentObject = dynamicObjects.head;
+		while (currentObject != nullptr) {
+			currentObject->item->show = _value;
+			currentObject = currentObject->next;
+		}
+	}
+
+	void staticObjectsVisible(bool _value) {
+		shared_ptr<bin<ScreenObject>> currentObject = staticObjects.head;
+		while (currentObject != nullptr) {
+			currentObject->item->show = _value;
+			currentObject = currentObject->next;
+		}
+	}
 	 
 	//add a screen object
 	void addStaticObject(shared_ptr<ScreenObject> _object) {
 		staticObjects.add(_object);
-		if (_object->hasPhysics && _object->physicsBody != nullptr) {
+		if (_object->physicsBody != nullptr) {
 			staticBodies.add(_object->physicsBody);
+			staticObjects.tail->item->physicsBody->linkedObject = staticBodies.tail->itemID;
 		}
 	}
 	void addDynamicObject(shared_ptr<ScreenObject> _object) {
 		dynamicObjects.add(_object);
-		if (_object->hasPhysics && _object->physicsBody != nullptr) {
+		if (_object->physicsBody != nullptr) {
 			dynamicBodies.add(_object->physicsBody);
+			dynamicObjects.tail->item->physicsBody->linkedObject = dynamicBodies.tail->itemID;
 		}
 	}
 
@@ -158,16 +176,48 @@ public:
 		_object->hasPhysics = true;
 		_object->physicsBody = _body;
 		staticBodies.add(_body);
+		staticBodies.tail->item->linkedObject = staticObjects.tail->itemID;
 	}
 	void addDynamicObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
 		dynamicObjects.add(_object);
 		_object->hasPhysics = true;
 		_object->physicsBody = _body;
 		dynamicBodies.add(_body);
+		dynamicBodies.tail->item->linkedObject = dynamicObjects.tail->itemID;
 	}
 
-	void copyDynamicObjects() {
+	void linkDynamicObjects() {
+		//do later
+	}
 
+	void copyDynamicObjects(list<ScreenObject> screenObjects, list<body> bodies) {
+		//copy bodies
+		dynamicBodies = bodies.deepCopy(body());
+		shared_ptr<bin<body>> currentBody = dynamicBodies.head;
+		//copy ScreenObjects
+		//custom deepCopy of list
+		dynamicObjects = list<ScreenObject>();
+		shared_ptr<bin<ScreenObject>> currentObject = screenObjects.head;
+		//only deep copy objects with physics
+		while (currentObject != nullptr) {
+			if (currentObject->item->hasPhysics) {
+				dynamicObjects.deepCopyBin(currentObject);
+			}
+			currentObject = currentObject->next;
+		}
+
+		currentObject = dynamicObjects.head;
+		//set screenObject pointers to body link IDs
+		while (currentBody != nullptr) {
+			currentObject->item->hasPhysics = false;
+			int ID = currentObject->itemID;
+			shared_ptr<ScreenObject> temp = dynamicObjects.getByBinID(ScreenObject(), currentBody->item->linkedObject);
+			if (temp != nullptr) {
+				temp->physicsBody = currentBody->item;
+				temp->hasPhysics = true;
+			}
+			currentBody = currentBody->next;
+		}
 	}
 };
 
@@ -176,7 +226,7 @@ public:
 	list<Button> buttons;
 	list<Page> pages;
 	shared_ptr<bin<Page>> currentPage;
-	list<vertex> renderedPaths;
+	list<dVector> renderedPaths;
 	int activeButton;
 
 public:

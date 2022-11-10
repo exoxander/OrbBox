@@ -87,6 +87,9 @@ public:
         UI.addToCurrentPage(p6);
         
         UI.buildObjectHandles();
+        UI.currentPage->item->copyDynamicObjects(UI.currentPage->item->staticObjects, UI.currentPage->item->staticBodies);
+        UI.renderedPaths = renderPaths();
+        UI.currentPage->item->dynamicObjectsVisible(false);
         return true;
     }
 
@@ -350,13 +353,33 @@ public:
             currentButton = currentButton->next;
         }
         //draw rendered path, relatve to anything?
-        shared_ptr<bin<vertex>> currentVertex = UI.renderedPaths.head;
-        while (currentVertex != nullptr) {
-            Pixel color = colorList[(currentVertex->itemID) % colorListLength];//itemIDs are overwritten to match the object its the path of
+        shared_ptr<bin<dVector>> currentCoord = UI.renderedPaths.head;
+        while (currentCoord != nullptr) {
+            Pixel color = colorList[(currentCoord->itemID) % colorListLength];//itemIDs are overwritten to match the object its the path of
+            iVector screenCoord = viewport->translate(*currentCoord->item);//use offset to make relative to a selected object?
+            DrawCircle(screenCoord.x, screenCoord.y, 4, color);
+            currentCoord = currentCoord->next;
+        }
 
-            currentVertex = currentVertex->next;
-        }   
+    }
 
+    list<dVector> renderPaths(int depth = 15, int step = 5) {
+        list<dVector> paths = list<dVector>();
+        for (int i = 0; i < depth; i++) {
+            shared_ptr<bin<body>> currentBody = UI.currentPage->item->dynamicBodies.head;
+            //do physics step times
+            for (int p = 0; p < step; p++) {
+                solver.step(UI.currentPage->item->dynamicBodies);
+            }
+            //run through visible physics objects and pop vertex on that spot
+            while (currentBody != nullptr) {
+                paths.add(currentBody->item->position);
+                paths.tail->itemID = currentBody->item->linkedObject;//override for color coding on draw
+                currentBody = currentBody->next;
+            }
+        }
+
+        return paths;
     }
 };
 
