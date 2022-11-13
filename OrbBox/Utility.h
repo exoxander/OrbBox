@@ -42,9 +42,16 @@ template <typename T> struct list {
 	}
 	//adds shared pointer of the specified type to the list
 
-	template <typename T> void add(shared_ptr<T> _item) {
+	template <typename T> void add(shared_ptr<T> _item, int overrideID = -1) {
 		shared_ptr<bin<T>> currentItem = head;
-		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item, uniqueCount);
+		int newID = uniqueCount;
+		if (overrideID > -1) {
+			newID = overrideID;
+			if (newID > uniqueCount) {
+				uniqueCount = newID;
+			}
+		}
+		shared_ptr<bin<T>> nextItem = make_shared<bin<T>>(_item, newID);
 		uniqueCount++;
 
 		if (tail == nullptr) {
@@ -61,8 +68,8 @@ template <typename T> struct list {
 
 	}
 
-	template <typename T> void add(T _item) {
-		add(make_shared<T>(_item));
+	template <typename T> void add(T _item, int overrideID = -1) {
+		add(make_shared<T>(_item), overrideID);
 	}
 
 	//removes an item of the matching shared pointer from the list (if it exists)
@@ -111,13 +118,7 @@ template <typename T> struct list {
 		int temp = _bin->itemID;
 		T newItem = *_bin->item;
 
-		add(make_shared<T>(newItem));
-		tail->itemID = temp;
-		
-		//ensures each ID is always unique in the list if adding more after copying
-		if (uniqueCount < temp) {
-			uniqueCount = temp + 1;
-		}
+		add(make_shared<T>(newItem), temp);
 	}
 
 	template <typename T> list<T> deepCopy(T type) {
@@ -142,23 +143,9 @@ template <typename T> struct list {
 		}
 
 	}
-	template <typename T> shared_ptr<T> getByBinID(T type, int _id) {
+	template <typename T> shared_ptr<bin<T>> getBinByID(T type, int _id, int index = 1) {
 		//return bin->item if bin->itemID == _id
 		//need a way of determining type without passing as arg
-		shared_ptr<bin<T>> currentBin = head;
-		while (currentBin != nullptr) {
-			if (currentBin->itemID == _id) {
-				return currentBin->item;
-			}
-			currentBin = currentBin->next;
-		}
-		return nullptr;
-	}
-
-	//same as above but works if multiple bins have same value and counts them as the index
-	//if index > number in list, returns last one found
-	template <typename T> shared_ptr<T> getByBinID(T type, int _id, int index) {
-		//return bin->item if bin->itemID == _id
 		shared_ptr<bin<T>> currentBin = head;
 		shared_ptr<bin<T>> last = nullptr;
 		int count = 0;
@@ -170,6 +157,21 @@ template <typename T> struct list {
 			currentBin = currentBin->next;
 		}
 		return last;
+	}
+
+	//same as above but works if multiple bins have same value and counts them as the index
+	//if index > number in list, returns last one found
+	template <typename T> shared_ptr<T> getItemByID(T type, int _id, int index = 1) {
+		//return bin->item if bin->itemID == _id
+		shared_ptr<bin<T>> currentBin = head;
+		shared_ptr<bin<T>> found = nullptr;
+		found = getBinByID(type, _id, index);
+		if (found != nullptr) {
+			return found->item;
+		}
+		else {
+			return nullptr;
+		}
 	}
 
 	template <typename T> int getBinID(shared_ptr<T> _item) {
@@ -419,9 +421,9 @@ struct mesh {
 		//run through polygons and use getByBinID to set all the pointers
 		shared_ptr<bin<polygon>> currentPolygon = polygonList.head;
 		while (currentPolygon != nullptr) {
-			currentPolygon->item->a = vertexList.getByBinID(vertex(), currentPolygon->item->aID);
-			currentPolygon->item->b = vertexList.getByBinID(vertex(), currentPolygon->item->bID);
-			currentPolygon->item->c = vertexList.getByBinID(vertex(), currentPolygon->item->cID);
+			currentPolygon->item->a = vertexList.getItemByID(vertex(), currentPolygon->item->aID);
+			currentPolygon->item->b = vertexList.getItemByID(vertex(), currentPolygon->item->bID);
+			currentPolygon->item->c = vertexList.getItemByID(vertex(), currentPolygon->item->cID);
 
 			if (currentPolygon->item->a == nullptr || currentPolygon->item->b == nullptr || currentPolygon->item->c == nullptr) {
 				currentPolygon->itemID = -1;

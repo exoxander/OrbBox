@@ -220,10 +220,12 @@ public:
 		//custom deepCopy of list
 		dynamicObjects = list<ScreenObject>();
 		shared_ptr<bin<ScreenObject>> currentObject = screenObjects.head;
+
 		//only deep copy objects with physics
 		while (currentObject != nullptr) {
 			if (currentObject->item->type == SO_TYPE::physicsObject) {
 				dynamicObjects.deepCopyBin(currentObject);
+				//dynamicObjects.tail->itemID = currentObject->itemID;
 			}
 			currentObject = currentObject->next;
 		}
@@ -233,7 +235,7 @@ public:
 		while (currentBody != nullptr) {
 			
 			int ID = currentObject->itemID;
-			shared_ptr<ScreenObject> temp = dynamicObjects.getByBinID(ScreenObject(), currentBody->item->linkedObject);
+			shared_ptr<ScreenObject> temp = dynamicObjects.getItemByID(ScreenObject(), currentBody->item->linkedObject);
 			if (temp != nullptr) {
 				temp->physicsBody = currentBody->item;
 				temp->type = currentObject->item->type;
@@ -250,6 +252,7 @@ public:
 	shared_ptr<bin<Page>> currentPage;
 	list<dVector> renderedPaths;
 	int activeButton;
+	double activeButtonTime;
 
 public:
 	InterfaceManager() {

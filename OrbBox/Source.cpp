@@ -30,6 +30,8 @@ private:
     list<body> activeBodies = list<body>();
     PhysicsSolver solver = PhysicsSolver();
     InterfaceManager UI = InterfaceManager();
+    int renderPathDepth = 60;
+    int renderPathSkips = 5;
 
     //UI testing
     //list<Button> buttonList = list<Button>();
@@ -88,7 +90,7 @@ public:
         
         UI.buildObjectHandles(viewport, iVector(30,30));
         UI.currentPage->item->copyDynamicObjects(UI.currentPage->item->staticObjects, UI.currentPage->item->staticBodies);
-        UI.renderedPaths = renderPaths(60, 5);
+        UI.renderedPaths = renderPaths(renderPathDepth, renderPathSkips);
         UI.currentPage->item->dynamicObjectsVisible(false);
         return true;
     }
@@ -111,15 +113,17 @@ public:
             //if one returns is clicked, do something with its position and mouse while held
             //once released, set linked body position to a reverse-spaceTranslated value / 10 (handle is 10x farther out)
             if (GetMouse(0).bReleased) {
-                shared_ptr<Button> currentButton = UI.currentPage->item->pageButtons.getByBinID(Button(), UI.activeButton);
+                shared_ptr<Button> currentButton = UI.currentPage->item->pageButtons.getItemByID(Button(), UI.activeButton);
                 if (currentButton != nullptr) {
                     if (currentButton->type == BUTTON_TYPE::handle) {
                         shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton)->item;
                         if (temp != nullptr) {
                             temp->physicsBody->position = viewport->reversespaceTranslate(currentButton->position);
                             UI.renderedPaths.clear();
-                            UI.currentPage->item->dynamicObjects.getByBinID(ScreenObject(), UI.currentPage->item->staticObjects.getBinID(temp))->physicsBody->position = temp->physicsBody->position;
-                            UI.renderedPaths = renderPaths(60, 5);
+                            UI.currentPage->item->dynamicObjects.clear();
+                            UI.currentPage->item->copyDynamicObjects(UI.currentPage->item->staticObjects, UI.currentPage->item->staticBodies);
+                            UI.renderedPaths = renderPaths(renderPathDepth, renderPathSkips);
+                            UI.currentPage->item->dynamicObjectsVisible(false);
                         }
                     }
                 }
@@ -140,7 +144,7 @@ public:
             }
             //follow on incase its set in previous statement
             if (GetMouse(0).bHeld && UI.activeButton >= 0) {//button is active
-                shared_ptr<Button> pressedButton = UI.currentPage->item->pageButtons.getByBinID(Button(), UI.activeButton);
+                shared_ptr<Button> pressedButton = UI.currentPage->item->pageButtons.getItemByID(Button(), UI.activeButton);
                 //check if button is a handle, type cast if so, then bind to mouse position and change object velocity
             }
         }
@@ -376,7 +380,9 @@ public:
         //draw rendered path, relatve to anything?
         shared_ptr<bin<dVector>> currentCoord = UI.renderedPaths.head;
         while (currentCoord != nullptr) {
-            Pixel color = colorList[(currentCoord->itemID) % colorListLength];//itemIDs are overwritten to match the object its the path of
+            Pixel color = colorList[(UI.currentPage->item->staticObjects.getBinByID(ScreenObject(), currentCoord->itemID)->itemID) % colorListLength];
+            //Pixel color = olc::WHITE;
+            //itemIDs are overwritten to match the object its the path of
             iVector screenCoord = viewport->spaceTranslate(*currentCoord->item);//use offset to make relative to a selected object?
             DrawCircle(screenCoord.x, screenCoord.y, 4, color);
             currentCoord = currentCoord->next;
@@ -388,7 +394,7 @@ public:
         list<dVector> paths = list<dVector>();
         dVector origin = dVector();
         if (relativeID >= 0) {
-            origin = UI.currentPage->item->dynamicBodies.getByBinID(body(), relativeID)->position;
+            origin = UI.currentPage->item->dynamicBodies.getItemByID(body(), relativeID)->position;
         }
         for (int i = 0; i < depth; i++) {
             shared_ptr<bin<body>> currentBody = UI.currentPage->item->dynamicBodies.head;
@@ -399,15 +405,15 @@ public:
                 solver.step(UI.currentPage->item->dynamicBodies);
             }
             if (relativeID >= 0) {
-                offset = UI.currentPage->item->dynamicBodies.getByBinID(body(), relativeID)->position;
+                offset = UI.currentPage->item->dynamicBodies.getItemByID(body(), relativeID)->position;
 
             }
             //run through visible physics objects and pop vertex on that spot
             while (currentBody != nullptr) {
-                paths.add(currentBody->item->position);
+                paths.add(currentBody->item->position, currentBody->item->linkedObject);
                 paths.tail->item->subtract(offset);
                 paths.tail->item->add(origin);
-                paths.tail->itemID = currentBody->item->linkedObject;//override for color coding on draw
+                //paths.tail->itemID = currentBody->item->linkedObject;//override for color coding on draw
                 currentBody = currentBody->next;
             }
         }
