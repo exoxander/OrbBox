@@ -67,14 +67,14 @@ public:
         //b6->mass = 5000;
 
         //test objects
-        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(iVector(15, 15), make_shared<mesh>(m4), 1);
-        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1)); 
-        shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2));
-        shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3));
-        shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3));
-        shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m5));
-        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m5));
-        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(iVector(50, 24), make_shared<mesh>(), 4);
+        shared_ptr<ScreenObject> s1 = make_shared<ScreenObject>(iVector(15, 15), make_shared<mesh>(m4), SO_TYPE::visualObject, 1);
+        shared_ptr<ScreenObject> p1 = make_shared<ScreenObject>(b1, make_shared<mesh>(m1), nullptr, SO_TYPE::physicsObject); 
+        shared_ptr<ScreenObject> p2 = make_shared<ScreenObject>(b2, make_shared<mesh>(m2), nullptr, SO_TYPE::physicsObject);
+        shared_ptr<ScreenObject> p3 = make_shared<ScreenObject>(b3, make_shared<mesh>(m3), nullptr, SO_TYPE::physicsObject);
+        shared_ptr<ScreenObject> p4 = make_shared<ScreenObject>(b4, make_shared<mesh>(m3), nullptr, SO_TYPE::physicsObject);
+        shared_ptr<ScreenObject> p5 = make_shared<ScreenObject>(b5, make_shared<mesh>(m5), nullptr, SO_TYPE::physicsObject);
+        shared_ptr<ScreenObject> p6 = make_shared<ScreenObject>(b6, make_shared<mesh>(m5), nullptr, SO_TYPE::physicsObject);
+        shared_ptr<ScreenObject> s2 = make_shared<ScreenObject>(iVector(50, 24), make_shared<mesh>(), SO_TYPE::visualObject, 4);
 
         //adding
         UI.addToCurrentPage(s1);
@@ -86,9 +86,9 @@ public:
         UI.addToCurrentPage(p5);
         UI.addToCurrentPage(p6);
         
-        UI.buildObjectHandles();
+        UI.buildObjectHandles(viewport, iVector(30,30));
         UI.currentPage->item->copyDynamicObjects(UI.currentPage->item->staticObjects, UI.currentPage->item->staticBodies);
-        UI.renderedPaths = renderPaths(60, 5, 2);
+        UI.renderedPaths = renderPaths(60, 5);
         UI.currentPage->item->dynamicObjectsVisible(false);
         return true;
     }
@@ -109,15 +109,30 @@ public:
             //check button clicks
             //run through list
             //if one returns is clicked, do something with its position and mouse while held
-            //once released, set linked body position to a reverse-translated value / 10 (handle is 10x farther out)
+            //once released, set linked body position to a reverse-spaceTranslated value / 10 (handle is 10x farther out)
             if (GetMouse(0).bReleased) {
+                shared_ptr<Button> currentButton = UI.currentPage->item->pageButtons.getByBinID(Button(), UI.activeButton);
+                if (currentButton != nullptr) {
+                    if (currentButton->type == BUTTON_TYPE::handle) {
+                        shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton)->item;
+                        if (temp != nullptr) {
+                            temp->physicsBody->position = viewport->reversespaceTranslate(currentButton->position);
+                            UI.renderedPaths.clear();
+                            UI.currentPage->item->dynamicObjects.getByBinID(ScreenObject(), UI.currentPage->item->staticObjects.getBinID(temp))->physicsBody->position = temp->physicsBody->position;
+                            UI.renderedPaths = renderPaths(60, 5);
+                        }
+                    }
+                }
+                //last part
                 UI.activeButton = -1;
             }
             if (UI.activeButton == -1 && (GetMouse(0).bHeld)) {//if mouse down and no active button, search buttons
                 shared_ptr<bin<Button>> currentButton = UI.currentPage->item->pageButtons.head;
                 while (currentButton != nullptr) {
+                    //cout << "checking button:  " << currentButton->itemID << endl;
                     if (currentButton->item->mouseIsOn(iVector(GetMouseX(), GetMouseY()))) {//this button is pressed
                         UI.activeButton = currentButton->itemID;
+                        //cout << "button found: " << currentButton->itemID << endl;
                         break;
                     }
                     currentButton = currentButton->next;
@@ -132,6 +147,7 @@ public:
 
         //----------------< DEBUG >--------------------
         if (GetKey(olc::Key::F1).bPressed) { util->iterateDrawMode(); }
+        if (GetKey(olc::Key::F5).bPressed) { cout << "registered F5 press" << endl; }
         if (GetKey(olc::Key::SPACE).bPressed) { 
             if(UI.currentPage->item->type == PAGE_TYPE::runSim) {
                 util->game_state = (util->game_state == GAME_STATE::pause ? GAME_STATE::play : GAME_STATE::pause); 
@@ -192,14 +208,14 @@ public:
                             //ignore any 'invalid' polygons in the list
                             if (currentPolygon->itemID >= 0) {
                                 if (hasBody) {
-                                    a = viewport->translate(p, currentPolygon->item->a->position);
-                                    b = viewport->translate(p, currentPolygon->item->b->position);
-                                    c = viewport->translate(p, currentPolygon->item->c->position);
+                                    a = viewport->spaceTranslate(p, currentPolygon->item->a->position);
+                                    b = viewport->spaceTranslate(p, currentPolygon->item->b->position);
+                                    c = viewport->spaceTranslate(p, currentPolygon->item->c->position);
                                 }
                                 else {
-                                    a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
-                                    b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
-                                    c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                                    a = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                    b = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                    c = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
                                 }
 
                                 //draw circles on vertecies
@@ -229,14 +245,14 @@ public:
                                 color = colorList[(currentPolygon->itemID) % colorListLength];
 
                                 if (hasBody) {
-                                    a = viewport->translate(p, currentPolygon->item->a->position);
-                                    b = viewport->translate(p, currentPolygon->item->b->position);
-                                    c = viewport->translate(p, currentPolygon->item->c->position);
+                                    a = viewport->spaceTranslate(p, currentPolygon->item->a->position);
+                                    b = viewport->spaceTranslate(p, currentPolygon->item->b->position);
+                                    c = viewport->spaceTranslate(p, currentPolygon->item->c->position);
                                 }
                                 else {
-                                    a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
-                                    b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
-                                    c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                                    a = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                    b = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                    c = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
                                 }
 
                                 //draw each polygon with a color from the list
@@ -260,14 +276,14 @@ public:
                             if (currentPolygon->itemID >= 0) {
 
                                 if (hasBody) {
-                                    a = viewport->translate(p, currentPolygon->item->a->position);
-                                    b = viewport->translate(p, currentPolygon->item->b->position);
-                                    c = viewport->translate(p, currentPolygon->item->c->position);
+                                    a = viewport->spaceTranslate(p, currentPolygon->item->a->position);
+                                    b = viewport->spaceTranslate(p, currentPolygon->item->b->position);
+                                    c = viewport->spaceTranslate(p, currentPolygon->item->c->position);
                                 }
                                 else {
-                                    a = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
-                                    b = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
-                                    c = viewport->translate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
+                                    a = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->a->position, scale);
+                                    b = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->b->position, scale);
+                                    c = viewport->spaceTranslate(currentObject->item->screenPosition, currentPolygon->item->c->position, scale);
                                 }
 
                                 //draw each polygon with a color from the list
@@ -295,7 +311,7 @@ public:
     }
 
     void drawDebugInfo(shared_ptr<body> _body) {
-        iVector start = viewport->translate(_body->position, dVector());
+        iVector start = viewport->spaceTranslate(_body->position, dVector());
         dVector b;
         int rad = 2;
 
@@ -303,7 +319,7 @@ public:
             b = _body->acceleration;
             b.normalize();
             b.multiply(50 / viewport->zoom);
-            iVector end = viewport->translate(_body->position, b);
+            iVector end = viewport->spaceTranslate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(255, 255, 0));
             FillCircle(end.x, end.y, rad, Pixel(255, 255, 0));
         }
@@ -311,7 +327,7 @@ public:
             b = _body->velocity;
             b.normalize();
             b.multiply(50 / viewport->zoom);
-            iVector end = viewport->translate(_body->position, b);
+            iVector end = viewport->spaceTranslate(_body->position, b);
             DrawLine(start.x, start.y, end.x, end.y, Pixel(0, 255, 255));
             FillCircle(end.x, end.y, rad, Pixel(0, 255, 255));
         }
@@ -338,16 +354,21 @@ public:
                 iVector wid;
                 shared_ptr<ScreenObject> temp = std::dynamic_pointer_cast<ObjectHandle>(currentButton->item)->item;//pointer access violation
                 if (temp != nullptr) {
-                    dVector alteredPosition = temp->physicsBody->velocity;
-                    iVector start = viewport->translate(temp->physicsBody->position);
-                    alteredPosition.normalize();
-                    alteredPosition.multiply(20 / viewport->zoom);
-                    pos = viewport->translate(temp->physicsBody->position, alteredPosition);
-                    DrawLine(start.x, start.y, pos.x, pos.y, Pixel(0, 255, 255));
-                    pos.add(currentButton->item->position);
-                    wid = currentButton->item->size;
-                    DrawRect(pos.x, pos.y, wid.x, wid.y);
+                    currentButton->item->position = viewport->spaceTranslate(temp->physicsBody->position, dVector());
 
+                    if (currentButton->itemID != UI.activeButton) {
+                        pos = currentButton->item->position;
+                    }
+                    else {
+                        //lock to mouse
+                        currentButton->item->position = iVector(GetMouseX(), GetMouseY());
+                        pos = currentButton->item->position;
+                    }
+
+                    wid = currentButton->item->size;
+                    iVector widOffset = wid;
+                    widOffset.divide(2);
+                    DrawRect(pos.x - widOffset.x, pos.y - widOffset.y, wid.x, wid.y);
                 }
             }
             currentButton = currentButton->next;
@@ -356,7 +377,7 @@ public:
         shared_ptr<bin<dVector>> currentCoord = UI.renderedPaths.head;
         while (currentCoord != nullptr) {
             Pixel color = colorList[(currentCoord->itemID) % colorListLength];//itemIDs are overwritten to match the object its the path of
-            iVector screenCoord = viewport->translate(*currentCoord->item);//use offset to make relative to a selected object?
+            iVector screenCoord = viewport->spaceTranslate(*currentCoord->item);//use offset to make relative to a selected object?
             DrawCircle(screenCoord.x, screenCoord.y, 4, color);
             currentCoord = currentCoord->next;
         }

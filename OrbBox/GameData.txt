@@ -33,7 +33,7 @@ https://www.youtube.com/watch?v=ZZY9YE7rZJw
             |
 place button on existing velocity vector
             |
-    when button released: button.position --> reverse translate = new object velocity
+    when button released: button.position --> reverse spaceTranslate = new object velocity
       edit page ----> copy lists ----> sim page
 
 possible issue when deleting an object

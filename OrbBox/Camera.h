@@ -43,27 +43,29 @@ public:
 	void home() {
 	location = dVector();
 }
-	iVector translate(dVector base, dVector offset = dVector(), double scale = 1) {//returns the coordinant of a offset after converting between object and camera space
+	iVector spaceTranslate(dVector base, dVector offset = dVector(), double scale = 1) {//returns the coordinant of a offset after converting between object and camera space
 	dVector result = base;
-	result.add(offset);
+	result.add(offset.returnMultiply(scale));
 	result.add(location);
-	result.multiply(zoom * scale);
+	result.multiply(zoom);
 	result.add(screen);
 	return result.toiVector();
 }
-	iVector translate(iVector base, dVector offset, double scale = 1) {
+	iVector spaceTranslate(iVector base, dVector offset, double scale = 1) {
 		iVector result = base;
 		dVector newoffset = offset;
 		newoffset.multiply(scale);
 		result.add(newoffset.toiVector());		
 		return result;
 	}
+
 	  //can only return the world space, not object space coordinant
-	dVector reverseTranslate(dVector input) {//translates a position on the viewport to a position in game space	
-	dVector result = input;
-	result.subtract(screen);
-	result.multiply(1 / zoom);
-	result.subtract(location);
-	return result;
+	dVector reversespaceTranslate(iVector input, double scale = 1) {//spaceTranslates a position on the viewport to a position in game space	
+		dVector result = dVector();
+		result.makedVector(input);
+		result.subtract(screen);
+		result.multiply(1 / (zoom * scale));
+		result.subtract(location);
+		return result;
 }
 };

@@ -45,7 +45,7 @@ public:
 public:
 	Button() {
 		type = BUTTON_TYPE::nonButton;
-		position = iVector(-5,-5);
+		position = iVector(0,0);
 		size = iVector(10, 10);
 		text = "none";
 	}
@@ -60,11 +60,22 @@ public:
 
 	}
 
-	bool mouseIsOn(iVector _mousePos) {
-		if (_mousePos.x > position.x && _mousePos.x < position.x + size.x &&
-			_mousePos.y > position.y && _mousePos.y < position.y + size.y) {
-			//return true if the mouse is inside the bounds of the button
-			return true;
+	bool mouseIsOn(iVector _Pos, int scale = 1) {
+		iVector TL = position;//smallest
+		iVector wid = size;
+		wid.multiply(scale);
+		wid.divide(2);
+		TL.subtract(wid);
+		iVector BR = TL;//largest
+		iVector siz = size;
+		siz.multiply(scale);
+		BR.add(siz);
+		if (_Pos.x > TL.x && _Pos.x < BR.x) {
+			//cout << "inside x bounds" << endl;
+			if (_Pos.y > TL.y && _Pos.y < BR.y) {
+				//cout << "inside y bounds" << endl;
+				return true;
+			}
 		}
 		return false;
 	}
@@ -91,6 +102,17 @@ public:
 	}
 	~ObjectHandle() {
 		item = nullptr;
+	}
+
+	void setObjectPosition(shared_ptr<Camera> viewport) {
+		if (item) {
+			if (item->physicsBody) {
+				item->physicsBody->position = viewport->reversespaceTranslate(position);
+			}
+			else {
+				item->screenPosition = position;
+			}
+		}
 	}
 };
 
@@ -130,7 +152,7 @@ public:
 		while (currentObject != nullptr) {
 
 			//if listed as having physics and a physics body exists
-			if (currentObject->item->hasPhysics && currentObject->item->physicsBody != nullptr) {
+			if (currentObject->item->type == SO_TYPE::physicsObject && currentObject->item->physicsBody != nullptr) {
 				newList.add(currentObject->item->physicsBody);
 			}
 			currentObject = currentObject->next;
@@ -171,16 +193,16 @@ public:
 	}
 
 	//add object and associated body
-	void addStaticObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+	void addStaticObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body, SO_TYPE _type = SO_TYPE::physicsObject) {
 		staticObjects.add(_object);
-		_object->hasPhysics = true;
+		_object->type = _type;
 		_object->physicsBody = _body;
 		staticBodies.add(_body);
 		staticBodies.tail->item->linkedObject = staticObjects.tail->itemID;
 	}
-	void addDynamicObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body) {
+	void addDynamicObject(shared_ptr<ScreenObject> _object, shared_ptr<body> _body, SO_TYPE _type = SO_TYPE::physicsObject) {
 		dynamicObjects.add(_object);
-		_object->hasPhysics = true;
+		_object->type = _type;
 		_object->physicsBody = _body;
 		dynamicBodies.add(_body);
 		dynamicBodies.tail->item->linkedObject = dynamicObjects.tail->itemID;
@@ -200,7 +222,7 @@ public:
 		shared_ptr<bin<ScreenObject>> currentObject = screenObjects.head;
 		//only deep copy objects with physics
 		while (currentObject != nullptr) {
-			if (currentObject->item->hasPhysics) {
+			if (currentObject->item->type == SO_TYPE::physicsObject) {
 				dynamicObjects.deepCopyBin(currentObject);
 			}
 			currentObject = currentObject->next;
@@ -209,12 +231,12 @@ public:
 		currentObject = dynamicObjects.head;
 		//set screenObject pointers to body link IDs
 		while (currentBody != nullptr) {
-			currentObject->item->hasPhysics = false;
+			
 			int ID = currentObject->itemID;
 			shared_ptr<ScreenObject> temp = dynamicObjects.getByBinID(ScreenObject(), currentBody->item->linkedObject);
 			if (temp != nullptr) {
 				temp->physicsBody = currentBody->item;
-				temp->hasPhysics = true;
+				temp->type = currentObject->item->type;
 			}
 			currentBody = currentBody->next;
 		}
@@ -266,19 +288,22 @@ public:
 			currentButton = currentButton->next;
 		}
 	}
-	void buildObjectHandles() {
+	void buildObjectHandles(shared_ptr<Camera> viewport, iVector buttonScale = iVector(10,10)) {
+		int count = 0;
 		if (currentPage != nullptr ) {//&& currentPage->item->type == PAGE_TYPE::editSim
 			shared_ptr<bin<ScreenObject>> currentObject = currentPage->item->staticObjects.head;
 			clearObjectHandles();
 			//make all new handles
 			while (currentObject != nullptr) {
-				if (currentObject->item->hasPhysics) {
+				if (currentObject->item->type == SO_TYPE::physicsObject || currentObject->item->type == SO_TYPE::buttonObject) {
 					currentPage->item->pageButtons.add(
-						std::dynamic_pointer_cast<Button>(make_shared<ObjectHandle>(currentObject->item, iVector(-6, -6), iVector(12, 12), "Handle")));
+						std::dynamic_pointer_cast<Button>(make_shared<ObjectHandle>(currentObject->item, viewport->spaceTranslate(currentObject->item->physicsBody->position), buttonScale, "Handle")));
+					count++;
 				}
 				currentObject = currentObject->next;
 			}
 		}
+		cout << "created " << count << " object handles" << endl;
 	}
 	/*
 	*/

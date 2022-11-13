@@ -214,10 +214,19 @@ struct iVector {
 		x += _value.x;
 		y += _value.y;
 	}
+	void subtract(iVector _value) {
+		x -= _value.x;
+		y -= _value.y;
+	}
 	void multiply(int _value) {
 		x *= _value;
 		y *= _value;
 	}
+	void divide(int _value) {
+		x /= _value;
+		y /= _value;
+	}
+	
 };
 //===================-< dVector >-==================
 struct dVector {
@@ -274,6 +283,13 @@ public:
 		else {
 			return dVector();
 		}
+	}
+	dVector returnMultiply(double _value) {
+		return dVector(x * _value, y * _value);
+	}
+	void makedVector(iVector _input) {
+		x = double(_input.x);
+		y = double(_input.y);
 	}
 };
 
