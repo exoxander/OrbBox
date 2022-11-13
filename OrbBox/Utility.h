@@ -115,10 +115,10 @@ template <typename T> struct list {
 	}
 
 	template <typename T> void deepCopyBin(shared_ptr<bin<T>> _bin) {
-		int temp = _bin->itemID;
+		//int temp = _bin->itemID;
 		T newItem = *_bin->item;
 
-		add(make_shared<T>(newItem), temp);
+		add(make_shared<T>(newItem), _bin->itemID);
 	}
 
 	template <typename T> list<T> deepCopy(T type) {

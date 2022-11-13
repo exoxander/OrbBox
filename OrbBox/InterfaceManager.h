@@ -181,14 +181,14 @@ public:
 		staticObjects.add(_object);
 		if (_object->physicsBody != nullptr) {
 			staticBodies.add(_object->physicsBody);
-			staticObjects.tail->item->physicsBody->linkedObject = staticBodies.tail->itemID;
+			staticObjects.tail->item->physicsBody->linkedObject = staticObjects.tail->itemID;
 		}
 	}
 	void addDynamicObject(shared_ptr<ScreenObject> _object) {
 		dynamicObjects.add(_object);
 		if (_object->physicsBody != nullptr) {
 			dynamicBodies.add(_object->physicsBody);
-			dynamicObjects.tail->item->physicsBody->linkedObject = dynamicBodies.tail->itemID;
+			dynamicObjects.tail->item->physicsBody->linkedObject = dynamicObjects.tail->itemID;
 		}
 	}
 
@@ -257,6 +257,7 @@ public:
 public:
 	InterfaceManager() {
 		activeButton = -1;
+		activeButtonTime = 0;
 	}
 	void addToCurrentPage(shared_ptr<ScreenObject> _object, bool dynamic = false) {
 		if (dynamic) {
